@@ -7,3 +7,8 @@ Stack:
 - React TS / redux
 - Node TS / graphQL API / elasticsearch
 - docker / docker-compose
+
+
+## work on / run
+
+`docker-compose up` to start
