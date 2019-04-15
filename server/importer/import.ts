@@ -74,7 +74,6 @@ async function readInFile (sImportFile: string) {
 			.on('data', (data: any) => {
 				// convert danish numbers to english numbers
 				let fAmount: number = parseFloat(data.Amount.replace('.', '').replace(',', '.'))
-				let asCategories: string[] = data.Category.split('/')
 				// remove certain properties
 				delete data.Payment
 				delete data.Currency
@@ -83,9 +82,7 @@ async function readInFile (sImportFile: string) {
 				// console.log(fAmount)
 				return results.push({
 				...data,
-				Amount: fAmount *= -1,
-				Category: asCategories[0],
-				Subcategory: asCategories[1]
+				Amount: fAmount *= -1
 			})})
 			.on('end', () => {
 				resolve(results)
