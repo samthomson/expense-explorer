@@ -8,6 +8,7 @@ import {
 	GraphQLInt,
 	GraphQLList
 } from 'graphql'
+import { Expense } from './declarations'
 
 const { Client } = require('@elastic/elasticsearch')
 const client = new Client({ node: 'http://elasticsearch:9200' })
@@ -21,6 +22,14 @@ const ExpenseType = new GraphQLObjectType({
 		subcategory: { type: GraphQLString },
 		date: { type: GraphQLString },
 		amount: { type: GraphQLFloat }
+	})
+})
+
+const SummaryType = new GraphQLObjectType({
+	name: 'SummaryType',
+	fields: () => ({
+		totalExpenditure: { type: GraphQLFloat },
+		expenses: { type: GraphQLList(ExpenseType)}
 	})
 })
 
@@ -52,11 +61,10 @@ const RootQuery = new GraphQLObjectType({
 			}
 		},
 		summary: {
-			type: GraphQLList(ExpenseType),
+			type: SummaryType,
 			args: { year: { type: new GraphQLNonNull(GraphQLInt) }, month: { type: new GraphQLNonNull(GraphQLInt) } },
 			resolve: async (parentValue, { year, month }) => {
 
-				console.log('ere')
 				const oQuery = {
 					index: process.env.ELASTIC_INDEX,
 					body: {
@@ -94,11 +102,15 @@ const RootQuery = new GraphQLObjectType({
 					}
 
 					// console.log(result.body._source)
+					let iSum: number = aReturn.reduce((iTotal: number, oExpense: Expense) => iTotal + oExpense.Amount, 0)
 
-					return aReturn
+					return {
+						totalExpenditure: iSum,
+						expenses: aReturn
+					}
 				} else {
 					console.log('no match')
-					return []
+					return {}
 				}
 			}
 		}
