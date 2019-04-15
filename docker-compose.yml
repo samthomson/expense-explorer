@@ -18,7 +18,7 @@ services:
     volumes:
       - ./server:/server
   elasticsearch:
-    build: ./docker-containers/elasticsearch
+    build: ./elasticsearch
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
       - elasticsearch-plugins:/usr/share/elasticsearch/plugins
@@ -43,3 +43,9 @@ services:
       - 1358:1358
     depends_on:
       - elasticsearch
+
+volumes:
+  elasticsearch-data:
+    driver: "local"
+  elasticsearch-plugins:
+    driver: "local"

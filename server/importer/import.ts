@@ -1,6 +1,7 @@
 import * as path from 'path'
 import * as fs from 'fs'
 import * as csv from 'csv-parser'
+import { Client as ElasticClient, ApiResponse, RequestParams } from '@elastic/elasticsearch'
 
 export type Expense = {
 	Date: string //'06/01/2018',
@@ -28,17 +29,37 @@ const main  = async () => {
 		return
 	}
 	const sImportFile: string = path.resolve(sImportDir, asFiles[0])
-	console.log('import: ', sImportFile)
+	console.log(`importing from ${sImportFile}`)
 
 
 	const results: Expense[] = await readInFile(sImportFile)
 	
-	console.log(results.length, ' items')
-	console.log(results[0])
+	console.log(`${results.length} expenses read from csv`)
+	// console.log(results[0])
 
-	let iSum: number = results.reduce((iTotal: number, oExpense: Expense) => iTotal + oExpense.Amount, 0)
+	// let iSum: number = results.reduce((iTotal: number, oExpense: Expense) => iTotal + oExpense.Amount, 0)
 
-	console.log('iSum: ', iSum)
+	// console.log('iSum: ', iSum)
+
+	const client = new ElasticClient({ node: 'http://elasticsearch:9200' })
+	const sIndex: string = 'expense-explorer-index'
+
+	results.forEach( async (oExpense: Expense) => {
+
+		const doc1: RequestParams.Index = {
+			index: sIndex,
+			body: oExpense,
+			type: 'expense'
+		}
+		await client.index(doc1)
+	})
+
+	// const doc1: RequestParams.Index = {
+	// 	index: sIndex,
+	// 	body: results[0],
+	// 	type: 'expense'
+	// }
+	// await client.index(doc1)
 }
 
 main()
