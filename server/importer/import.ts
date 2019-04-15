@@ -43,23 +43,24 @@ const main  = async () => {
 
 	const client = new ElasticClient({ node: 'http://elasticsearch:9200' })
 	const sIndex: string = 'expense-explorer-index'
+	const sType: string = 'expense'
+
+	let aBody: any[] = []
 
 	results.forEach( async (oExpense: Expense) => {
 
-		const doc1: RequestParams.Index = {
-			index: sIndex,
-			body: oExpense,
-			type: 'expense'
-		}
-		await client.index(doc1)
+		aBody.push({ index: { _index: sIndex } })
+		aBody.push({
+			...oExpense,
+			id: oExpense.ID
+		})
 	})
 
-	// const doc1: RequestParams.Index = {
-	// 	index: sIndex,
-	// 	body: results[0],
-	// 	type: 'expense'
-	// }
-	// await client.index(doc1)
+	const { body: bulkResponse } = await client.bulk({
+        index: sIndex,
+        type: sType,
+		body: aBody
+	})
 }
 
 main()
@@ -76,7 +77,7 @@ async function readInFile (sImportFile: string) {
 				// console.log(fAmount)
 				return results.push({
 				...data,
-				Amount: fAmount
+				Amount: fAmount *= -1
 			})})
 			.on('end', () => {
 				resolve(results)
