@@ -19,6 +19,7 @@
     "build": "tsc",
     "watch": "tsc-watch --onSuccess \"yarn run start\"",
     "start": "ts-node src/server.ts",
-    "import": "ts-node importer/import.ts"
+    "import": "ts-node importer/import.ts",
+    "wipe": "ts-node importer/wipe-index.ts"
   }
 }
