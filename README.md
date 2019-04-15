@@ -20,3 +20,11 @@ Stack:
 - graphql api
 - elasticsearch container
 - read csv and store in elasticsearch
+
+## usecases
+
+- see a month by month summary of expenses
+- for a single expense, see all instances of it
+- summary and calendar view
+- see a yearly view
+- option to omit certain items from a report (like bhutan trip)
