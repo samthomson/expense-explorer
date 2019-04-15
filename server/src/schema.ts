@@ -60,13 +60,27 @@ const RootQuery = new GraphQLObjectType({
 				const oQuery = {
 					index: process.env.ELASTIC_INDEX,
 					body: {
-						// Year: year,
-						// Month: month
+						query: {
+							bool: {
+								must: [
+									{
+										match: {
+											Year: year
+										}
+									},
+									{
+										match: {
+											Month: month
+										}
+									}
+								]
+							}
+							
+						}
 					}
 				}
 				// console.log(oQuery)
 				const result = await client.search(oQuery).catch((err: any) => console.log(err))
-				// console.log(result.body.hits.hits)
 				if (result && result.body && result.body.hits && result.body.hits.hits) {
 
 					let { hits } = result.body.hits
