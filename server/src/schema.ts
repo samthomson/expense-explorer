@@ -29,6 +29,7 @@ const SummaryType = new GraphQLObjectType({
 	name: 'SummaryType',
 	fields: () => ({
 		totalExpenditure: { type: GraphQLFloat },
+		numberOfExpenses: { type: GraphQLInt },
 		expenses: { type: GraphQLList(ExpenseType)}
 	})
 })
@@ -106,10 +107,10 @@ const RootQuery = new GraphQLObjectType({
 
 					return {
 						totalExpenditure: iSum,
+						numberOfExpenses: aReturn.length,
 						expenses: aReturn
 					}
 				} else {
-					console.log('no match')
 					return {}
 				}
 			}
