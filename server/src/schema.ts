@@ -4,7 +4,9 @@ import {
 	GraphQLObjectType,
 	GraphQLSchema,
 	GraphQLString,
-	GraphQLFloat
+	GraphQLFloat,
+	GraphQLInt,
+	GraphQLList
 } from 'graphql'
 
 const { Client } = require('@elastic/elasticsearch')
@@ -30,8 +32,8 @@ const RootQuery = new GraphQLObjectType({
 			args: { id: { type: new GraphQLNonNull(GraphQLID) } },
 			resolve: async (parentValue, { id }) => {
 				const result = await client.get({
-					index: 'expense-explorer-index',
-					type: 'expense',
+					index: process.env.ELASTIC_INDEX,
+					type: process.env.ELASTIC_TYPE,
 					id
 				})
 				if (result && result.body && result.body._source) {
@@ -48,9 +50,57 @@ const RootQuery = new GraphQLObjectType({
 					return {}
 				}
 			}
+		},
+		summary: {
+			type: GraphQLList(ExpenseType),
+			args: { year: { type: new GraphQLNonNull(GraphQLInt) }, month: { type: new GraphQLNonNull(GraphQLInt) } },
+			resolve: async (parentValue, { year, month }) => {
+
+				console.log('ere')
+				const oQuery = {
+					index: process.env.ELASTIC_INDEX,
+					body: {
+						// Year: year,
+						// Month: month
+					}
+				}
+				// console.log(oQuery)
+				const result = await client.search(oQuery).catch((err: any) => console.log(err))
+				// console.log(result.body.hits.hits)
+				if (result && result.body && result.body.hits && result.body.hits.hits) {
+
+					let { hits } = result.body.hits
+					let aReturn: any[] = []
+
+					for (let cMatch: number = 0; cMatch < hits.length; cMatch++) {
+					// hits.foreach((oHit: any) => {
+						let oDocument = hits[cMatch]
+						// console.log('len: ', oDocument)
+						aReturn.push(elasticDocumentToObject(oDocument._source))
+					}
+
+					// console.log(result.body._source)
+
+					return aReturn
+				} else {
+					console.log('no match')
+					return []
+				}
+			}
 		}
 	})
 })
+
+let elasticDocumentToObject = (oDocument: any) => {
+	return {
+		...oDocument,
+		vendor: oDocument.Vendor,
+		category: oDocument.Category,
+		subcategory: oDocument.Subcategory,
+		amount: oDocument.Amount,
+		date: oDocument.Date
+	}
+}
 
 export default new GraphQLSchema({
   query: RootQuery
