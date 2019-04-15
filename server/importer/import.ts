@@ -49,10 +49,9 @@ const main  = async () => {
 
 	results.forEach( async (oExpense: Expense) => {
 
-		aBody.push({ index: { _index: sIndex } })
+		aBody.push({ index: { _index: sIndex, _id: oExpense.ID }})
 		aBody.push({
-			...oExpense,
-			id: oExpense.ID
+			...oExpense
 		})
 	})
 
@@ -73,11 +72,20 @@ async function readInFile (sImportFile: string) {
 		fs.createReadStream(sImportFile)
 			.pipe(csv())
 			.on('data', (data: any) => {
-				let fAmount: number = parseFloat(data.Amount)
+				// convert danish numbers to english numbers
+				let fAmount: number = parseFloat(data.Amount.replace('.', '').replace(',', '.'))
+				let asCategories: string[] = data.Category.split('/')
+				// remove certain properties
+				delete data.Payment
+				delete data.Currency
+				delete data.Note
+				delete data.ID
 				// console.log(fAmount)
 				return results.push({
 				...data,
-				Amount: fAmount *= -1
+				Amount: fAmount *= -1,
+				Category: asCategories[0],
+				Subcategory: asCategories[1]
 			})})
 			.on('end', () => {
 				resolve(results)
