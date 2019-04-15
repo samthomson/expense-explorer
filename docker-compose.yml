@@ -1,0 +1,10 @@
+version: "2"
+services:
+  server:
+    build:
+      context: ./server
+    # command: yarn run watch
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./server:/server
