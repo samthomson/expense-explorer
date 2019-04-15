@@ -12,3 +12,11 @@ Stack:
 ## work on / run
 
 `docker-compose up` to start
+
+## todo
+
+- client containter
+- ejected react ts with redux
+- graphql api
+- elasticsearch container
+- read csv and store in elasticsearch
