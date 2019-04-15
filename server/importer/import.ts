@@ -42,8 +42,8 @@ const main  = async () => {
 	// console.log('iSum: ', iSum)
 
 	const client = new ElasticClient({ node: 'http://elasticsearch:9200' })
-	const sIndex: string = 'expense-explorer-index'
-	const sType: string = 'expense'
+	const sIndex: string = process.env.ELASTIC_INDEX
+	const sType: string = process.env.ELASTIC_TYPE
 
 	let aBody: any[] = []
 
@@ -74,6 +74,7 @@ async function readInFile (sImportFile: string) {
 			.on('data', (data: any) => {
 				// convert danish numbers to english numbers
 				let fAmount: number = parseFloat(data.Amount.replace('.', '').replace(',', '.'))
+				let asDateParts: string[] = data.Date.split('/')
 				// remove certain properties
 				delete data.Payment
 				delete data.Currency
@@ -82,7 +83,9 @@ async function readInFile (sImportFile: string) {
 				// console.log(fAmount)
 				return results.push({
 				...data,
-				Amount: fAmount *= -1
+				Amount: fAmount *= -1,
+				Month: Number(asDateParts[0]),
+				Year: Number(asDateParts[2])
 			})})
 			.on('end', () => {
 				resolve(results)
