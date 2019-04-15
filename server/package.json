@@ -16,6 +16,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc-watch --onSuccess \"yarn run start\"",
-    "start": "ts-node src/server.ts"
+	"start": "ts-node src/server.ts",
+	"import": "ts-node importer/import.ts"
   }
 }

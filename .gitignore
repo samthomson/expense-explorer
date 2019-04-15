@@ -5,3 +5,7 @@ server/node_modules
 # auto-generated stuff
 server/dist
 client/build
+
+
+# data files
+server/importer/data
