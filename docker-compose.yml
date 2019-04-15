@@ -13,10 +13,14 @@ services:
     command: yarn run watch
     environment:
       - PORT=3100
+      - ELASTIC_INDEX=expense-explorer-index
+      - ELASTIC_TYPE=expense
     ports:
       - "3300:3100"
     volumes:
       - ./server:/server
+    depends_on:
+      - elasticsearch
   elasticsearch:
     build: ./elasticsearch
     volumes:
@@ -35,8 +39,6 @@ services:
     ports:
       - "9200:9200"
       - "9300:9300"
-    depends_on:
-      - server
   dejavu:
     image: appbaseio/dejavu:3.0.0-alpha
     ports:
