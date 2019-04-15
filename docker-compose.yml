@@ -1,5 +1,12 @@
 version: "2"
 services:
+  client:
+    build:
+      context: ./client
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client:/client
   server:
     build:
       context: ./server
