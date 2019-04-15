@@ -7,6 +7,9 @@ import {
 	GraphQLFloat
 } from 'graphql'
 
+const { Client } = require('@elastic/elasticsearch')
+const client = new Client({ node: 'http://elasticsearch:9200' })
+
 const ExpenseType = new GraphQLObjectType({
 	name:  'ExpenseType',
 	fields: () => ({
@@ -15,7 +18,7 @@ const ExpenseType = new GraphQLObjectType({
 		category: { type: GraphQLString },
 		subcategory: { type: GraphQLString },
 		date: { type: GraphQLString },
-		Amount: { type: GraphQLFloat }
+		amount: { type: GraphQLFloat }
 	})
 })
 
@@ -25,8 +28,25 @@ const RootQuery = new GraphQLObjectType({
 		expense: {
 			type: ExpenseType,
 			args: { id: { type: new GraphQLNonNull(GraphQLID) } },
-			resolve(parentValue, { id }) {
-				return {id, vendor: 'sas', category: 'fdsfds', subcategory: 'hgh', date: 'gfdgfd', Amount: 789.56}
+			resolve: async (parentValue, { id }) => {
+				const result = await client.get({
+					index: 'expense-explorer-index',
+					type: 'expense',
+					id
+				})
+				if (result && result.body && result.body._source) {
+					let oExpense = result.body._source
+					return {
+						...oExpense,
+						vendor: oExpense.Vendor,
+						category: oExpense.Category,
+						subcategory: oExpense.Subcategory,
+						amount: oExpense.Amount,
+						date: oExpense.Date
+					}
+				} else {
+					return {}
+				}
 			}
 		}
 	})
