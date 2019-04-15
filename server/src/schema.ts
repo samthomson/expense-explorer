@@ -83,8 +83,8 @@ const RootQuery = new GraphQLObjectType({
 									}
 								]
 							}
-							
-						}
+						},
+						size: 10000
 					}
 				}
 				// console.log(oQuery)
