@@ -3,7 +3,9 @@ services:
   server:
     build:
       context: ./server
-    # command: yarn run watch
+    command: yarn run watch
+    environment:
+      - PORT=3100
     ports:
       - "3100:3100"
     volumes:
