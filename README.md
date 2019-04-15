@@ -15,8 +15,6 @@ Stack:
 
 ## todo
 
-- elasticsearch container
-- read csv and store in elasticsearch
 - graphql api
 
 ## usecases
