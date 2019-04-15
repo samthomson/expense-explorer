@@ -17,3 +17,29 @@ services:
       - "3300:3100"
     volumes:
       - ./server:/server
+  elasticsearch:
+    build: ./docker-containers/elasticsearch
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+      - elasticsearch-plugins:/usr/share/elasticsearch/plugins
+    environment:
+      - cluster.name=expense-explorer-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    mem_limit: 1024m
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    depends_on:
+      - server
+  dejavu:
+    image: appbaseio/dejavu:3.0.0-alpha
+    ports:
+      - 1358:1358
+    depends_on:
+      - elasticsearch
