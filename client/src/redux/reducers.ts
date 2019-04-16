@@ -7,7 +7,6 @@ const initialState: Store.App = {
 	oSummary: {}
 }
 
-
 export function appReducers(
 	state: Store.App = initialState,
 	action: Action,
@@ -24,11 +23,8 @@ export function appReducers(
 
 			let oDate = moment(iDate)
 
-			if (bBackwards) {
-				oDate = oDate.subtract(1, 'months')
-			} else {
-				oDate = oDate.add(1, 'months')
-			}
+			oDate = bBackwards ? oDate.subtract(1, 'months') : oDate.add(1, 'months')
+			
 			return {
 				...state,
 				iDate: oDate.valueOf(),
