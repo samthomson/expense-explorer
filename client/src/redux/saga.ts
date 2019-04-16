@@ -1,4 +1,4 @@
-import { put, takeLatest } from 'redux-saga/effects'
+import { all, put, takeLatest } from 'redux-saga/effects'
 
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import ApolloClient from 'apollo-client'
@@ -17,7 +17,7 @@ const client = new ApolloClient({
 
 
 // worker Saga: will be fired on USER_FETCH_REQUESTED actions
-function* fetchUser(action: Action) {
+function* getSummery(action: Action) {
    	try {
 		const data = yield client.query({
 			query: gql`
@@ -42,19 +42,12 @@ function* fetchUser(action: Action) {
 		if (data && data.data && data.data.summary) {
 			const { summary } = data.data
 
-			const { expenses, totalExpenditure, numberOfExpenses } = summary
-			console.log(expenses)
-			console.log(totalExpenditure)
-			console.log(numberOfExpenses)
+			console.log('got summary, now calling succeeded')
 
-			// return {
-			// 	...state,
-			// 	oSummary: summary
-			// }
 			yield put(getSummarySucceded(summary))
 		}else {
 			// return {...state}
-			yield put(getSummarySucceded({}))
+			put(getSummarySucceded({}))
 		}
 
 
@@ -66,8 +59,12 @@ function* fetchUser(action: Action) {
    }
 }
 
-function* mySaga() {
-	yield takeLatest("GET_SUMMARY", fetchUser);
+function* watchGetSummary() {
+	yield takeLatest("GET_SUMMARY", getSummery);
 }
 
-export default mySaga;
+export default function* rootSaga() {
+	yield all([
+		watchGetSummary()
+	])
+  }

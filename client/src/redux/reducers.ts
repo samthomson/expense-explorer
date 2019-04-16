@@ -25,13 +25,11 @@ export function appReducers(
 				sDate: action.sDate,
 			}
 		case 'GET_SUMMARY_SUCCEEDED':
+			console.log('summary succeeded reducer: ', action.oSummary)
 			return {
 				...state,
 				oSummary: action.oSummary,
 			}
-		// case 'GET_SUMMARY':
-		// 	// call API
-		// 	// const { year, month } = action
 	}
 
 	return state

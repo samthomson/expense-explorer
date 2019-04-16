@@ -2,17 +2,16 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { applyMiddleware, createStore, Store as ReduxStore } from 'redux'
+import createSagaMiddleware from 'redux-saga'
 import { getSummary } from './redux/actions'
 
 import App from './App'
 // import './index.css'
 import { appReducers } from './redux/reducers'
+import rootSaga from './redux/saga'
 import { Store } from './redux/store'
 // import registerServiceWorker from './registerServiceWorker';
 
-// import socketMiddleware from './socketMiddleware';
-import createSagaMiddleware from 'redux-saga'
-import mySaga from './redux/saga'
 
 const sagaMiddleware = createSagaMiddleware()
 
@@ -21,12 +20,9 @@ const store: ReduxStore<Store.App> = createStore(
 	applyMiddleware(sagaMiddleware)
 )
 
-// store.dispatch(getSummary(4, 2019))
-sagaMiddleware.run(mySaga)
+sagaMiddleware.run(rootSaga)
 
-setTimeout(() => {
-	store.dispatch(getSummary(4, 2019))
-}, 1000)
+store.dispatch(getSummary(4, 2019))
 
 ReactDOM.render(
 	<div>
