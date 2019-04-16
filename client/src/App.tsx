@@ -62,6 +62,7 @@ class App extends React.Component<IAppProps, {}> {
 										<th>item</th>
 										<th>category</th>
 										<th>subcategory</th>
+										<th>date</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -73,6 +74,12 @@ class App extends React.Component<IAppProps, {}> {
 													<td>{oSingleExpense.vendor}</td>
 													<td>{oSingleExpense.category}</td>
 													<td>{oSingleExpense.subcategory}</td>
+													<td>
+														<a
+															target="_blank"
+															href={this.sGetPiciliUrl(oSingleExpense.date)}
+														>{oSingleExpense.date}</a>
+													</td>
 												</tr>
 											)
 										}
@@ -85,6 +92,13 @@ class App extends React.Component<IAppProps, {}> {
 			</div>
         )
     }
+	
+	private sGetPiciliUrl(sDate: string): string {
+		const oTargetDate: moment.Moment = moment(sDate)
+		const sDisplayDate: string = oTargetDate.format('ddd Do')
+		const sQueryValueDate: string = oTargetDate.format('DD/MM/YYYY')
+		return `https://test-instance.picili.com/1/calendar?filters=[{"type":"calendar","display":"${sDisplayDate}","value":"day:${sQueryValueDate}"}]`
+	}
 }
 
 const mapStateToProps = (state: Store.App) => {

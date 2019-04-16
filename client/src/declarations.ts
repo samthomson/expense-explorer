@@ -8,5 +8,6 @@ export type Expense = {
 	amount: number,
 	vendor: string,
 	category: string,
-	subcategory: string
+	subcategory: string,
+	date: string
 }
