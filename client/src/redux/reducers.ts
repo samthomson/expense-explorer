@@ -29,14 +29,12 @@ export function appReducers(
 			} else {
 				oDate = oDate.add(1, 'months')
 			}
-			console.log(oDate)
 			return {
 				...state,
 				iDate: oDate.valueOf(),
 				oSummary: {}
 			}
 		case 'GET_SUMMARY_SUCCEEDED':
-			console.log('summary succeeded reducer: ', action.oSummary)
 			return {
 				...state,
 				oSummary: action.oSummary

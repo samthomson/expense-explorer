@@ -50,19 +50,13 @@ function* getSummary(action: Action) {
 		if (data && data.data && data.data.summary) {
 			const { summary } = data.data
 
-			console.log('got summary, now calling succeeded')
-
 			yield put(getSummarySucceded(summary))
 		}else {
 			// return {...state}
 			put(getSummarySucceded({}))
 		}
-
-
-		// let summary = {}
-		// yield put({type: "GET_SUMMARY_SUCCEEDED", summary});
    	} catch (e) {
-	   console.log(e.message)
+	   console.log('error getting summary? ', e.message)
 	   // yield put({type: "USER_FETCH_FAILED", message: e.message});
    }
 }
