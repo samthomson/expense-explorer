@@ -75,10 +75,7 @@ class App extends React.Component<IAppProps, {}> {
 													<td>{oSingleExpense.category}</td>
 													<td>{oSingleExpense.subcategory}</td>
 													<td>
-														<a
-															target="_blank"
-															href={this.sGetPiciliUrl(oSingleExpense.date)}
-														>{oSingleExpense.date}</a>
+														{this.sRenderPiciliLink(oSingleExpense.date)}
 													</td>
 												</tr>
 											)
@@ -93,11 +90,18 @@ class App extends React.Component<IAppProps, {}> {
         )
     }
 	
-	private sGetPiciliUrl(sDate: string): string {
+	private sRenderPiciliLink(sDate: string) {
 		const oTargetDate: moment.Moment = moment(sDate)
 		const sDisplayDate: string = oTargetDate.format('ddd Do')
 		const sQueryValueDate: string = oTargetDate.format('DD/MM/YYYY')
-		return `https://test-instance.picili.com/1/calendar?filters=[{"type":"calendar","display":"${sDisplayDate}","value":"day:${sQueryValueDate}"}]`
+		const sPiciliURL: string = `https://test-instance.picili.com/1/calendar?filters=[{"type":"calendar","display":"${sDisplayDate}","value":"day:${sQueryValueDate}"}]`
+
+		return (
+			<a
+				target="_blank"
+				href={sPiciliURL}
+			>{sDisplayDate}</a>
+		)
 	}
 }
 
