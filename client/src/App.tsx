@@ -36,6 +36,7 @@ class App extends React.Component<IAppProps, {}> {
 			numberOfExpenses,
 			totalExpenditure
 		} = oSummary
+		const USDDKKOffset = 0.15
 
         return (
             <div className="App ui container">
@@ -49,7 +50,7 @@ class App extends React.Component<IAppProps, {}> {
 				{/* render expenses for current date */}
 				{totalExpenditure && (
 					<div>
-						<p>total expenditure (dkk): {totalExpenditure.toFixed(0)} (${(totalExpenditure * 0.15).toFixed(2)})</p>
+						<p>total expenditure (dkk): {totalExpenditure.toFixed(0)} (${(totalExpenditure * USDDKKOffset).toFixed(2)})</p>
 						<p>total expenses: {numberOfExpenses}</p>
 
 						<hr />
@@ -63,7 +64,7 @@ class App extends React.Component<IAppProps, {}> {
 										(oSingleExpense, i) => {
 											return (
 												<tr key={i}>
-													<td>{oSingleExpense.amount} (?)</td>
+													<td>{oSingleExpense.amount} (${(oSingleExpense.amount * USDDKKOffset).toFixed(2)})</td>
 													<td>{oSingleExpense.vendor}</td>
 													<td>{oSingleExpense.category}</td>
 													<td>{oSingleExpense.subcategory}</td>
