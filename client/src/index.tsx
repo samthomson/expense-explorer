@@ -6,11 +6,9 @@ import createSagaMiddleware from 'redux-saga'
 import { getSummary } from './redux/actions'
 
 import App from './App'
-// import './index.css'
 import { appReducers } from './redux/reducers'
 import rootSaga from './redux/saga'
 import { Store } from './redux/store'
-// import registerServiceWorker from './registerServiceWorker';
 
 
 const sagaMiddleware = createSagaMiddleware()
@@ -31,5 +29,4 @@ ReactDOM.render(
 		</Provider>
 	</div>,
 	document.getElementById('root') as HTMLElement
-);
-// registerServiceWorker();
+)
