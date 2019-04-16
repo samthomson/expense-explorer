@@ -2,11 +2,11 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 import { Store } from './redux/store'
 
-// import AddBot from './components/AddBot'
+import { Summary } from './declarations'
 
 interface IAppProps {
 	date: string
-	summary: {totalExpenditure: number}
+	summary: Summary
 }
 
 class App extends React.Component<IAppProps, {}> {
@@ -19,13 +19,20 @@ class App extends React.Component<IAppProps, {}> {
 
     public render() {
 		const {
-		} = this.props
+			numberOfExpenses,
+			totalExpenditure
+		} = this.props.summary
 
         return (
             <div className="App ui container">
 				<p>expense explorer</p>
 				<p>{this.props.date}</p>
-				<p>{this.props.summary.totalExpenditure}</p>
+				{totalExpenditure && (
+					<div>
+						<p>total expenditure (dkk): {totalExpenditure.toFixed(0)} (${(totalExpenditure * 0.15).toFixed(2)})</p>
+						<p>total expenses: {numberOfExpenses}</p>
+					</div>
+				)}
 			</div>
         )
     }
