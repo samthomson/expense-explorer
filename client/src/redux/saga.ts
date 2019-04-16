@@ -17,7 +17,7 @@ const client = new ApolloClient({
 
 
 // worker Saga: will be fired on USER_FETCH_REQUESTED actions
-function* getSummery(action: Action) {
+function* getSummary(action: Action) {
    	try {
 		const data = yield client.query({
 			query: gql`
@@ -60,7 +60,7 @@ function* getSummery(action: Action) {
 }
 
 function* watchGetSummary() {
-	yield takeLatest("GET_SUMMARY", getSummery);
+	yield takeLatest("GET_SUMMARY", getSummary);
 }
 
 export default function* rootSaga() {
