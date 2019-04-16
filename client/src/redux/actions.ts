@@ -1,5 +1,3 @@
-// import * as moment from 'moment'
-
 export type Action =
 	{
 		type: 'SET_DATE'

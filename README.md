@@ -15,7 +15,7 @@ Stack:
 
 ## todo
 
-- graphql api
+- build out client
 
 ## usecases
 
