@@ -18,6 +18,20 @@ export function appReducers(
 				...state,
 				oDate: action.oDate,
 			}
+		case 'CHANGE_MONTH':
+			const { bBackwards } = action
+			let { oDate } = state
+
+			if (bBackwards) {
+				oDate = oDate.subtract(1, 'months')
+			} else {
+				oDate = oDate.add(1, 'months')
+			}
+			console.log(oDate)
+			return {
+				...state,
+				oDate
+			}
 		case 'GET_SUMMARY_SUCCEEDED':
 			console.log('summary succeeded reducer: ', action.oSummary)
 			return {

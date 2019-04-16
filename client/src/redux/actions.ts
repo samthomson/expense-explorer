@@ -11,6 +11,9 @@ export type Action =
 	} | {
 		type: 'GET_SUMMARY_SUCCEEDED'
 		oSummary: {}
+	} | {
+		type: 'CHANGE_MONTH'
+		bBackwards: boolean
 	}
 
 
@@ -33,5 +36,12 @@ export const getSummarySucceded = (oSummary: {}): Action => {
 	return {
 		type: 'GET_SUMMARY_SUCCEEDED',
 		oSummary
+	}
+}
+
+export const changeMonth = (bBackwards: boolean) => {
+	return {
+		type: 'CHANGE_MONTH',
+		bBackwards
 	}
 }
