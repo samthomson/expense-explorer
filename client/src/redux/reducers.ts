@@ -6,12 +6,24 @@ const initialState: Store.App = {
 	oSummary: {}
 }
 
-import ApolloClient from 'apollo-boost'
+import { InMemoryCache } from 'apollo-cache-inmemory'
+import ApolloClient from 'apollo-client'
+import { createHttpLink } from 'apollo-link-http'
 import gql from 'graphql-tag'
 
 const client = new ApolloClient({
-  uri: 'http://localhost:3300'
+	link: createHttpLink({
+		uri: 'http://localhost:3300/graphql',
+		credentials: 'include'
+	}),
+	cache: new InMemoryCache()
 })
+
+
+// const client = new ApolloClient({
+// 	link: createHttpLink({ uri: 'http://api.githunt.com/graphql' })
+//   })
+
 
 
 export function appReducers(
@@ -44,16 +56,28 @@ export function appReducers(
 						} 
 					}
 				`,
-			}).then(data => {
-				console.log(data)
-				// return data
 			})
+			.then(data => {
+				if (data && data.data && data.data.summary) {
+					const { summary } = data.data
 
+					const { expenses, totalExpenditure, numberOfExpenses } = summary
+					console.log(expenses)
+					console.log(totalExpenditure)
+					console.log(numberOfExpenses)
 
-			return {
-				...state,
-				oSummary: {}
-			}
+					return {
+						...state,
+						oSummary: summary
+					}
+				}else { return {...state}}
+			})
+			.catch(error => {
+				console.error(error)
+				return {...state}
+			})
+			
+			
 	}
 
 	return state
