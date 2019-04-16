@@ -1,12 +1,15 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
+import { Store } from './redux/store'
 
 // import AddBot from './components/AddBot'
 
-// interface IAppProps {
-// }
+interface IAppProps {
+	date: string
+	summary: {totalExpenditure: number}
+}
 
-class App extends React.Component<{}, {}> {
+class App extends React.Component<IAppProps, {}> {
 
 	public socket: any;
 	
@@ -21,12 +24,22 @@ class App extends React.Component<{}, {}> {
         return (
             <div className="App ui container">
 				<p>expense explorer</p>
+				<p>{this.props.date}</p>
+				<p>{this.props.summary.totalExpenditure}</p>
 			</div>
         )
     }
 }
 
+const mapStateToProps = (state: Store.App) => {
+	console.log('summary: ', state.oSummary)
+	return {
+		date: state.sDate,
+		summary: state.oSummary
+	}
+}
+
 export default connect(
-	null,
+	mapStateToProps,
 	null
 )(App)

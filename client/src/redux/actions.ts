@@ -7,6 +7,9 @@ export type Action =
 		type: 'GET_SUMMARY'
 		year: number
 		month: number
+	} | {
+		type: 'GET_SUMMARY_SUCCEEDED'
+		oSummary: {}
 	}
 
 
@@ -23,5 +26,11 @@ export const getSummary = (month: number, year: number): Action => {
 		year,
 		month,
 		type: 'GET_SUMMARY',
+	}
+}
+export const getSummarySucceded = (oSummary: {}): Action => {
+	return {
+		type: 'GET_SUMMARY_SUCCEEDED',
+		oSummary
 	}
 }

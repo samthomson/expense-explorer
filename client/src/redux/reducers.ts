@@ -6,18 +6,6 @@ const initialState: Store.App = {
 	oSummary: {}
 }
 
-import { InMemoryCache } from 'apollo-cache-inmemory'
-import ApolloClient from 'apollo-client'
-import { createHttpLink } from 'apollo-link-http'
-import gql from 'graphql-tag'
-
-const client = new ApolloClient({
-	link: createHttpLink({
-		uri: 'http://localhost:3300/graphql',
-		credentials: 'include'
-	}),
-	cache: new InMemoryCache()
-})
 
 
 // const client = new ApolloClient({
@@ -36,48 +24,14 @@ export function appReducers(
 				...state,
 				sDate: action.sDate,
 			}
-		case 'GET_SUMMARY':
-			// call API
-			// const { year, month } = action
-
-			client.query({
-				query: gql`
-					query GetSummary {					
-						summary(month: 3, year: 2019){
-							totalExpenditure,
-							numberOfExpenses,
-							expenses {
-								vendor,
-								amount,
-								category,
-								subcategory,
-								date
-							}
-						} 
-					}
-				`,
-			})
-			.then(data => {
-				if (data && data.data && data.data.summary) {
-					const { summary } = data.data
-
-					const { expenses, totalExpenditure, numberOfExpenses } = summary
-					console.log(expenses)
-					console.log(totalExpenditure)
-					console.log(numberOfExpenses)
-
-					return {
-						...state,
-						oSummary: summary
-					}
-				}else { return {...state}}
-			})
-			.catch(error => {
-				console.error(error)
-				return {...state}
-			})
-			
-			
+		case 'GET_SUMMARY_SUCCEEDED':
+			return {
+				...state,
+				oSummary: action.oSummary,
+			}
+		// case 'GET_SUMMARY':
+		// 	// call API
+		// 	// const { year, month } = action
 	}
 
 	return state
