@@ -1,11 +1,13 @@
-import { all, put, takeLatest } from 'redux-saga/effects'
+import { all, put, select, takeLatest } from 'redux-saga/effects'
 
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import ApolloClient from 'apollo-client'
 import { createHttpLink } from 'apollo-link-http'
 import gql from 'graphql-tag'
-import { Action, getSummarySucceded } from './actions';
+import { Action, getSummarySucceded } from './actions'
+import { Store } from './store'
 
+import * as moment from 'moment'
 
 const client = new ApolloClient({
 	link: createHttpLink({
@@ -15,9 +17,13 @@ const client = new ApolloClient({
 	cache: new InMemoryCache()
 })
 
+export const getIDate = (state: Store.App) => state.iDate
 
 // worker Saga: will be fired on USER_FETCH_REQUESTED actions
 function* getSummary(action: Action) {
+	// const oDate = moment(action.iDate)
+	const oDate = moment(yield select(getIDate))
+	
    	try {
 		const data = yield client.query({
 			query: gql`
@@ -35,10 +41,11 @@ function* getSummary(action: Action) {
 					} 
 				}
 			`,
-			variables: {month: 11, year: 2018}
+			variables: {
+				month: Number(oDate.format('M')),
+				year: Number(oDate.format('YYYY'))
+			}
 		})
-
-		console.log(data)
 
 		if (data && data.data && data.data.summary) {
 			const { summary } = data.data
@@ -56,7 +63,7 @@ function* getSummary(action: Action) {
 		// yield put({type: "GET_SUMMARY_SUCCEEDED", summary});
    	} catch (e) {
 	   console.log(e.message)
-    //   yield put({type: "USER_FETCH_FAILED", message: e.message});
+	   // yield put({type: "USER_FETCH_FAILED", message: e.message});
    }
 }
 

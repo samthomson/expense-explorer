@@ -38,7 +38,7 @@ export function appReducers(
 			console.log('summary succeeded reducer: ', action.oSummary)
 			return {
 				...state,
-				oSummary: action.oSummary,
+				oSummary: action.oSummary
 			}
 	}
 

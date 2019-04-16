@@ -4,8 +4,7 @@ export type Action =
 		iDate: number
 	} | {
 		type: 'GET_SUMMARY'
-		year: number
-		month: number
+		iDate: number
 	} | {
 		type: 'GET_SUMMARY_SUCCEEDED'
 		oSummary: {}
@@ -23,10 +22,9 @@ export const setDate = (iDate: number): Action => {
 	}
 }
   
-export const getSummary = (month: number, year: number): Action => {
+export const getSummary = (iDate: number): Action => {
 	return {
-		year,
-		month,
+		iDate,
 		type: 'GET_SUMMARY',
 	}
 }
