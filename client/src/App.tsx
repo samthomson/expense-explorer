@@ -32,6 +32,7 @@ class App extends React.Component<IAppProps, {}> {
 			oSummary
 		} = this.props
 		const {
+			expenses,
 			numberOfExpenses,
 			totalExpenditure
 		} = oSummary
@@ -50,6 +51,13 @@ class App extends React.Component<IAppProps, {}> {
 					<div>
 						<p>total expenditure (dkk): {totalExpenditure.toFixed(0)} (${(totalExpenditure * 0.15).toFixed(2)})</p>
 						<p>total expenses: {numberOfExpenses}</p>
+
+						<hr />
+						{expenses.map(
+							(oSingleExpense, i) => <div key={i}>
+							{oSingleExpense.amount} {oSingleExpense.vendor}{oSingleExpense.category}{oSingleExpense.subcategory}
+							</div>
+						)}
 					</div>
 				)}
 			</div>
