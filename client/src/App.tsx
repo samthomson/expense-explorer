@@ -57,7 +57,12 @@ class App extends React.Component<IAppProps, {}> {
 						{expenses.length > 0 && (
 							<table>
 								<thead>
-									<tr><th>dkk (usd)</th><th>item</th><th>category</th><th>subcategory</th></tr>
+									<tr>
+										<th>dkk (usd)</th>
+										<th>item</th>
+										<th>category</th>
+										<th>subcategory</th>
+									</tr>
 								</thead>
 								<tbody>
 									{expenses.map(
