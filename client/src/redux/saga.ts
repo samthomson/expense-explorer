@@ -21,8 +21,8 @@ function* getSummary(action: Action) {
    	try {
 		const data = yield client.query({
 			query: gql`
-				query GetSummary {					
-					summary(month: 3, year: 2019){
+				query GetSummary($month: Int!, $year: Int!) {					
+					summary(month: $month, year: $year){
 						totalExpenditure,
 						numberOfExpenses,
 						expenses {
@@ -35,6 +35,7 @@ function* getSummary(action: Action) {
 					} 
 				}
 			`,
+			variables: {month: 11, year: 2018}
 		})
 
 		console.log(data)
