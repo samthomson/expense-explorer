@@ -1,7 +1,7 @@
 import * as moment from 'moment'
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { changeMonth } from './redux/actions'
+import { changeMonth, getSummary } from './redux/actions'
 import { Store } from './redux/store'
 
 import { Summary } from './declarations'
@@ -10,6 +10,7 @@ interface IAppProps {
 	iDate: number
 	oSummary: Summary
 	changeMonth: (bBackwards: boolean) => {}
+	getSummary: (iDate: number) => {}
 }
 
 class App extends React.Component<IAppProps, {}> {
@@ -18,7 +19,12 @@ class App extends React.Component<IAppProps, {}> {
 	
     constructor(props: any) {
         super(props)
-    }
+	}
+	
+	public eChangeMonth(bBackwards: boolean) {
+		this.props.changeMonth(bBackwards)
+		this.props.getSummary(this.props.iDate)
+	}
 
     public render() {
 		const {
@@ -35,9 +41,9 @@ class App extends React.Component<IAppProps, {}> {
 				<p>expense explorer</p>
 				{/* date navigation */}
 				<p>
-					<a onClick={() => this.props.changeMonth(true)}>left</a>
+					<a onClick={() => this.eChangeMonth(true)}>left</a>
 					 - {moment(iDate).format()} - 
-					<a onClick={() => this.props.changeMonth(false)}>right</a>
+					<a onClick={() => this.eChangeMonth(false)}>right</a>
 				</p>
 				{/* render expenses for current date */}
 				{totalExpenditure && (
@@ -61,7 +67,8 @@ const mapStateToProps = (state: Store.App) => {
 }
 
 const mapDispatchToProps = (dispatch: any) => ({
-	changeMonth: (bBackwards: boolean) => dispatch(changeMonth(bBackwards))
+	changeMonth: (bBackwards: boolean) => dispatch(changeMonth(bBackwards)),
+	getSummary: (iDate: number) => dispatch(getSummary(iDate))
 })
 
 export default connect(
