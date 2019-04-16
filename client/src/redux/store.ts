@@ -1,8 +1,8 @@
-import * as moment from 'moment'
+// import * as moment from 'moment'
 
 export namespace Store {
 	export type App = {
-		oDate: moment.Moment
+		iDate: number
 		oSummary: {}
 	}
 }

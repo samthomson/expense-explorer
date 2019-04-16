@@ -3,7 +3,7 @@ import { Action } from './actions'
 import { Store } from './store'
 
 const initialState: Store.App = {
-	oDate: moment(),
+	iDate: moment().valueOf(),
 	oSummary: {}
 }
 
@@ -16,11 +16,13 @@ export function appReducers(
 		case 'SET_DATE':
 			return {
 				...state,
-				oDate: action.oDate,
+				iDate: action.iDate,
 			}
 		case 'CHANGE_MONTH':
 			const { bBackwards } = action
-			let { oDate } = state
+			const { iDate } = state
+
+			let oDate = moment(iDate)
 
 			if (bBackwards) {
 				oDate = oDate.subtract(1, 'months')
@@ -30,7 +32,7 @@ export function appReducers(
 			console.log(oDate)
 			return {
 				...state,
-				oDate
+				iDate: oDate.valueOf()
 			}
 		case 'GET_SUMMARY_SUCCEEDED':
 			console.log('summary succeeded reducer: ', action.oSummary)

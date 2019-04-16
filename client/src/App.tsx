@@ -7,7 +7,7 @@ import { Store } from './redux/store'
 import { Summary } from './declarations'
 
 interface IAppProps {
-	oDate: moment.Moment
+	iDate: number
 	oSummary: Summary
 	changeMonth: (bBackwards: boolean) => {}
 }
@@ -22,7 +22,7 @@ class App extends React.Component<IAppProps, {}> {
 
     public render() {
 		const {
-			oDate,
+			iDate,
 			oSummary
 		} = this.props
 		const {
@@ -36,7 +36,7 @@ class App extends React.Component<IAppProps, {}> {
 				{/* date navigation */}
 				<p>
 					<a onClick={() => this.props.changeMonth(true)}>left</a>
-					 - {oDate.format()} - 
+					 - {moment(iDate).format()} - 
 					<a onClick={() => this.props.changeMonth(false)}>right</a>
 				</p>
 				{/* render expenses for current date */}
@@ -53,9 +53,9 @@ class App extends React.Component<IAppProps, {}> {
 
 const mapStateToProps = (state: Store.App) => {
 	console.log('mapStateToProps: ', state)
-	const { oDate, oSummary } = state
+	const { iDate, oSummary } = state
 	return {
-		oDate,
+		iDate,
 		oSummary
 	}
 }
