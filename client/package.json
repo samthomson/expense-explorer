@@ -9,6 +9,7 @@
 		"apollo-client": "^2.5.1",
 		"apollo-link-http": "^1.5.14",
 		"graphql": "^14.2.1",
+		"moment": "^2.24.0",
 		"react": "^16.8.6",
 		"react-dom": "^16.8.6",
 		"react-redux": "^7.0.2",

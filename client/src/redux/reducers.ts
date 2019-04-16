@@ -1,17 +1,11 @@
+import * as moment from 'moment'
 import { Action } from './actions'
 import { Store } from './store'
 
 const initialState: Store.App = {
-	sDate: '',
+	oDate: moment(),
 	oSummary: {}
 }
-
-
-
-// const client = new ApolloClient({
-// 	link: createHttpLink({ uri: 'http://api.githunt.com/graphql' })
-//   })
-
 
 
 export function appReducers(
@@ -22,7 +16,7 @@ export function appReducers(
 		case 'SET_DATE':
 			return {
 				...state,
-				sDate: action.sDate,
+				oDate: action.oDate,
 			}
 		case 'GET_SUMMARY_SUCCEEDED':
 			console.log('summary succeeded reducer: ', action.oSummary)

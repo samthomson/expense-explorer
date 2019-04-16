@@ -1,8 +1,9 @@
+import * as moment from 'moment'
 
 export type Action =
 	{
 		type: 'SET_DATE'
-		sDate: string
+		oDate: moment.Moment
 	} | {
 		type: 'GET_SUMMARY'
 		year: number
@@ -14,10 +15,10 @@ export type Action =
 
 
 
-export const setDate = (sDate: string): Action => {
+export const setDate = (oDate: moment.Moment): Action => {
 	return {
 		type: 'SET_DATE',
-		sDate
+		oDate
 	}
 }
   
