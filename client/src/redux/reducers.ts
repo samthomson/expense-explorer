@@ -32,7 +32,8 @@ export function appReducers(
 			console.log(oDate)
 			return {
 				...state,
-				iDate: oDate.valueOf()
+				iDate: oDate.valueOf(),
+				oSummary: {}
 			}
 		case 'GET_SUMMARY_SUCCEEDED':
 			console.log('summary succeeded reducer: ', action.oSummary)

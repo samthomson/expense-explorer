@@ -11,6 +11,7 @@ export type Action =
 	} | {
 		type: 'CHANGE_MONTH'
 		bBackwards: boolean
+		oSummary: {}
 	}
 
 

@@ -58,7 +58,6 @@ class App extends React.Component<IAppProps, {}> {
 }
 
 const mapStateToProps = (state: Store.App) => {
-	console.log('mapStateToProps: ', state)
 	const { iDate, oSummary } = state
 	return {
 		iDate,
