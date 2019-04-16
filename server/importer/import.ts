@@ -26,9 +26,29 @@ const main  = async () => {
 	console.log(`${results.length} expenses read from csv`)
 
 	const client = new ElasticClient({ node: 'http://elasticsearch:9200' })
-	const sIndex: string = process.env.ELASTIC_INDEX
-	const sType: string = process.env.ELASTIC_TYPE
+	const sIndex: string = String(process.env.ELASTIC_INDEX)
+	const sType: string = String(process.env.ELASTIC_TYPE)
 
+	//
+	// put mapping
+	//
+	const oMapping = {
+		expense:{
+			properties:{
+				vendor: { "type" : "string", "index": "not_analyzed" },
+				amount: { "type" : "string", "index": "not_analyzed" },
+				category: { "type" : "string", "index": "not_analyzed" },
+				subcategory: { "type" : "string", "index": "not_analyzed" },
+				date: { "type": "date", "index": "not_analyzed" }
+			}
+		}
+	}
+	
+	client.indices.putMapping({index: sIndex, type: sType, body: oMapping});
+
+	// 
+	// store expenses
+	//
 	let aBody: any[] = []
 
 	results.forEach( async (oExpense: Expense) => {
