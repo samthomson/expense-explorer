@@ -176,9 +176,6 @@ class App extends React.Component<IAppProps, {}> {
 			maintainAspectRatio: false
 		}
 
-		// const dataPoints = categories.map(oP => Number(oP.percent))
-		// const dataLabels = categories.map(oP => oP.category)
-
 		const oCategoryColours: any = {
 			'Auto/Transportation': 'green',		
 			'Bills/Utilities': 'blue',
