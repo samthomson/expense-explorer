@@ -109,6 +109,7 @@ class App extends React.Component<IAppProps, {}> {
 			projection_for_scope,
 			totalExpenditure
 		} = this.props.oSummary
+		const { sScope } = this.props
 		return (
 			<table className="ui table">
 				<tbody>
@@ -120,10 +121,10 @@ class App extends React.Component<IAppProps, {}> {
 						<td className="collapsing">{numberOfExpenses}</td>
 					</tr>
 					<tr>
-						<td>average per day/month</td>
+						<td>average per {sScope === 'year' && 'month'}{sScope === 'month' && 'day'}</td>
 						<td className="collapsing">{average_per_unit.toFixed(2)} (${(average_per_unit * this.USDDKKOffset).toFixed(2)})</td>
 
-						<td>projection for month/year</td>
+						<td>projection for {sScope}</td>
 						<td className="collapsing">{projection_for_scope.toFixed(0)} (${(projection_for_scope * this.USDDKKOffset).toFixed(2)})</td>
 					</tr>
 				</tbody>
