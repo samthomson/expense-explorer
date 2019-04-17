@@ -33,18 +33,33 @@ const main  = async () => {
 	// put mapping
 	//
 	const oMapping = {
-		expense:{
-			properties:{
-				vendor: { "type" : "string", "index": "not_analyzed" },
-				amount: { "type" : "string", "index": "not_analyzed" },
-				category: { "type" : "string", "index": "not_analyzed" },
-				subcategory: { "type" : "string", "index": "not_analyzed" },
-				date: { "type": "date", "index": "not_analyzed" }
+		mappings: {				
+			expense:{
+				properties: {
+					Date: { "type": "date", "format": "MM/dd/yyyy" }
+				}
 			}
 		}
 	}
 	
-	client.indices.putMapping({index: sIndex, type: sType, body: oMapping});
+	await client.indices.delete({ index: sIndex })
+	try { 
+		await client.indices.create({
+			index: sIndex,
+			body: oMapping
+		})
+	}catch(err) {
+		console.log('\nerror applying mapping:\n', err.message, '\n\n', err, '\n\n')
+	}
+
+	try { 
+		const oFetchedMapping = await client.indices.getMapping()
+		let oExpenseMapping = oFetchedMapping.body['expense-explorer-index'].mappings
+		// console.log(oExpenseMapping)
+		// console.log('\n\ndate: ', oExpenseMapping.expense.properties.Date.type, '\n\n')
+	}catch(err) {
+		console.log('error getting mapping')
+	}
 
 	// 
 	// store expenses
@@ -84,12 +99,10 @@ async function readInFile (sImportFile: string) {
 				delete data.Currency
 				delete data.Note
 				delete data.ID
-				// console.log(fAmount)
+				
 				return results.push({
 				...data,
 				Amount: fAmount *= -1,
-				Month: Number(asDateParts[0]),
-				Year: Number(asDateParts[2])
 			})})
 			.on('end', () => {
 				resolve(results)

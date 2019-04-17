@@ -32,7 +32,7 @@ const SummaryType = new GraphQLObjectType({
 		numberOfExpenses: { type: GraphQLInt },
 		expenses: { type: GraphQLList(ExpenseType)}
 	})
-})
+})	
 
 const RootQuery = new GraphQLObjectType({
 	name: 'RootQueryType',
@@ -63,26 +63,21 @@ const RootQuery = new GraphQLObjectType({
 		},
 		summary: {
 			type: SummaryType,
-			args: { year: { type: new GraphQLNonNull(GraphQLInt) }, month: { type: new GraphQLNonNull(GraphQLInt) } },
-			resolve: async (parentValue, { year, month }) => {
+			args: { date: { type: new GraphQLNonNull(GraphQLInt) }, scope: { type: new GraphQLNonNull(GraphQLString) } },
+			resolve: async (parentValue, { date, scope }) => {
+
+				// build date range query
 
 				const oQuery = {
 					index: process.env.ELASTIC_INDEX,
 					body: {
 						query: {
-							bool: {
-								must: [
-									{
-										match: {
-											Year: year
-										}
-									},
-									{
-										match: {
-											Month: month
-										}
-									}
-								]
+							range: {
+								Date: {
+									gte: "01/01/2019",
+									lte: "31/01/2019",
+									format: "dd/MM/yyyy"
+								}
 							}
 						},
 						size: 10000
