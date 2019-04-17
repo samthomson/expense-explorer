@@ -94,6 +94,7 @@ const RootQuery = new GraphQLObjectType({
 				// build date range query
 				const oQueriedDate = moment.unix(date)
 				const sScopePeriod: any = (scope === 'month') ? 'month' : 'year'
+				const sAggregationScopePeriod: any = (scope === 'month') ? 'day' : 'month'
 				const sLowerDateRange = oQueriedDate.startOf(sScopePeriod).format('DD/MM/Y')
 				const sUpperDateRange = oQueriedDate.endOf(sScopePeriod).format('DD/MM/Y')
 
@@ -114,7 +115,7 @@ const RootQuery = new GraphQLObjectType({
 							time_spending_breakdown: {
 								date_histogram : {
 									field: "Date",
-									interval: "day"
+									interval: sAggregationScopePeriod
 								},
 								aggs: {
 									unit_total: { "sum" : { "field" : "Amount" } }
