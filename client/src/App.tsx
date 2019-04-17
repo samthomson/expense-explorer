@@ -44,13 +44,27 @@ class App extends React.Component<IAppProps, {}> {
             <div className="App ui container">
 				<p>expense explorer</p>
 				{/* date navigation */}
+
+				<div className="ui small buttons">
+					<button onClick={() => this.eChangeScope('month')} className={'ui button' + (sScope === 'month' ? ' active' : '')}>month</button>
+					<div className="or"/>
+					<button onClick={() => this.eChangeScope('year')} className={'ui button' + (sScope === 'year' ? ' active' : '')}>year</button>
+				</div>
+
+
+				<div className="ui small buttons">
+					<button className="ui labeled icon button" onClick={() => this.eChangeMonth(true)}>
+						<i className="left chevron icon" />
+						Back
+					</button>
+					<button className="ui right labeled icon button" onClick={() => this.eChangeMonth(false)}>
+						Forward
+						<i className="right chevron icon" />
+					</button>
+				</div>
+
 				<p>
-					<strong>{sScope}</strong> mode: <a onClick={() => this.eChangeScope('month')}>month</a> or <a onClick={() => this.eChangeScope('year')}>year</a>
-				</p>
-				<p>
-					<a onClick={() => this.eChangeMonth(true)}>left</a>
-					 - {this.renderScopeLabel(iDate, sScope)} - 
-					<a onClick={() => this.eChangeMonth(false)}>right</a>
+					{this.renderScopeLabel(iDate, sScope)}
 				</p>
 				{/* render expenses for current date */}
 				{totalExpenditure && (
