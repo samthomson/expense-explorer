@@ -5,7 +5,7 @@ import { Store } from './store'
 const initialState: Store.App = {
 	iDate: moment().unix(),
 	oSummary: {},
-	sScope: 'year'
+	sScope: 'month'
 }
 
 export function appReducers(
