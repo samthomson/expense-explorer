@@ -33,6 +33,7 @@ class App extends React.Component<IAppProps, {}> {
 		} = this.props
 		const {
 			spending_by_category,
+			spending_over_time,
 			expenses,
 			numberOfExpenses,
 			totalExpenditure
@@ -60,6 +61,8 @@ class App extends React.Component<IAppProps, {}> {
 						<hr />
 						{this.renderCategorySpending(spending_by_category)}
 						<hr />
+						{this.renderSpendingOverTime(spending_over_time)}
+						<hr />
 						{this.renderExpenses(expenses)}
 						
 					</div>
@@ -78,6 +81,36 @@ class App extends React.Component<IAppProps, {}> {
 		this.props.getSummary(this.props.iDate)
 	}
 	
+	private renderSpendingOverTime(timeunits: any[]) {
+		return (
+			timeunits.length > 0 && (
+				<table>
+					<thead>
+						<tr>
+							<th>time unit</th>
+							<th>Total DKK</th>
+							<th>Total USD</th>
+							<th># expenses</th>
+						</tr>
+					</thead>
+					<tbody>
+						{timeunits.map(
+							(oSingleUnit, i) => {
+								return (
+									<tr key={i}>
+										<td>{oSingleUnit.date}</td>
+										<td>{oSingleUnit.total.toFixed(2)}</td>
+										<td>{(oSingleUnit.total * this.USDDKKOffset).toFixed(2)}</td>
+										<td>{oSingleUnit.expense_count}</td>
+									</tr>
+								)
+							}
+						)}
+					</tbody>
+				</table>
+			)
+		)
+	}
 	private renderCategorySpending(categories: any[]) {
 		return (
 			categories.length > 0 && (
