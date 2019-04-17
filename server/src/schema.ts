@@ -55,7 +55,9 @@ const SummaryType = new GraphQLObjectType({
 		},
 		spending_by_category: {
 			type: GraphQLList(CategorySpendType)
-		}
+		},
+		average_per_unit: { type: GraphQLFloat },
+		projection_for_scope: { type: GraphQLFloat }
 	})
 })	
 
@@ -159,11 +161,12 @@ const RootQuery = new GraphQLObjectType({
 				if (result && result.body && result.body.aggregations) {
 					const aggDump = result.body.aggregations
 
-					if (aggDump.category_spending_breakdown) {
+					if (aggDump.category_spending_breakdown && aggDump.time_spending_breakdown) {
 
 						const iTotal: number = aggDump.category_spending_breakdown.buckets.reduce((iTotal: number, oBucket: any) => iTotal + oBucket.unit_total.value, 0)
+						
 
-						let aCategories = aggDump.category_spending_breakdown.buckets.map((oBucket: any) => {
+						const aCategorySpending = aggDump.category_spending_breakdown.buckets.map((oBucket: any) => {
 							return { 
 								category: oBucket.key,
 								expense_count: oBucket.doc_count,
@@ -172,11 +175,16 @@ const RootQuery = new GraphQLObjectType({
 							}
 						})
 
-						oReturn['spending_by_category'] = aCategories
-					}
-					if (aggDump.time_spending_breakdown) {
+						oReturn['spending_by_category'] = aCategorySpending
 						
-						let aCategories = aggDump.time_spending_breakdown.buckets.map((oBucket: any) => {
+						const fAverage: number = iTotal / aggDump.time_spending_breakdown.buckets.length
+						oReturn['average_per_unit'] = fAverage
+
+						// projection = average_per_unit * number of units (year scope - 12, month scope - number of days in current month)
+						const iNumberOfUnits: number = scope === 'year' ? 12 : oQueriedDate.daysInMonth()
+						oReturn['projection_for_scope'] = fAverage * iNumberOfUnits
+						
+						const aTimeUnitSpending = aggDump.time_spending_breakdown.buckets.map((oBucket: any) => {
 							return { 
 								date: oBucket.key_as_string,
 								expense_count: oBucket.doc_count,
@@ -184,7 +192,7 @@ const RootQuery = new GraphQLObjectType({
 							}
 						})
 						
-						oReturn['spending_over_time'] = aCategories
+						oReturn['spending_over_time'] = aTimeUnitSpending
 					}
 				}
 				return oReturn
