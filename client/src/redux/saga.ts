@@ -30,6 +30,8 @@ function* getSummary(action: Action) {
 					summary(date: $date, scope: $scope){
 						totalExpenditure,
 						numberOfExpenses,
+						average_per_unit,
+						projection_for_scope,
 						expenses {
 							vendor,
 							amount,

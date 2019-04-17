@@ -35,7 +35,6 @@ class App extends React.Component<IAppProps, {}> {
 			spending_by_category,
 			spending_over_time,
 			expenses,
-			numberOfExpenses,
 			totalExpenditure
 		}: Summary = oSummary
 		
@@ -45,7 +44,6 @@ class App extends React.Component<IAppProps, {}> {
 				{/* date navigation */}
 				<p>
 					<strong>{sScope}</strong> mode: <a onClick={() => this.eChangeScope('month')}>month</a> or <a onClick={() => this.eChangeScope('year')}>year</a>
-					
 				</p>
 				<p>
 					<a onClick={() => this.eChangeMonth(true)}>left</a>
@@ -55,9 +53,7 @@ class App extends React.Component<IAppProps, {}> {
 				{/* render expenses for current date */}
 				{totalExpenditure && (
 					<div>
-						<p>total expenditure (dkk): {totalExpenditure.toFixed(0)} (${(totalExpenditure * this.USDDKKOffset).toFixed(2)})</p>
-						<p>total expenses: {numberOfExpenses}</p>
-
+						{this.renderSummary()}
 						<hr />
 						{this.renderCategorySpending(spending_by_category)}
 						<hr />
@@ -79,6 +75,23 @@ class App extends React.Component<IAppProps, {}> {
 	private eChangeScope(sScope: string) {
 		this.props.changeScope(sScope)
 		this.props.getSummary(this.props.iDate)
+	}
+	
+	private renderSummary() {
+		const {
+			average_per_unit,
+			numberOfExpenses,
+			projection_for_scope,
+			totalExpenditure
+		} = this.props.oSummary
+		return (
+			<div>
+				<p>total expenditure (dkk): {totalExpenditure.toFixed(0)} (${(totalExpenditure * this.USDDKKOffset).toFixed(2)})</p>
+				<p>total expenses: {numberOfExpenses}</p>
+				<p>average per day/month: {average_per_unit.toFixed(2)} (${(average_per_unit * this.USDDKKOffset).toFixed(2)})</p>
+				<p>projection for month/year: {projection_for_scope.toFixed(0)} (${(projection_for_scope * this.USDDKKOffset).toFixed(2)})</p>
+			</div>
+		)
 	}
 	
 	private renderSpendingOverTime(timeunits: any[]) {
@@ -111,6 +124,7 @@ class App extends React.Component<IAppProps, {}> {
 			)
 		)
 	}
+
 	private renderCategorySpending(categories: any[]) {
 		return (
 			categories.length > 0 && (
