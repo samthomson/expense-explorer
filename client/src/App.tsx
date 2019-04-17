@@ -1,6 +1,8 @@
 import * as moment from 'moment'
 import * as React from 'react'
 import { connect } from 'react-redux'
+import './../node_modules/semantic-ui-css/semantic.min.css'
+import './App.css'
 import { changeMonth, changeScope, getSummary } from './redux/actions'
 import { Store } from './redux/store'
 
