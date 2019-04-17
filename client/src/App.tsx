@@ -42,7 +42,7 @@ class App extends React.Component<IAppProps, {}> {
 		
         return (
             <div className="App ui container">
-				<h3>expense explorer</h3>
+				<h1>expense explorer</h1>
 				<div className="ui grid">
 					<div className="three column row">
 						<div className="column">
@@ -53,13 +53,13 @@ class App extends React.Component<IAppProps, {}> {
 								<button onClick={() => this.eChangeScope('year')} className={'ui button' + (sScope === 'year' ? ' active' : '')}>year</button>
 							</div>
 						</div>
-						<div className="column">
+						<div className="column centered-text">
 							{/* current period */}
-							{this.renderScopeLabel(iDate, sScope)}
+							<h2>{this.renderScopeLabel(iDate, sScope)}</h2>
 						</div>
 						<div className="column">
 							{/* date navigation */}
-							<div className="ui small buttons">
+							<div className="ui small buttons right floated">
 								<button className="ui labeled icon button" onClick={() => this.eChangeMonth(true)}>
 									<i className="left chevron icon" />
 									Back
