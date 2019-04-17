@@ -26,12 +26,35 @@ const ExpenseType = new GraphQLObjectType({
 	})
 })
 
+const CategorySpendType = new GraphQLObjectType({
+	name: 'CategorySpend',
+	fields: () => ({
+		key: { type: GraphQLString },
+		doc_count: { type: GraphQLInt },
+		total: { type: GraphQLFloat }
+	})
+})
+const TimeSpendType = new GraphQLObjectType({
+	name: 'TimeSpend',
+	fields: () => ({
+		key: { type: GraphQLString },
+		doc_count: { type: GraphQLInt },
+		total: { type: GraphQLFloat }
+	})
+})
+
 const SummaryType = new GraphQLObjectType({
 	name: 'SummaryType',
 	fields: () => ({
 		totalExpenditure: { type: GraphQLFloat },
 		numberOfExpenses: { type: GraphQLInt },
-		expenses: { type: GraphQLList(ExpenseType)}
+		expenses: { type: GraphQLList(ExpenseType)},
+		spending_over_time: {
+			type: GraphQLList(TimeSpendType)
+		},
+		spending_by_category: {
+			type: GraphQLList(CategorySpendType)
+		}
 	})
 })	
 
@@ -85,11 +108,31 @@ const RootQuery = new GraphQLObjectType({
 								}
 							}
 						},
-						size: 10000
+						size: 10000,
+						aggs: {
+							time_spending_breakdown: {
+								date_histogram : {
+									field: "Date",
+									interval: "day"
+								},
+								aggs: {
+									unit_total: { "sum" : { "field" : "Amount" } }
+								}
+							},
+							category_spending_breakdown: {
+								terms : { "field" : "Category" },
+								aggs: {
+									unit_total: { "sum" : { "field" : "Amount" } }
+								}
+							}
+						}
 					}
 				}
 				// console.log(oQuery)
 				const result = await client.search(oQuery).catch((err: any) => console.log(err))
+
+				let oReturn: any = {}
+
 				if (result && result.body && result.body.hits && result.body.hits.hits) {
 
 					let { hits } = result.body.hits
@@ -102,17 +145,43 @@ const RootQuery = new GraphQLObjectType({
 						aReturn.push(elasticDocumentToObject(oDocument._source))
 					}
 
-					// console.log(result.body._source)
 					let iSum: number = aReturn.reduce((iTotal: number, oExpense: Expense) => iTotal + oExpense.Amount, 0)
 
-					return {
+					oReturn = {
 						totalExpenditure: iSum,
 						numberOfExpenses: aReturn.length,
 						expenses: aReturn
 					}
-				} else {
-					return {}
 				}
+
+				if (result && result.body && result.body.aggregations) {
+					const aggDump = result.body.aggregations
+
+					if (aggDump.category_spending_breakdown) {
+						let aCategories = aggDump.category_spending_breakdown.buckets.map((oBucket: any) => {
+							return { 
+								key: oBucket.key,
+								doc_count: oBucket.doc_count,
+								total: oBucket.unit_total.value,
+							}
+						})
+
+						oReturn['spending_by_category'] = aCategories
+					}
+					if (aggDump.time_spending_breakdown) {
+						
+						let aCategories = aggDump.time_spending_breakdown.buckets.map((oBucket: any) => {
+							return { 
+								key: oBucket.key_as_string,
+								doc_count: oBucket.doc_count,
+								total: oBucket.unit_total.value,
+							}
+						})
+						
+						oReturn['spending_over_time'] = aCategories
+					}
+				}
+				return oReturn
 			}
 		}
 	})
