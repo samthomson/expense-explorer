@@ -42,30 +42,37 @@ class App extends React.Component<IAppProps, {}> {
 		
         return (
             <div className="App ui container">
-				<p>expense explorer</p>
-				{/* date navigation */}
-
-				<div className="ui small buttons">
-					<button onClick={() => this.eChangeScope('month')} className={'ui button' + (sScope === 'month' ? ' active' : '')}>month</button>
-					<div className="or"/>
-					<button onClick={() => this.eChangeScope('year')} className={'ui button' + (sScope === 'year' ? ' active' : '')}>year</button>
+				<h3>expense explorer</h3>
+				<div className="ui grid">
+					<div className="three column row">
+						<div className="column">
+							{/* month / year changer */}
+							<div className="ui small buttons">
+								<button onClick={() => this.eChangeScope('month')} className={'ui button' + (sScope === 'month' ? ' active' : '')}>month</button>
+								<div className="or"/>
+								<button onClick={() => this.eChangeScope('year')} className={'ui button' + (sScope === 'year' ? ' active' : '')}>year</button>
+							</div>
+						</div>
+						<div className="column">
+							{/* current period */}
+							{this.renderScopeLabel(iDate, sScope)}
+						</div>
+						<div className="column">
+							{/* date navigation */}
+							<div className="ui small buttons">
+								<button className="ui labeled icon button" onClick={() => this.eChangeMonth(true)}>
+									<i className="left chevron icon" />
+									Back
+								</button>
+								<button className="ui right labeled icon button" onClick={() => this.eChangeMonth(false)}>
+									Forward
+									<i className="right chevron icon" />
+								</button>
+							</div>
+						</div>
+					</div>
 				</div>
 
-
-				<div className="ui small buttons">
-					<button className="ui labeled icon button" onClick={() => this.eChangeMonth(true)}>
-						<i className="left chevron icon" />
-						Back
-					</button>
-					<button className="ui right labeled icon button" onClick={() => this.eChangeMonth(false)}>
-						Forward
-						<i className="right chevron icon" />
-					</button>
-				</div>
-
-				<p>
-					{this.renderScopeLabel(iDate, sScope)}
-				</p>
 				{/* render expenses for current date */}
 				{totalExpenditure && (
 					<div>
