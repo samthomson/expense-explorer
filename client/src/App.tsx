@@ -1,5 +1,7 @@
 import * as moment from 'moment'
 import * as React from 'react'
+// @ts-ignore
+import { Line as LineChart } from  'react-chartjs'
 import { connect } from 'react-redux'
 import './../node_modules/semantic-ui-css/semantic.min.css'
 import './App.css'
@@ -130,34 +132,41 @@ class App extends React.Component<IAppProps, {}> {
 	}
 	
 	private renderSpendingOverTime(timeunits: any[]) {
-		return (
-			timeunits.length > 0 && (
-				<table>
-					<thead>
-						<tr>
-							<th>time unit</th>
-							<th>Total DKK</th>
-							<th>Total USD</th>
-							<th># expenses</th>
-						</tr>
-					</thead>
-					<tbody>
-						{timeunits.map(
-							(oSingleUnit, i) => {
-								return (
-									<tr key={i}>
-										<td>{oSingleUnit.date}</td>
-										<td>{oSingleUnit.total.toFixed(2)}</td>
-										<td>{(oSingleUnit.total * this.USDDKKOffset).toFixed(2)}</td>
-										<td>{oSingleUnit.expense_count}</td>
-									</tr>
-								)
-							}
-						)}
-					</tbody>
-				</table>
+
+		if (timeunits.length > 0) {
+
+			const chartOptions = {
+				responsive: true,
+				maintainAspectRatio: false
+			}
+
+			const dataPoints = timeunits.map(oP => Number(oP.total))
+			const dataLabels = timeunits.map(oP => oP.date)
+
+			const chartData = {
+				labels: dataLabels,
+				datasets: [
+					{
+						label: "Spending over time",
+						fillColor: "rgba(220,220,220,0.2)",
+						strokeColor: "rgba(220,220,220,1)",
+						pointColor: "rgba(220,220,220,1)",
+						pointStrokeColor: "#fff",
+						pointHighlightFill: "#fff",
+						pointHighlightStroke: "rgba(220,220,220,1)",
+						data: dataPoints,
+					}
+				]
+			}
+
+			return (
+				<div>
+					<LineChart data={chartData} options={chartOptions} width="100%" height="180" />
+				</div>
 			)
-		)
+		} else {
+			return 'awaiting data'
+		}
 	}
 
 	private renderCategorySpending(categories: any[]) {
