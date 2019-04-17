@@ -36,13 +36,19 @@ const main  = async () => {
 		mappings: {				
 			expense:{
 				properties: {
+					Category: { "type": "keyword" },
 					Date: { "type": "date", "format": "MM/dd/yyyy" }
 				}
 			}
 		}
 	}
 	
-	await client.indices.delete({ index: sIndex })
+	try { 
+		await client.indices.delete({ index: sIndex })
+	}catch(err) {
+		console.log('\nerror deleting index:\n')
+		// console.log('\nerror deleting index:\n', err.message, '\n\n', err, '\n\n')
+	}
 	try { 
 		await client.indices.create({
 			index: sIndex,
