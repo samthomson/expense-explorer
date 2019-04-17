@@ -1,4 +1,5 @@
 export type Summary = {
+	spending_by_category: any[]
 	expenses: Expense[]
 	totalExpenditure: number
 	numberOfExpenses: number
