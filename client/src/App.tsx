@@ -47,7 +47,7 @@ class App extends React.Component<IAppProps, {}> {
 				<p>{sScope} mode</p>
 				<p>
 					<a onClick={() => this.eChangeMonth(true)}>left</a>
-					 - {moment.unix(iDate).format('MMMM YYYY')} - 
+					 - {this.renderScopeLabel(iDate, sScope)} - 
 					<a onClick={() => this.eChangeMonth(false)}>right</a>
 				</p>
 				{/* render expenses for current date */}
@@ -91,7 +91,14 @@ class App extends React.Component<IAppProps, {}> {
 				)}
 			</div>
         )
-    }
+	}
+	
+	private renderScopeLabel(iDate: number, sScope: string) {
+		const sFormat: string = (sScope === 'month') ? 'MMMM YYYY' : 'Y'
+		return (
+			moment.unix(iDate).format(sFormat)
+		)
+	}
 	
 	private sRenderPiciliLink(sDate: string) {
 		const oTargetDate: moment.Moment = moment(sDate)
