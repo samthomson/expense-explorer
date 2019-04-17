@@ -28,6 +28,7 @@
     "watch": "tsc-watch --onSuccess \"yarn run start\"",
     "start": "ts-node src/server.ts",
     "import": "ts-node importer/import.ts",
+    "search": "ts-node importer/searchtest.ts",
     "wipe": "ts-node importer/wipe-index.ts",
     "re-index": "yarn run wipe && yarn run import"
   }
