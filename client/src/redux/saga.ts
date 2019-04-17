@@ -7,8 +7,6 @@ import gql from 'graphql-tag'
 import { Action, getSummarySucceded } from './actions'
 import { Store } from './store'
 
-import * as moment from 'moment'
-
 const client = new ApolloClient({
 	link: createHttpLink({
 		uri: 'http://localhost:3300/graphql',
@@ -21,14 +19,13 @@ export const getIDate = (state: Store.App) => state.iDate
 
 // worker Saga: will be fired on USER_FETCH_REQUESTED actions
 function* getSummary(action: Action) {
-	// const oDate = moment(action.iDate)
-	const oDate = moment(yield select(getIDate))
+	const iDate = yield select(getIDate) // epoch seconds
 	
    	try {
 		const data = yield client.query({
 			query: gql`
-				query GetSummary($month: Int!, $year: Int!) {					
-					summary(month: $month, year: $year){
+				query GetSummary($date: Int!, $scope: String!) {					
+					summary(date: $date, scope: $scope){
 						totalExpenditure,
 						numberOfExpenses,
 						expenses {
@@ -42,8 +39,8 @@ function* getSummary(action: Action) {
 				}
 			`,
 			variables: {
-				month: Number(oDate.format('M')),
-				year: Number(oDate.format('YYYY'))
+				date: iDate,
+				scope: 'month'
 			}
 		})
 
@@ -56,7 +53,7 @@ function* getSummary(action: Action) {
 			put(getSummarySucceded({}))
 		}
    	} catch (e) {
-	   console.log('error getting summary? ', e.message)
+		console.log('error getting summary? ', e.message)
 	   // yield put({type: "USER_FETCH_FAILED", message: e.message});
    }
 }

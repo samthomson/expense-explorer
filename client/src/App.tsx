@@ -44,7 +44,7 @@ class App extends React.Component<IAppProps, {}> {
 				{/* date navigation */}
 				<p>
 					<a onClick={() => this.eChangeMonth(true)}>left</a>
-					 - {moment(iDate).format('MMMM YYYY')} - 
+					 - {moment.unix(iDate).format('MMMM YYYY')} - 
 					<a onClick={() => this.eChangeMonth(false)}>right</a>
 				</p>
 				{/* render expenses for current date */}
