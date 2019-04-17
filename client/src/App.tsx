@@ -21,11 +21,6 @@ class App extends React.Component<IAppProps, {}> {
     constructor(props: any) {
         super(props)
 	}
-	
-	public eChangeMonth(bBackwards: boolean) {
-		this.props.changeMonth(bBackwards)
-		this.props.getSummary(this.props.iDate)
-	}
 
     public render() {
 		const {
@@ -91,6 +86,11 @@ class App extends React.Component<IAppProps, {}> {
 				)}
 			</div>
         )
+	}
+	
+	private eChangeMonth(bBackwards: boolean) {
+		this.props.changeMonth(bBackwards)
+		this.props.getSummary(this.props.iDate)
 	}
 	
 	private renderScopeLabel(iDate: number, sScope: string) {
