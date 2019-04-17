@@ -163,32 +163,44 @@ class App extends React.Component<IAppProps, {}> {
 	private renderCategorySpending(categories: any[]) {
 		return (
 			categories.length > 0 && (
-				<table>
-					<thead>
-						<tr>
-							<th>Category</th>
-							<th>Total DKK</th>
-							<th>Total USD</th>
-							<th># expenses</th>
-							<th>%</th>
-						</tr>
-					</thead>
-					<tbody>
-						{categories.map(
-							(oSingleCategory, i) => {
-								return (
-									<tr key={i}>
-										<td>{oSingleCategory.category}</td>
-										<td>{oSingleCategory.total.toFixed(2)}</td>
-										<td>{(oSingleCategory.total * this.USDDKKOffset).toFixed(2)}</td>
-										<td>{oSingleCategory.expense_count}</td>
-										<td>{oSingleCategory.percent.toFixed(0)}</td>
+				<div>
+					<h3>Spending by category</h3>
+
+
+					<div className="ui grid">
+						<div className="eight wide column">
+							<table className="ui celled table">
+								<thead>
+									<tr>
+										<th>Category</th>
+										<th>Total DKK</th>
+										<th>Total USD</th>
+										<th># expenses</th>
+										<th>%</th>
 									</tr>
-								)
-							}
-						)}
-					</tbody>
-				</table>
+								</thead>
+								<tbody>
+									{categories.map(
+										(oSingleCategory, i) => {
+											return (
+												<tr key={i}>
+													<td>{oSingleCategory.category}</td>
+													<td>{oSingleCategory.total.toFixed(2)}</td>
+													<td>{(oSingleCategory.total * this.USDDKKOffset).toFixed(2)}</td>
+													<td>{oSingleCategory.expense_count}</td>
+													<td>{oSingleCategory.percent.toFixed(0)}</td>
+												</tr>
+											)
+										}
+									)}
+								</tbody>
+							</table>
+						</div>
+						<div className="eight wide column">
+							[pie chart - coming soon..]
+						</div>
+					</div>
+				</div>
 			)
 		)
 	}
@@ -196,34 +208,37 @@ class App extends React.Component<IAppProps, {}> {
 	private renderExpenses(expenses: any[]) {
 		return (
 			expenses.length > 0 && (
-				<table className="ui celled table">
-					<thead>
-						<tr>
-							<th>dkk (usd)</th>
-							<th>item</th>
-							<th>category</th>
-							<th>subcategory</th>
-							<th>date</th>
-						</tr>
-					</thead>
-					<tbody>
-						{expenses.map(
-							(oSingleExpense, i) => {
-								return (
-									<tr key={i}>
-										<td>{oSingleExpense.amount} (${(oSingleExpense.amount * this.USDDKKOffset).toFixed(2)})</td>
-										<td>{oSingleExpense.vendor}</td>
-										<td>{oSingleExpense.category}</td>
-										<td>{oSingleExpense.subcategory}</td>
-										<td>
-											{this.sRenderPiciliLink(oSingleExpense.date)}
-										</td>
-									</tr>
-								)
-							}
-						)}
-					</tbody>
-				</table>
+				<div>
+					<h3>expenses</h3>
+					<table className="ui celled table">
+						<thead>
+							<tr>
+								<th>dkk (usd)</th>
+								<th>item</th>
+								<th>category</th>
+								<th>subcategory</th>
+								<th>date</th>
+							</tr>
+						</thead>
+						<tbody>
+							{expenses.map(
+								(oSingleExpense, i) => {
+									return (
+										<tr key={i}>
+											<td>{oSingleExpense.amount} (${(oSingleExpense.amount * this.USDDKKOffset).toFixed(2)})</td>
+											<td>{oSingleExpense.vendor}</td>
+											<td>{oSingleExpense.category}</td>
+											<td>{oSingleExpense.subcategory}</td>
+											<td>
+												{this.sRenderPiciliLink(oSingleExpense.date)}
+											</td>
+										</tr>
+									)
+								}
+							)}
+						</tbody>
+					</table>
+				</div>
 			)
 		)
 	}
