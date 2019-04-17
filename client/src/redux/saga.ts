@@ -16,10 +16,12 @@ const client = new ApolloClient({
 })
 
 export const getIDate = (state: Store.App) => state.iDate
+export const getScope = (state: Store.App) => state.sScope
 
 // worker Saga: will be fired on USER_FETCH_REQUESTED actions
 function* getSummary(action: Action) {
 	const iDate = yield select(getIDate) // epoch seconds
+	const sScope = yield select(getScope) // month / year
 	
    	try {
 		const data = yield client.query({
@@ -40,7 +42,7 @@ function* getSummary(action: Action) {
 			`,
 			variables: {
 				date: iDate,
-				scope: 'month'
+				scope: sScope
 			}
 		})
 

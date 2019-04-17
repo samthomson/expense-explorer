@@ -9,6 +9,7 @@ import { Summary } from './declarations'
 interface IAppProps {
 	iDate: number
 	oSummary: Summary
+	sScope: string
 	changeMonth: (bBackwards: boolean) => {}
 	getSummary: (iDate: number) => {}
 }
@@ -29,7 +30,8 @@ class App extends React.Component<IAppProps, {}> {
     public render() {
 		const {
 			iDate,
-			oSummary
+			oSummary,
+			sScope
 		} = this.props
 		const {
 			expenses,
@@ -42,6 +44,7 @@ class App extends React.Component<IAppProps, {}> {
             <div className="App ui container">
 				<p>expense explorer</p>
 				{/* date navigation */}
+				<p>{sScope} mode</p>
 				<p>
 					<a onClick={() => this.eChangeMonth(true)}>left</a>
 					 - {moment.unix(iDate).format('MMMM YYYY')} - 
@@ -106,10 +109,11 @@ class App extends React.Component<IAppProps, {}> {
 }
 
 const mapStateToProps = (state: Store.App) => {
-	const { iDate, oSummary } = state
+	const { iDate, oSummary, sScope } = state
 	return {
 		iDate,
-		oSummary
+		oSummary,
+		sScope
 	}
 }
 

@@ -4,7 +4,8 @@ import { Store } from './store'
 
 const initialState: Store.App = {
 	iDate: moment().unix(),
-	oSummary: {}
+	oSummary: {},
+	sScope: 'year'
 }
 
 export function appReducers(
