@@ -76,12 +76,12 @@ class App extends React.Component<IAppProps, {}> {
 				{/* render expenses for current date */}
 				{totalExpenditure && (
 					<div>
+						<br />
 						{this.renderSummary()}
-						<hr />
-						{this.renderCategorySpending(spending_by_category)}
-						<hr />
 						{this.renderSpendingOverTime(spending_over_time)}
-						<hr />
+						<br />
+						{this.renderCategorySpending(spending_by_category)}
+						<br />
 						{this.renderExpenses(expenses)}
 						
 					</div>
@@ -108,12 +108,24 @@ class App extends React.Component<IAppProps, {}> {
 			totalExpenditure
 		} = this.props.oSummary
 		return (
-			<div>
-				<p>total expenditure (dkk): {totalExpenditure.toFixed(0)} (${(totalExpenditure * this.USDDKKOffset).toFixed(2)})</p>
-				<p>total expenses: {numberOfExpenses}</p>
-				<p>average per day/month: {average_per_unit.toFixed(2)} (${(average_per_unit * this.USDDKKOffset).toFixed(2)})</p>
-				<p>projection for month/year: {projection_for_scope.toFixed(0)} (${(projection_for_scope * this.USDDKKOffset).toFixed(2)})</p>
-			</div>
+			<table className="ui table">
+				<tbody>
+					<tr>
+						<td>total expenditure</td>
+						<td className="collapsing">{totalExpenditure.toFixed(0)} (${(totalExpenditure * this.USDDKKOffset).toFixed(2)})</td>
+
+						<td>expenses</td>
+						<td className="collapsing">{numberOfExpenses}</td>
+					</tr>
+					<tr>
+						<td>average per day/month</td>
+						<td className="collapsing">{average_per_unit.toFixed(2)} (${(average_per_unit * this.USDDKKOffset).toFixed(2)})</td>
+
+						<td>projection for month/year</td>
+						<td className="collapsing">{projection_for_scope.toFixed(0)} (${(projection_for_scope * this.USDDKKOffset).toFixed(2)})</td>
+					</tr>
+				</tbody>
+			</table>
 		)
 	}
 	
@@ -184,7 +196,7 @@ class App extends React.Component<IAppProps, {}> {
 	private renderExpenses(expenses: any[]) {
 		return (
 			expenses.length > 0 && (
-				<table>
+				<table className="ui celled table">
 					<thead>
 						<tr>
 							<th>dkk (usd)</th>
