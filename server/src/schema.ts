@@ -29,7 +29,7 @@ const ExpenseType = new GraphQLObjectType({
 const CategorySpendType = new GraphQLObjectType({
 	name: 'CategorySpend',
 	fields: () => ({
-		key: { type: GraphQLString },
+		category: { type: GraphQLString },
 		expense_count: { type: GraphQLInt },
 		total: { type: GraphQLFloat }
 	})
@@ -37,7 +37,7 @@ const CategorySpendType = new GraphQLObjectType({
 const TimeSpendType = new GraphQLObjectType({
 	name: 'TimeSpend',
 	fields: () => ({
-		key: { type: GraphQLString },
+		date: { type: GraphQLString },
 		expense_count: { type: GraphQLInt },
 		total: { type: GraphQLFloat }
 	})
@@ -160,7 +160,7 @@ const RootQuery = new GraphQLObjectType({
 					if (aggDump.category_spending_breakdown) {
 						let aCategories = aggDump.category_spending_breakdown.buckets.map((oBucket: any) => {
 							return { 
-								key: oBucket.key,
+								category: oBucket.key,
 								expense_count: oBucket.doc_count,
 								total: oBucket.unit_total.value,
 							}
@@ -172,7 +172,7 @@ const RootQuery = new GraphQLObjectType({
 						
 						let aCategories = aggDump.time_spending_breakdown.buckets.map((oBucket: any) => {
 							return { 
-								key: oBucket.key_as_string,
+								date: oBucket.key_as_string,
 								expense_count: oBucket.doc_count,
 								total: oBucket.unit_total.value,
 							}
