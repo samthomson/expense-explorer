@@ -1,7 +1,7 @@
 import * as moment from 'moment'
 import * as React from 'react'
 // @ts-ignore
-import { Line as LineChart } from  'react-chartjs'
+import { Line as LineChart, Pie as PieChart } from  'react-chartjs'
 import { connect } from 'react-redux'
 import './../node_modules/semantic-ui-css/semantic.min.css'
 import './App.css'
@@ -170,6 +170,36 @@ class App extends React.Component<IAppProps, {}> {
 	}
 
 	private renderCategorySpending(categories: any[]) {
+
+		const chartOptions = {
+			responsive: true,
+			maintainAspectRatio: false
+		}
+
+		// const dataPoints = categories.map(oP => Number(oP.percent))
+		// const dataLabels = categories.map(oP => oP.category)
+
+		const oCategoryColours: any = {
+			'Auto/Transportation': 'green',		
+			'Bills/Utilities': 'blue',
+			'Entertainment': 'orange',
+			'Food/Drink': 'red',
+			'Miscellaneous': 'yellow',
+			'Personal Care': 'purple',
+			'Shopping': 'pink',
+			'Business/Offtice': 'teal',
+			'Health': 'lime',
+			'Travel': 'maroon',
+		}
+
+		const chartData = categories.map(oP => {
+			return {
+				value: (Number(oP.percent)).toFixed(0),
+				label: oP.category,
+				color: oCategoryColours[oP.category] ? oCategoryColours[oP.category] : 'white'
+			}
+		})
+
 		return (
 			categories.length > 0 && (
 				<div>
@@ -206,7 +236,7 @@ class App extends React.Component<IAppProps, {}> {
 							</table>
 						</div>
 						<div className="eight wide column">
-							[pie chart - coming soon..]
+							<PieChart data={chartData} options={chartOptions} width="600" height="250" />
 						</div>
 					</div>
 				</div>
