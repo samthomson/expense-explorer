@@ -8,6 +8,7 @@ import {
 	GraphQLInt,
 	GraphQLList
 } from 'graphql'
+import * as moment from 'moment'
 import { Expense } from './declarations'
 
 const { Client } = require('@elastic/elasticsearch')
@@ -63,10 +64,14 @@ const RootQuery = new GraphQLObjectType({
 		},
 		summary: {
 			type: SummaryType,
-			args: { date: { type: new GraphQLNonNull(GraphQLInt) }, scope: { type: new GraphQLNonNull(GraphQLString) } },
+			args: { date: { type: new GraphQLNonNull(GraphQLInt), description: "unix epoch date: number of seconds since 1970" }, scope: { type: new GraphQLNonNull(GraphQLString) } },
 			resolve: async (parentValue, { date, scope }) => {
 
 				// build date range query
+				const oQueriedDate = moment.unix(date)
+				const sScopePeriod: any = (scope === 'month') ? 'month' : 'year'
+				const sLowerDateRange = oQueriedDate.startOf(sScopePeriod).format('DD/MM/Y')
+				const sUpperDateRange = oQueriedDate.endOf(sScopePeriod).format('DD/MM/Y')
 
 				const oQuery = {
 					index: process.env.ELASTIC_INDEX,
@@ -74,8 +79,8 @@ const RootQuery = new GraphQLObjectType({
 						query: {
 							range: {
 								Date: {
-									gte: "01/01/2019",
-									lte: "31/01/2019",
+									gte: sLowerDateRange,
+									lte: sUpperDateRange,
 									format: "dd/MM/yyyy"
 								}
 							}
