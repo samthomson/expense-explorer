@@ -12,6 +12,9 @@ export type Action =
 		type: 'CHANGE_MONTH'
 		bBackwards: boolean
 		oSummary: {}
+	} | {
+		type: 'CHANGE_SCOPE'
+		sScope: string
 	}
 
 
@@ -40,5 +43,12 @@ export const changeMonth = (bBackwards: boolean) => {
 	return {
 		type: 'CHANGE_MONTH',
 		bBackwards
+	}
+}
+
+export const changeScope = (sScope: string) => {
+	return {
+		type: 'CHANGE_SCOPE',
+		sScope
 	}
 }

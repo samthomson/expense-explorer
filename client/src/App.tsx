@@ -1,7 +1,7 @@
 import * as moment from 'moment'
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { changeMonth, getSummary } from './redux/actions'
+import { changeMonth, changeScope, getSummary } from './redux/actions'
 import { Store } from './redux/store'
 
 import { Summary } from './declarations'
@@ -11,6 +11,7 @@ interface IAppProps {
 	oSummary: Summary
 	sScope: string
 	changeMonth: (bBackwards: boolean) => {}
+	changeScope: (sScope: string) => {}
 	getSummary: (iDate: number) => {}
 }
 
@@ -39,7 +40,10 @@ class App extends React.Component<IAppProps, {}> {
             <div className="App ui container">
 				<p>expense explorer</p>
 				{/* date navigation */}
-				<p>{sScope} mode</p>
+				<p>
+					<strong>{sScope}</strong> mode: <a onClick={() => this.eChangeScope('month')}>month</a> or <a onClick={() => this.eChangeScope('year')}>year</a>
+					
+				</p>
 				<p>
 					<a onClick={() => this.eChangeMonth(true)}>left</a>
 					 - {this.renderScopeLabel(iDate, sScope)} - 
@@ -93,6 +97,11 @@ class App extends React.Component<IAppProps, {}> {
 		this.props.getSummary(this.props.iDate)
 	}
 	
+	private eChangeScope(sScope: string) {
+		this.props.changeScope(sScope)
+		this.props.getSummary(this.props.iDate)
+	}
+	
 	private renderScopeLabel(iDate: number, sScope: string) {
 		const sFormat: string = (sScope === 'month') ? 'MMMM YYYY' : 'Y'
 		return (
@@ -126,6 +135,7 @@ const mapStateToProps = (state: Store.App) => {
 
 const mapDispatchToProps = (dispatch: any) => ({
 	changeMonth: (bBackwards: boolean) => dispatch(changeMonth(bBackwards)),
+	changeScope: (sScope: string) => dispatch(changeScope(sScope)),
 	getSummary: (iDate: number) => dispatch(getSummary(iDate))
 })
 

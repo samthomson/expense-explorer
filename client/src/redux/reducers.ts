@@ -18,19 +18,28 @@ export function appReducers(
 				...state,
 				iDate: action.iDate,
 			}
-		case 'CHANGE_MONTH':
-			const { bBackwards } = action
-			const { iDate } = state
-
-			let oDate = moment.unix(iDate)
-
-			oDate = bBackwards ? oDate.subtract(1, 'months') : oDate.add(1, 'months')
-			
-			return {
-				...state,
-				iDate: oDate.unix(),
-				oSummary: {}
-			}
+			case 'CHANGE_MONTH':
+				const { bBackwards } = action
+				const { iDate } = state
+	
+				let oDate = moment.unix(iDate)
+	
+				oDate = bBackwards ? oDate.subtract(1, 'months') : oDate.add(1, 'months')
+				
+				return {
+					...state,
+					iDate: oDate.unix(),
+					oSummary: {}
+				}
+			case 'CHANGE_SCOPE':
+				let { sScope } = action
+	
+				sScope = (sScope === 'month') ? sScope : 'year'
+				
+				return {
+					...state,
+					sScope,
+				}
 		case 'GET_SUMMARY_SUCCEEDED':
 			return {
 				...state,
