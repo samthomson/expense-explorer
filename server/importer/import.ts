@@ -11,11 +11,15 @@ const main  = async () => {
 
 	// get path of file to import
 	const sImportDir: string =  path.resolve(path.dirname(__filename), 'data')
-	const asFiles: string[] = fs.readdirSync(sImportDir)
+	let asFiles: string[] = fs.readdirSync(sImportDir)
+	// only csvs
+	asFiles = asFiles.filter(sPath => sPath.endsWith('.csv'))
 
 	if (asFiles.length < 1) {
 		console.log('no data files to import')
 		return
+	} else {
+		console.log('found all these files: ', asFiles)
 	}
 	const sImportFile: string = path.resolve(sImportDir, asFiles[0])
 	console.log(`importing from ${sImportFile}`)
