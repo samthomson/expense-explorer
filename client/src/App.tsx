@@ -185,7 +185,7 @@ class App extends React.Component<IAppProps, {}> {
 			'Miscellaneous': 'yellow',
 			'Personal Care': 'purple',
 			'Shopping': 'pink',
-			'Business/Offtice': 'teal',
+			'Business/Office': 'teal',
 			'Health': 'lime',
 			'Travel': 'maroon',
 		}

@@ -184,13 +184,31 @@ const RootQuery = new GraphQLObjectType({
 						const iNumberOfUnits: number = scope === 'year' ? 12 : oQueriedDate.daysInMonth()
 						oReturn['projection_for_scope'] = fAverage * iNumberOfUnits
 						
-						const aTimeUnitSpending = aggDump.time_spending_breakdown.buckets.map((oBucket: any) => {
+						let aTimeUnitSpending = aggDump.time_spending_breakdown.buckets.map((oBucket: any) => {
 							return { 
 								date: oBucket.key_as_string,
 								expense_count: oBucket.doc_count,
-								total: oBucket.unit_total.value,
+								total: (oBucket.unit_total.value).toFixed(0),
 							}
 						})
+
+						// current month?
+						if (scope === 'year' && moment(oQueriedDate).isSame(new Date(), scope)) {
+							// add remaining months
+							const iCurrentMonth: number = Number(moment().format('M'))
+							const iRemaininingMonths: number = 12 - iCurrentMonth
+
+							console.log('iCurrentMonth ', iCurrentMonth)
+							console.log('iRemaininingMonths ', iRemaininingMonths)
+							
+							for (let i = 0; i < iRemaininingMonths; i++) {
+								aTimeUnitSpending.push({
+									date: '?',//oQueriedDate.add((i+1), 'months').format('MMM'),
+									expense_count: 0,
+									total: 0,
+								})
+							}
+						}
 						
 						oReturn['spending_over_time'] = aTimeUnitSpending
 					}
