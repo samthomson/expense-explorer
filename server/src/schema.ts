@@ -256,10 +256,11 @@ const RootQuery = new GraphQLObjectType({
 
 						const fAverage: number = fTotalExpenditureForScopedPeriod / fNumberOfUnits
 						oReturn['average_per_unit'] = fAverage
-						oReturn['median_per_unit'] = 22
+
+						oReturn['median_per_unit'] = fMedian(aTimeUnitSpending.map(oItem => Number(oItem.total))) // past period
 
 						// projection = average_per_unit * number of units (year scope - 12, month scope - number of days in current month)
-						if (moment(oQueriedDate).isSame(new Date(), scope)) {
+						if (moment(oQueriedDate).isSame(new Date(), scope)) { // current scope
 							// projected 'scope expenditure'
 							const iNumberOfUnits: number = scope === 'year' ? 12 : oQueriedDate.daysInMonth()
 							oReturn['projection_for_scope'] = fAverage * iNumberOfUnits
@@ -278,11 +279,14 @@ const RootQuery = new GraphQLObjectType({
 							// april = 3, so we add one
 							// month mode - before current date, so on 4th, take 1st 2nd 3rd
 							// 18th = 18
-							
+							let aMedianData = []
 							for (let cReplacePeriod = 0; cReplacePeriod < (iCurrentUnitTime -1); cReplacePeriod++) {
 								// console.log(aTimeUnitSpending)
+								aMedianData.push(aTimeUnitSpending[cReplacePeriod].total)
 								aSpendingProjection[cReplacePeriod].total = aTimeUnitSpending[cReplacePeriod].total
 							}
+							// override median data
+							oReturn['median_per_unit'] = fMedian(aMedianData) // current period
 
 							oReturn['projected_spending_over_time'] = aSpendingProjection
 
@@ -312,3 +316,19 @@ let elasticDocumentToObject = (oDocument: any) => {
 export default new GraphQLSchema({
   query: RootQuery
 })
+
+
+const fMedian = (afValues: number[]) => {
+	if (afValues.length === 0) return 0
+
+	afValues.sort((a, b) => {
+		return a - b
+	})
+
+	const half = Math.floor(afValues.length / 2)
+
+	if (afValues.length % 2)
+		return afValues[half];
+
+	return (afValues[half - 1] + afValues[half]) / 2
+}
