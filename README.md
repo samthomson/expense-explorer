@@ -16,7 +16,6 @@ Stack:
 ## todo
 
 missing/todo:
-- render projection on chart
 - map dropbox folder in via docker-compose (like I did on python project)
 - take latest file from folder, not just first it finds
 - mean median mode?
