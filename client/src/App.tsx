@@ -225,7 +225,7 @@ class App extends React.Component<IAppProps, {}> {
 													<td>{oSingleCategory.total.toFixed(2)}</td>
 													<td>{(oSingleCategory.total * this.USDDKKOffset).toFixed(2)}</td>
 													<td>{oSingleCategory.expense_count}</td>
-													<td>{oSingleCategory.percent.toFixed(0)}</td>
+													<td>{(oSingleCategory.percent > 1) ? oSingleCategory.percent.toFixed(0) : oSingleCategory.percent.toFixed(1)}%</td>
 												</tr>
 											)
 										}
