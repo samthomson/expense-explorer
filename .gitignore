@@ -9,6 +9,3 @@ client/build
 
 # data files
 server/importer/data
-
-# config
-.env
