@@ -151,7 +151,8 @@ class App extends React.Component<IAppProps, {}> {
 				maintainAspectRatio: false
 			}
 
-			const dataPoints = timeunits.map(oP => Number(oP.total))
+			const afSpendingOverTime: number[] = timeunits.map(oP => Number(oP.total))
+			const afSpendingProjection: number[] = timeunits.map(oP => this.props.oSummary.average_per_unit || 0)
 			const dataLabels = timeunits.map(oP => {
 				// make nice date rendered label
 				return (this.props.sScope === 'month') ? moment().date(Number(oP.date)).format("Do") : moment().month((Number(oP.date)-1)).format("MMM")
@@ -162,13 +163,23 @@ class App extends React.Component<IAppProps, {}> {
 				datasets: [
 					{
 						label: "Spending over time",
+						fillColor: "rgba(151,187,205,0.2)",
+						strokeColor: "rgba(151,187,205,1)",
+						pointColor: "rgba(151,187,205,1)",
+						pointStrokeColor: "#fff",
+						pointHighlightFill: "#fff",
+						pointHighlightStroke: "rgba(151,187,205,1)",
+						data: afSpendingOverTime,
+					},
+					{
+						label: "Projected Spending",
 						fillColor: "rgba(220,220,220,0.2)",
 						strokeColor: "rgba(220,220,220,1)",
 						pointColor: "rgba(220,220,220,1)",
 						pointStrokeColor: "#fff",
 						pointHighlightFill: "#fff",
 						pointHighlightStroke: "rgba(220,220,220,1)",
-						data: dataPoints,
+						data: afSpendingProjection,
 					}
 				]
 			}
