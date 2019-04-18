@@ -8,6 +8,8 @@ import './App.css'
 import { changeMonth, changeScope, getSummary } from './redux/actions'
 import { Store } from './redux/store'
 
+import NumberDisplay from './components/NumberDisplay'
+
 import { Summary } from './declarations'
 
 interface IAppProps {
@@ -145,7 +147,10 @@ class App extends React.Component<IAppProps, {}> {
 							<td>projection for {sScope}</td>
 						)}
 						{projection_for_scope && (
-							<td className="collapsing">{projection_for_scope.toFixed(0)} (${(projection_for_scope * this.USDDKKOffset).toFixed(2)})</td>
+							<td className="collapsing">
+								<NumberDisplay number={Number(projection_for_scope.toFixed(0))} /> dkk&nbsp;
+								($<NumberDisplay number={Number((projection_for_scope * this.USDDKKOffset).toFixed(2))} />)
+							</td>
 						)}
 					</tr>
 				</tbody>
