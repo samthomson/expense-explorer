@@ -7,7 +7,7 @@ import { Expense } from './../src/declarations'
 
 const main  = async () => {
 	// @ts-ignore
-	console.log('\nimporter script\n\n')
+	console.log('\nimporter script\n')
 
 	// get path of file to import
 	const sImportDir: string =  path.resolve(path.dirname(__filename), 'data')
@@ -18,10 +18,20 @@ const main  = async () => {
 	if (asFiles.length < 1) {
 		console.log('no data files to import')
 		return
-	} else {
-		console.log('found all these files: ', asFiles)
 	}
-	const sImportFile: string = path.resolve(sImportDir, asFiles[0])
+	console.log(`found ${asFiles.length} csv files`)
+	const aiDates: number[] = asFiles.map(
+		sPath => Number(
+			sPath
+				.replace('.csv', '')
+				.replace('ix_', '')
+		)
+	)
+	const iBiggest:number = Math.max(...aiDates)
+	const sImportFileName: string = `ix_${iBiggest}.csv`
+	console.log('determined the latest is: ', sImportFileName)
+
+	const sImportFile: string = path.resolve(sImportDir, sImportFileName)
 	console.log(`importing from ${sImportFile}`)
 
 
