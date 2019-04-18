@@ -2,9 +2,10 @@ export type Summary = {
 	spending_by_category: any[]
 	spending_over_time: any[]
 	projected_spending_over_time: any[]
-	average_per_unit: number,
-	median_per_unit: number,
-	projection_for_scope: number,
+	average_per_unit: number
+	median_per_unit: number
+	mode_per_unit: number
+	projection_for_scope: number
 	expenses: Expense[]
 	totalExpenditure: number
 	numberOfExpenses: number

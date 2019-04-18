@@ -20,7 +20,6 @@ Stack:
 ## todo
 
 missing/todo:
-- mean median mode?
 - number display component (takes currency as param), formats with commas and decimals, and displays currency eg. 12 dkk or $12
 
 bigger features:

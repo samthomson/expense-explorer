@@ -68,6 +68,7 @@ const SummaryType = new GraphQLObjectType({
 		},
 		average_per_unit: { type: GraphQLFloat },
 		median_per_unit: { type: GraphQLFloat },
+		mode_per_unit: { type: GraphQLFloat },
 		projection_for_scope: { type: GraphQLFloat }
 	})
 })	
@@ -258,6 +259,8 @@ const RootQuery = new GraphQLObjectType({
 						oReturn['average_per_unit'] = fAverage
 
 						oReturn['median_per_unit'] = fMedian(aTimeUnitSpending.map(oItem => Number(oItem.total))) // past period
+						let aMaybeMode = mode(aTimeUnitSpending.map(oItem => Number(oItem.total)))
+						oReturn['mode_per_unit'] = (aMaybeMode && aMaybeMode.length > 0) ? aMaybeMode[0] : 0
 
 						// projection = average_per_unit * number of units (year scope - 12, month scope - number of days in current month)
 						if (moment(oQueriedDate).isSame(new Date(), scope)) { // current scope
@@ -287,6 +290,8 @@ const RootQuery = new GraphQLObjectType({
 							}
 							// override median data
 							oReturn['median_per_unit'] = fMedian(aMedianData) // current period
+							let aMaybeMode = mode(aMedianData)
+							oReturn['mode_per_unit'] = (aMaybeMode && aMaybeMode.length > 0) ? aMaybeMode[0] : 0
 
 							oReturn['projected_spending_over_time'] = aSpendingProjection
 
@@ -332,3 +337,6 @@ const fMedian = (afValues: number[]) => {
 
 	return (afValues[half - 1] + afValues[half]) / 2
 }
+
+// @ts-ignore
+const mode = arr => { if(arr.filter((x,index)=>arr.indexOf(x)==index).length == arr.length) return arr; else return mode(arr.sort((x,index)=>x-index).map((x,index)=>arr.indexOf(x)!=index ? x : null ).filter(x=>x!=null)) }

@@ -112,6 +112,7 @@ class App extends React.Component<IAppProps, {}> {
 		const {
 			average_per_unit,
 			median_per_unit,
+			mode_per_unit,
 			numberOfExpenses,
 			projection_for_scope,
 			totalExpenditure
@@ -131,11 +132,13 @@ class App extends React.Component<IAppProps, {}> {
 					<tr>
 						<td>
 							average per {sScope === 'year' && 'month'}{sScope === 'month' && 'day'}<br/>
-							median per {sScope === 'year' && 'month'}{sScope === 'month' && 'day'}
+							median per {sScope === 'year' && 'month'}{sScope === 'month' && 'day'}<br/>
+							mode per {sScope === 'year' && 'month'}{sScope === 'month' && 'day'}
 						</td>
 						<td className="collapsing">
 							{average_per_unit.toFixed(2)} (${(average_per_unit * this.USDDKKOffset).toFixed(2)})<br />
-							{median_per_unit.toFixed(2)} (${(median_per_unit * this.USDDKKOffset).toFixed(2)})
+							{median_per_unit.toFixed(2)} (${(median_per_unit * this.USDDKKOffset).toFixed(2)})<br />
+							{mode_per_unit.toFixed(2)} (${(mode_per_unit * this.USDDKKOffset).toFixed(2)})
 						</td>
 						{/* only show projection data if the current period is incomplete */}
 						{projection_for_scope && (

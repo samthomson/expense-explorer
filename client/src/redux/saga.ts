@@ -32,6 +32,7 @@ function* getSummary(action: Action) {
 						numberOfExpenses,
 						average_per_unit,
 						median_per_unit,
+						mode_per_unit,
 						projection_for_scope,
 						projected_spending_over_time {
 							date,
