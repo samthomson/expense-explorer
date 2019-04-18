@@ -162,7 +162,7 @@ class App extends React.Component<IAppProps, {}> {
 
 			return (
 				<div>
-					<LineChart data={chartData} options={chartOptions} width="100%" height="180" />
+					<LineChart data={chartData} options={chartOptions} width="100%" height="300" />
 				</div>
 			)
 		} else {
@@ -234,7 +234,7 @@ class App extends React.Component<IAppProps, {}> {
 							</table>
 						</div>
 						<div className="eight wide column">
-							<PieChart data={chartData} options={chartOptions} width="600" height="250" />
+							<PieChart data={chartData} options={chartOptions} width="100%" height="250" />
 						</div>
 					</div>
 				</div>
