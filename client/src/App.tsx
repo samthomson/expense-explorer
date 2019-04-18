@@ -152,7 +152,10 @@ class App extends React.Component<IAppProps, {}> {
 			}
 
 			const dataPoints = timeunits.map(oP => Number(oP.total))
-			const dataLabels = timeunits.map(oP => oP.date)
+			const dataLabels = timeunits.map(oP => {
+				// make nice date rendered label
+				return (this.props.sScope === 'month') ? moment().date(Number(oP.date)).format("Do") : moment().month((Number(oP.date)-1)).format("MMM")
+			})
 
 			const chartData = {
 				labels: dataLabels,
