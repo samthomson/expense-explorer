@@ -22,10 +22,6 @@ interface IAppProps {
 }
 
 class App extends React.Component<IAppProps, {}> {
-
-	public socket: any;
-	private USDDKKOffset: number = 0.15
-
 	
     constructor(props: any) {
         super(props)
@@ -127,8 +123,7 @@ class App extends React.Component<IAppProps, {}> {
 					<tr>
 						<td>total expenditure</td>
 						<td className="collapsing">
-							<strong><NumberDisplay number={Number(totalExpenditure.toFixed(0))} />&nbsp;
-							($<NumberDisplay number={Number((totalExpenditure * this.USDDKKOffset).toFixed(2))} />)</strong>
+							<strong>$<NumberDisplay number={Number(totalExpenditure.toFixed(2))} /></strong>
 						</td>
 
 						<td>expenses</td>
@@ -141,9 +136,9 @@ class App extends React.Component<IAppProps, {}> {
 							mode per {sScope === 'year' && 'month'}{sScope === 'month' && 'day'}
 						</td>
 						<td className="collapsing">
-							{average_per_unit.toFixed(2)} ($<NumberDisplay number={Number((average_per_unit * this.USDDKKOffset).toFixed(2))} /><br />
-							{median_per_unit.toFixed(2)} (${(median_per_unit * this.USDDKKOffset).toFixed(2)})<br />
-							{mode_per_unit.toFixed(2)} (${(mode_per_unit * this.USDDKKOffset).toFixed(2)})
+							$<NumberDisplay number={Number(average_per_unit.toFixed(2))} /><br />
+							${median_per_unit.toFixed(2)}<br />
+							${mode_per_unit.toFixed(2)}
 						</td>
 						{/* only show projection data if the current period is incomplete */}
 						{projection_for_scope && (
@@ -151,8 +146,7 @@ class App extends React.Component<IAppProps, {}> {
 						)}
 						{projection_for_scope && (
 							<td className="collapsing">
-								<NumberDisplay number={Number(projection_for_scope.toFixed(0))} /> dkk&nbsp;
-								($<NumberDisplay number={Number((projection_for_scope * this.USDDKKOffset).toFixed(2))} />)
+								$<NumberDisplay number={Number(projection_for_scope.toFixed(2))} />
 							</td>
 						)}
 					</tr>
@@ -252,16 +246,13 @@ class App extends React.Component<IAppProps, {}> {
 			categories.length > 0 && (
 				<div>
 					<h3>Spending by category</h3>
-
-
 					<div className="ui grid">
 						<div className="eight wide column">
 							<table className="ui celled table">
 								<thead>
 									<tr>
 										<th>Category</th>
-										<th>Total DKK</th>
-										<th>Total USD</th>
+										<th>Total</th>
 										<th># expenses</th>
 										<th>%</th>
 									</tr>
@@ -272,8 +263,7 @@ class App extends React.Component<IAppProps, {}> {
 											return (
 												<tr key={i}>
 													<td>{oSingleCategory.category}</td>
-													<td>{oSingleCategory.total.toFixed(2)}</td>
-													<td>{(oSingleCategory.total * this.USDDKKOffset).toFixed(2)}</td>
+													<td>${oSingleCategory.total.toFixed(2)}</td>
 													<td>{oSingleCategory.expense_count}</td>
 													<td>{(oSingleCategory.percent > 1) ? oSingleCategory.percent.toFixed(0) : oSingleCategory.percent.toFixed(1)}%</td>
 												</tr>
@@ -300,7 +290,7 @@ class App extends React.Component<IAppProps, {}> {
 					<table className="ui celled table">
 						<thead>
 							<tr>
-								<th>dkk (usd)</th>
+								<th>usd</th>
 								<th>item</th>
 								<th>category</th>
 								<th>subcategory</th>
@@ -312,7 +302,7 @@ class App extends React.Component<IAppProps, {}> {
 								(oSingleExpense, i) => {
 									return (
 										<tr key={i}>
-											<td>{oSingleExpense.amount} (${(oSingleExpense.amount * this.USDDKKOffset).toFixed(2)})</td>
+											<td>${oSingleExpense.amount.toFixed(2)}</td>
 											<td>{oSingleExpense.vendor}</td>
 											<td>{oSingleExpense.category}</td>
 											<td>{oSingleExpense.subcategory}</td>
