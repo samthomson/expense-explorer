@@ -127,8 +127,8 @@ class App extends React.Component<IAppProps, {}> {
 					<tr>
 						<td>total expenditure</td>
 						<td className="collapsing">
-							<NumberDisplay number={Number(totalExpenditure.toFixed(0))} />&nbsp;
-							($<NumberDisplay number={Number((totalExpenditure * this.USDDKKOffset).toFixed(2))} />)
+							<strong><NumberDisplay number={Number(totalExpenditure.toFixed(0))} />&nbsp;
+							($<NumberDisplay number={Number((totalExpenditure * this.USDDKKOffset).toFixed(2))} />)</strong>
 						</td>
 
 						<td>expenses</td>
