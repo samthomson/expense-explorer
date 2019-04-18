@@ -1,7 +1,9 @@
 # expense-explorer
 
+![expense explorer](./expense-explorer.png)
+
 Created to better make sense of my spending.
-It reads in a CSV from iExpense (mobile app), and feeds in all expenses into elasticsearch. Aggreagation summaries are then generated based on what a calendar UI helps the user request.
+It reads in a CSV from iExpense (mobile app), and feeds in all expenses into elasticsearch. Elastic queries are used along with some backend logic to make more actionable data, this is then rendered in a react SPA, having been served via graphQL.
 
 Stack:
 - React TS / redux
