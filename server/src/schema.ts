@@ -214,7 +214,11 @@ const RootQuery = new GraphQLObjectType({
 							const aoMatchingTimePeriods: any[] = aggDump.time_spending_breakdown.buckets.filter((oSpendingSummary: any) => { 
 								let oPeriodDate = moment(oSpendingSummary.key_as_string, 'MM/DD/Y')
 
-								return oPeriodDate.date() === Number(sKey)
+								if (scope === 'month') {
+									return oPeriodDate.date() === Number(sKey)
+								} else {
+									return (oPeriodDate.month()+1) === Number(sKey)
+								}
 							})
 								
 							return {
