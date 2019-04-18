@@ -131,7 +131,7 @@ class App extends React.Component<IAppProps, {}> {
 					</tr>
 					<tr>
 						<td>
-							average per {sScope === 'year' && 'month'}{sScope === 'month' && 'day'}<br/>
+							mean average per {sScope === 'year' && 'month'}{sScope === 'month' && 'day'}<br/>
 							median per {sScope === 'year' && 'month'}{sScope === 'month' && 'day'}<br/>
 							mode per {sScope === 'year' && 'month'}{sScope === 'month' && 'day'}
 						</td>
