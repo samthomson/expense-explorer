@@ -163,7 +163,7 @@ const RootQuery = new GraphQLObjectType({
 
 					if (aggDump.category_spending_breakdown && aggDump.time_spending_breakdown) {
 
-						const iTotal: number = aggDump.category_spending_breakdown.buckets.reduce((iTotal: number, oBucket: any) => iTotal + oBucket.unit_total.value, 0)
+						const fTotalExpenditureForScopedPeriod: number = aggDump.category_spending_breakdown.buckets.reduce((iTotal: number, oBucket: any) => iTotal + oBucket.unit_total.value, 0)
 						
 						//
 						// spending by category
@@ -174,7 +174,7 @@ const RootQuery = new GraphQLObjectType({
 								category: oBucket.key,
 								expense_count: oBucket.doc_count,
 								total: oBucket.unit_total.value,
-								percent: (oBucket.unit_total.value / iTotal) * 100
+								percent: (oBucket.unit_total.value / fTotalExpenditureForScopedPeriod) * 100
 							}
 						})
 						oReturn['spending_by_category'] = aCategorySpending
@@ -200,8 +200,18 @@ const RootQuery = new GraphQLObjectType({
 							}
 						}
 
+						let fNumberOfUnits: number = aggDump.time_spending_breakdown.buckets.length
+
+						// current year and year mode
+						if (scope === 'year' && moment(oQueriedDate).isSame(new Date(), scope)) {
+							// get exact monthly average
+							const cDayNumberOfYear: number = moment().dayOfYear()
+							const fDecimalMonthsThroughYear: number = cDayNumberOfYear / 365 * 12
+							fNumberOfUnits = fDecimalMonthsThroughYear
+						}
+
 						
-						const fAverage: number = iTotal / aggDump.time_spending_breakdown.buckets.length
+						const fAverage: number = fTotalExpenditureForScopedPeriod / fNumberOfUnits
 						oReturn['average_per_unit'] = fAverage
 
 						// projection = average_per_unit * number of units (year scope - 12, month scope - number of days in current month)
@@ -234,25 +244,7 @@ const RootQuery = new GraphQLObjectType({
 								expense_count: oBucket.doc_count,
 								total: (oBucket.unit_total.value).toFixed(0),
 							}
-						})
-
-						// // current month?
-						// if (scope === 'year' && moment(oQueriedDate).isSame(new Date(), scope)) {
-						// 	// add remaining months
-						// 	const iCurrentMonth: number = Number(moment().format('M'))
-						// 	const iRemaininingMonths: number = 12 - iCurrentMonth
-
-						// 	console.log('iCurrentMonth ', iCurrentMonth)
-						// 	console.log('iRemaininingMonths ', iRemaininingMonths)
-							
-						// 	for (let i = 0; i < iRemaininingMonths; i++) {
-						// 		aTimeUnitSpending.push({
-						// 			date: '?',//oQueriedDate.add((i+1), 'months').format('MMM'),
-						// 			expense_count: 0,
-						// 			total: 0,
-						// 		})
-						// 	}
-						// }
+						})						
 						
 						oReturn['spending_over_time'] = aTimeUnitSpending
 					}
