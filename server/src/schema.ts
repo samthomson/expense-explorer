@@ -209,18 +209,6 @@ const RootQuery = new GraphQLObjectType({
 							const fDecimalMonthsThroughYear: number = cDayNumberOfYear / 365 * 12
 							fNumberOfUnits = fDecimalMonthsThroughYear
 						}
-
-						
-						const fAverage: number = fTotalExpenditureForScopedPeriod / fNumberOfUnits
-						oReturn['average_per_unit'] = fAverage
-
-						// projection = average_per_unit * number of units (year scope - 12, month scope - number of days in current month)
-						if (moment(oQueriedDate).isSame(new Date(), scope)) {
-							const iNumberOfUnits: number = scope === 'year' ? 12 : oQueriedDate.daysInMonth()
-							oReturn['projection_for_scope'] = fAverage * iNumberOfUnits
-						} else {
-							oReturn['projection_for_scope'] = null
-						}
 						
 						// for each possible time unit, see if we have matching data - or return zeros (missing dates)
 						let aTimeUnitSpending = Object.keys(oPossibleTimeUnits).map((sKey: string) => {
@@ -248,9 +236,23 @@ const RootQuery = new GraphQLObjectType({
 								expense_count: oBucket.doc_count,
 								total: (oBucket.unit_total.value).toFixed(0),
 							}
-						})						
+						})	
+						oReturn['spending_over_time'] = aTimeUnitSpending	
 						
-						oReturn['spending_over_time'] = aTimeUnitSpending
+						//
+						// summary stats
+						//
+
+						const fAverage: number = fTotalExpenditureForScopedPeriod / fNumberOfUnits
+						oReturn['average_per_unit'] = fAverage
+
+						// projection = average_per_unit * number of units (year scope - 12, month scope - number of days in current month)
+						if (moment(oQueriedDate).isSame(new Date(), scope)) {
+							const iNumberOfUnits: number = scope === 'year' ? 12 : oQueriedDate.daysInMonth()
+							oReturn['projection_for_scope'] = fAverage * iNumberOfUnits
+						} else {
+							oReturn['projection_for_scope'] = null
+						}
 					}
 				}
 				return oReturn
