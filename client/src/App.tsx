@@ -123,9 +123,13 @@ class App extends React.Component<IAppProps, {}> {
 					<tr>
 						<td>average per {sScope === 'year' && 'month'}{sScope === 'month' && 'day'}</td>
 						<td className="collapsing">{average_per_unit.toFixed(2)} (${(average_per_unit * this.USDDKKOffset).toFixed(2)})</td>
-
-						<td>projection for {sScope}</td>
-						<td className="collapsing">{projection_for_scope.toFixed(0)} (${(projection_for_scope * this.USDDKKOffset).toFixed(2)})</td>
+						{/* only show projection data if the current period is incomplete */}
+						{projection_for_scope && (
+							<td>projection for {sScope}</td>
+						)}
+						{projection_for_scope && (
+							<td className="collapsing">{projection_for_scope.toFixed(0)} (${(projection_for_scope * this.USDDKKOffset).toFixed(2)})</td>
+						)}
 					</tr>
 				</tbody>
 			</table>
