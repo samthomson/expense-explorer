@@ -76,7 +76,7 @@ class App extends React.Component<IAppProps, {}> {
 				</div>
 
 				{/* render expenses for current date */}
-				{totalExpenditure && (
+				{(typeof totalExpenditure !== 'undefined') && totalExpenditure > 0 && (
 					<div>
 						<br />
 						{this.renderSummary()}
@@ -86,6 +86,12 @@ class App extends React.Component<IAppProps, {}> {
 						<br />
 						{this.renderExpenses(expenses)}
 						
+					</div>
+				)}
+				{(typeof totalExpenditure !== 'undefined') && totalExpenditure === 0 && (
+					<div>
+						<br />
+						<h2 className="centered-text">no expense data for current period..</h2>
 					</div>
 				)}
 			</div>
