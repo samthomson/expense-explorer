@@ -126,7 +126,10 @@ class App extends React.Component<IAppProps, {}> {
 				<tbody>
 					<tr>
 						<td>total expenditure</td>
-						<td className="collapsing">{totalExpenditure.toFixed(0)} (${(totalExpenditure * this.USDDKKOffset).toFixed(2)})</td>
+						<td className="collapsing">
+							<NumberDisplay number={Number(totalExpenditure.toFixed(0))} />&nbsp;
+							($<NumberDisplay number={Number((totalExpenditure * this.USDDKKOffset).toFixed(2))} />)
+						</td>
 
 						<td>expenses</td>
 						<td className="collapsing">{numberOfExpenses}</td>
@@ -138,7 +141,7 @@ class App extends React.Component<IAppProps, {}> {
 							mode per {sScope === 'year' && 'month'}{sScope === 'month' && 'day'}
 						</td>
 						<td className="collapsing">
-							{average_per_unit.toFixed(2)} (${(average_per_unit * this.USDDKKOffset).toFixed(2)})<br />
+							{average_per_unit.toFixed(2)} ($<NumberDisplay number={Number((average_per_unit * this.USDDKKOffset).toFixed(2))} /><br />
 							{median_per_unit.toFixed(2)} (${(median_per_unit * this.USDDKKOffset).toFixed(2)})<br />
 							{mode_per_unit.toFixed(2)} (${(mode_per_unit * this.USDDKKOffset).toFixed(2)})
 						</td>
