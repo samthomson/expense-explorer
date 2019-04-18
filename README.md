@@ -20,7 +20,6 @@ missing/todo:
 - map dropbox folder in via docker-compose (like I did on python project)
 - take latest file from folder, not just first it finds
 - mean median mode?
-- render date strings for x axis of spending chart (1st not 1, Jan not 1)
 - number display component (takes currency as param), formats with commas and decimals, and displays currency eg. 12 dkk or $12
 
 bigger features:
