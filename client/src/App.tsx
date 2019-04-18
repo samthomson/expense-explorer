@@ -181,20 +181,9 @@ class App extends React.Component<IAppProps, {}> {
 				]
 			}
 
-			if (this.props.oSummary.projection_for_scope) {
+			if (this.props.oSummary.projected_spending_over_time) {
 				// render projection data too
-				const afSpendingProjection: number[] = timeunits.map(oP => this.props.oSummary.average_per_unit || 0)
-				
-				// projection data is from now until end of period, until now should be real data
-				const iCurrentUnitTime = (this.props.sScope === 'year') ? (moment().month() + 1) : moment().date()
-				// year mode - before current month, so in april, take month jan feb mar
-				// april = 3, so we add one
-				// month mode - before current date, so on 4th, take 1st 2nd 3rd
-				// 18th = 18
-				
-				for (let cReplacePeriod = 0; cReplacePeriod < (iCurrentUnitTime -1); cReplacePeriod++) {
-					afSpendingProjection[cReplacePeriod] = afSpendingOverTime[cReplacePeriod]
-				}
+				const afSpendingProjection = this.props.oSummary.projected_spending_over_time.map(oItem => oItem.total)
 				
 				chartData.datasets.push(
 					{

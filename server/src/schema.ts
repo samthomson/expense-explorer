@@ -43,6 +43,13 @@ const TimeSpendType = new GraphQLObjectType({
 		total: { type: GraphQLFloat }
 	})
 })
+const ProjectedTimeSpendType = new GraphQLObjectType({
+	name: 'ProjectedTimeSpend',
+	fields: () => ({
+		date: { type: GraphQLString },
+		total: { type: GraphQLFloat }
+	})
+})
 
 const SummaryType = new GraphQLObjectType({
 	name: 'SummaryType',
@@ -53,10 +60,14 @@ const SummaryType = new GraphQLObjectType({
 		spending_over_time: {
 			type: GraphQLList(TimeSpendType)
 		},
+		projected_spending_over_time: {
+			type: GraphQLList(ProjectedTimeSpendType)
+		},
 		spending_by_category: {
 			type: GraphQLList(CategorySpendType)
 		},
 		average_per_unit: { type: GraphQLFloat },
+		median_per_unit: { type: GraphQLFloat },
 		projection_for_scope: { type: GraphQLFloat }
 	})
 })	
@@ -245,13 +256,39 @@ const RootQuery = new GraphQLObjectType({
 
 						const fAverage: number = fTotalExpenditureForScopedPeriod / fNumberOfUnits
 						oReturn['average_per_unit'] = fAverage
+						oReturn['median_per_unit'] = 22
 
 						// projection = average_per_unit * number of units (year scope - 12, month scope - number of days in current month)
 						if (moment(oQueriedDate).isSame(new Date(), scope)) {
+							// projected 'scope expenditure'
 							const iNumberOfUnits: number = scope === 'year' ? 12 : oQueriedDate.daysInMonth()
 							oReturn['projection_for_scope'] = fAverage * iNumberOfUnits
+
+							// projected dated spending
+							const aSpendingProjection: any[] = aTimeUnitSpending.map(oP => {
+								return {
+									...oP,
+									total: fAverage || 0
+								}
+							})
+				
+							// projection data is from now until end of period, until now should be real data
+							const iCurrentUnitTime = (scope === 'year') ? (moment().month() + 1) : moment().date()
+							// year mode - before current month, so in april, take month jan feb mar
+							// april = 3, so we add one
+							// month mode - before current date, so on 4th, take 1st 2nd 3rd
+							// 18th = 18
+							
+							for (let cReplacePeriod = 0; cReplacePeriod < (iCurrentUnitTime -1); cReplacePeriod++) {
+								// console.log(aTimeUnitSpending)
+								aSpendingProjection[cReplacePeriod].total = aTimeUnitSpending[cReplacePeriod].total
+							}
+
+							oReturn['projected_spending_over_time'] = aSpendingProjection
+
 						} else {
 							oReturn['projection_for_scope'] = null
+							oReturn['projected_spending_over_time'] = null
 						}
 					}
 				}
