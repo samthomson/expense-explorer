@@ -15,7 +15,18 @@ Stack:
 
 ## todo
 
-- build out client
+missing/todo:
+- render projection on chart
+- map dropbox folder in via docker-compose (like I did on python project)
+- take latest file from folder, not just first it finds
+- mean median mode?
+- render date strings for x axis of spending chart (1st not 1, Jan not 1)
+- number display component (takes currency as param), formats with commas and decimals, and displays currency eg. 12 dkk or $12
+
+bigger features:
+- filterable table of expenses
+- category filter, ie. show a category over time (month/year)
+- single expense filter, ie. show a recurring expense over time (lunch/dinner/flights/beer/pad thai)
 
 ## usecases
 
