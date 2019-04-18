@@ -111,11 +111,13 @@ class App extends React.Component<IAppProps, {}> {
 	private renderSummary() {
 		const {
 			average_per_unit,
+			median_per_unit,
 			numberOfExpenses,
 			projection_for_scope,
 			totalExpenditure
 		} = this.props.oSummary
 		const { sScope } = this.props
+
 		return (
 			<table className="ui table">
 				<tbody>
@@ -127,8 +129,14 @@ class App extends React.Component<IAppProps, {}> {
 						<td className="collapsing">{numberOfExpenses}</td>
 					</tr>
 					<tr>
-						<td>average per {sScope === 'year' && 'month'}{sScope === 'month' && 'day'}</td>
-						<td className="collapsing">{average_per_unit.toFixed(2)} (${(average_per_unit * this.USDDKKOffset).toFixed(2)})</td>
+						<td>
+							average per {sScope === 'year' && 'month'}{sScope === 'month' && 'day'}<br/>
+							median per {sScope === 'year' && 'month'}{sScope === 'month' && 'day'}
+						</td>
+						<td className="collapsing">
+							{average_per_unit.toFixed(2)} (${(average_per_unit * this.USDDKKOffset).toFixed(2)})<br />
+							{median_per_unit.toFixed(2)} (${(median_per_unit * this.USDDKKOffset).toFixed(2)})
+						</td>
 						{/* only show projection data if the current period is incomplete */}
 						{projection_for_scope && (
 							<td>projection for {sScope}</td>

@@ -31,6 +31,7 @@ function* getSummary(action: Action) {
 						totalExpenditure,
 						numberOfExpenses,
 						average_per_unit,
+						median_per_unit,
 						projection_for_scope,
 						expenses {
 							vendor,
