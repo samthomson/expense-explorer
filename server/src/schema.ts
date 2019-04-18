@@ -165,6 +165,9 @@ const RootQuery = new GraphQLObjectType({
 
 						const iTotal: number = aggDump.category_spending_breakdown.buckets.reduce((iTotal: number, oBucket: any) => iTotal + oBucket.unit_total.value, 0)
 						
+						//
+						// spending by category
+						//
 
 						const aCategorySpending = aggDump.category_spending_breakdown.buckets.map((oBucket: any) => {
 							return { 
@@ -174,8 +177,29 @@ const RootQuery = new GraphQLObjectType({
 								percent: (oBucket.unit_total.value / iTotal) * 100
 							}
 						})
-
 						oReturn['spending_by_category'] = aCategorySpending
+
+						//
+						// spending over time
+						//
+
+						// build up empty state objects
+						let oPossibleTimeUnits: any = {}
+						// dates of the month
+						if (scope === 'month') {
+							// get all dates for the month
+							const iNumberOfDays: number = oQueriedDate.daysInMonth() // get number of days in current month
+							for (let cUnitCreate = 0; cUnitCreate < iNumberOfDays; cUnitCreate++) {
+								oPossibleTimeUnits[(cUnitCreate + 1)] = {}
+							}
+						}
+						// months of the year
+						if (scope === 'year') {
+							for (let cUnitCreate = 0; cUnitCreate < 12; cUnitCreate++) {
+								oPossibleTimeUnits[(cUnitCreate + 1)] = {}
+							}
+						}
+
 						
 						const fAverage: number = iTotal / aggDump.time_spending_breakdown.buckets.length
 						oReturn['average_per_unit'] = fAverage
@@ -184,7 +208,23 @@ const RootQuery = new GraphQLObjectType({
 						const iNumberOfUnits: number = scope === 'year' ? 12 : oQueriedDate.daysInMonth()
 						oReturn['projection_for_scope'] = fAverage * iNumberOfUnits
 						
-						let aTimeUnitSpending = aggDump.time_spending_breakdown.buckets.map((oBucket: any) => {
+						// for each possible time unit, see if we have matching data - or return zeros (missing dates)
+						let aTimeUnitSpending = Object.keys(oPossibleTimeUnits).map((sKey: string) => {
+
+							const aoMatchingTimePeriods: any[] = aggDump.time_spending_breakdown.buckets.filter((oSpendingSummary: any) => { 
+								let oPeriodDate = moment(oSpendingSummary.key_as_string, 'MM/DD/Y')
+
+								return oPeriodDate.date() === Number(sKey)
+							})
+								
+							return {
+								date: sKey,
+								expense_count: aoMatchingTimePeriods.length > 0 ? aoMatchingTimePeriods[0].doc_count : 0,
+								total: aoMatchingTimePeriods.length > 0 ? aoMatchingTimePeriods[0].unit_total.value.toFixed(0) : 0,
+							}
+						})
+						
+						aggDump.time_spending_breakdown.buckets.map((oBucket: any) => {
 							return { 
 								date: oBucket.key_as_string,
 								expense_count: oBucket.doc_count,
@@ -192,23 +232,23 @@ const RootQuery = new GraphQLObjectType({
 							}
 						})
 
-						// current month?
-						if (scope === 'year' && moment(oQueriedDate).isSame(new Date(), scope)) {
-							// add remaining months
-							const iCurrentMonth: number = Number(moment().format('M'))
-							const iRemaininingMonths: number = 12 - iCurrentMonth
+						// // current month?
+						// if (scope === 'year' && moment(oQueriedDate).isSame(new Date(), scope)) {
+						// 	// add remaining months
+						// 	const iCurrentMonth: number = Number(moment().format('M'))
+						// 	const iRemaininingMonths: number = 12 - iCurrentMonth
 
-							console.log('iCurrentMonth ', iCurrentMonth)
-							console.log('iRemaininingMonths ', iRemaininingMonths)
+						// 	console.log('iCurrentMonth ', iCurrentMonth)
+						// 	console.log('iRemaininingMonths ', iRemaininingMonths)
 							
-							for (let i = 0; i < iRemaininingMonths; i++) {
-								aTimeUnitSpending.push({
-									date: '?',//oQueriedDate.add((i+1), 'months').format('MMM'),
-									expense_count: 0,
-									total: 0,
-								})
-							}
-						}
+						// 	for (let i = 0; i < iRemaininingMonths; i++) {
+						// 		aTimeUnitSpending.push({
+						// 			date: '?',//oQueriedDate.add((i+1), 'months').format('MMM'),
+						// 			expense_count: 0,
+						// 			total: 0,
+						// 		})
+						// 	}
+						// }
 						
 						oReturn['spending_over_time'] = aTimeUnitSpending
 					}
