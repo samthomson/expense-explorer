@@ -15,6 +15,7 @@ services:
       - PORT=3100
       - ELASTIC_INDEX=expense-explorer-index
       - ELASTIC_TYPE=expense
+      - DKK_TO_USD=0.15
     ports:
       - "3300:3100"
     volumes:
