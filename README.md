@@ -16,7 +16,7 @@ Stack:
 - update left hand side of data volume import (`/home/sam/Dropbox/Apps/Iexpense lite:/server/importer/data`)` to contain your own export folder
 	- import script assumes all CSVs in that folder are named like `ix_20190417.csv`
 - `docker-compose up` to start
-- `docker-compose run server sh` and then `yarn run import`
+- `docker-compose run server yarn run import`
 - browse to `http://localhost:3400`
 
 ## todo
