@@ -66,6 +66,9 @@ const SummaryType = new GraphQLObjectType({
 		spending_by_category: {
 			type: GraphQLList(CategorySpendType)
 		},
+		spending_by_subcategory: {
+			type: GraphQLList(CategorySpendType)
+		},
 		average_per_unit: { type: GraphQLFloat },
 		median_per_unit: { type: GraphQLFloat },
 		mode_per_unit: { type: GraphQLFloat },
@@ -140,6 +143,12 @@ const RootQuery = new GraphQLObjectType({
 								aggs: {
 									unit_total: { "sum" : { "field" : "Amount" } }
 								}
+							},
+							subcategory_spending_breakdown: {
+								terms : { "field" : "Fullcategory" },
+								aggs: {
+									unit_total: { "sum" : { "field" : "Amount" } }
+								}
 							}
 						}
 					}
@@ -173,7 +182,7 @@ const RootQuery = new GraphQLObjectType({
 				if (result && result.body && result.body.aggregations) {
 					const aggDump = result.body.aggregations
 
-					if (aggDump.category_spending_breakdown && aggDump.time_spending_breakdown) {
+					if (aggDump.category_spending_breakdown && aggDump.subcategory_spending_breakdown && aggDump.time_spending_breakdown) {
 
 						const fTotalExpenditureForScopedPeriod: number = aggDump.category_spending_breakdown.buckets.reduce((iTotal: number, oBucket: any) => iTotal + oBucket.unit_total.value, 0)
 						
@@ -181,15 +190,28 @@ const RootQuery = new GraphQLObjectType({
 						// spending by category
 						//
 
-						const aCategorySpending = aggDump.category_spending_breakdown.buckets.map((oBucket: any) => {
+						const aCategorySpending = aggDump.category_spending_breakdown.buckets.map((oCategoryBucket: any) => {
 							return { 
-								category: oBucket.key,
-								expense_count: oBucket.doc_count,
-								total: oBucket.unit_total.value,
-								percent: (oBucket.unit_total.value / fTotalExpenditureForScopedPeriod) * 100
+								category: oCategoryBucket.key,
+								expense_count: oCategoryBucket.doc_count,
+								total: oCategoryBucket.unit_total.value,
+								percent: (oCategoryBucket.unit_total.value / fTotalExpenditureForScopedPeriod) * 100
 							}
 						})
 						oReturn['spending_by_category'] = aCategorySpending
+						
+						//
+						// spending by subcategory
+						//
+						const aSubcategorySpending = aggDump.subcategory_spending_breakdown.buckets.map((oSubcategoryBucket: any) => {
+							return { 
+								category: oSubcategoryBucket.key,
+								expense_count: oSubcategoryBucket.doc_count,
+								total: oSubcategoryBucket.unit_total.value,
+								percent: (oSubcategoryBucket.unit_total.value / fTotalExpenditureForScopedPeriod) * 100
+							}
+						})
+						oReturn['spending_by_subcategory'] = aSubcategorySpending
 
 						//
 						// spending over time
