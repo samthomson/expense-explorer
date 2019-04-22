@@ -52,6 +52,7 @@ const main  = async () => {
 				properties: {
 					Category: { "type": "keyword" },
 					Date: { "type": "date", "format": "MM/dd/yyyy" },
+					Fullcategory: { "type": "keyword" },
 					Subcategory: { "type": "keyword" }
 				}
 			}
@@ -128,6 +129,7 @@ async function readInFile (sImportFile: string) {
 					return results.push({
 						...data,
 						Amount: fAmount,
+						Fullcategory: data.Category + '_' + data.Subcategory
 					})
 				}
 			})
