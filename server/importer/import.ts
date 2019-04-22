@@ -51,7 +51,8 @@ const main  = async () => {
 			expense:{
 				properties: {
 					Category: { "type": "keyword" },
-					Date: { "type": "date", "format": "MM/dd/yyyy" }
+					Date: { "type": "date", "format": "MM/dd/yyyy" },
+					Subcategory: { "type": "keyword" }
 				}
 			}
 		}
