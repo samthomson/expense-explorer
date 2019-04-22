@@ -25,6 +25,7 @@ bigger features (maybe later):
 - filterable table of expenses
 - category filter, ie. show a category over time (month/year)
 - single expense filter, ie. show a recurring expense over time (lunch/dinner/flights/beer/pad thai)
+- subcategory breakdown too
 
 ## usecases
 
