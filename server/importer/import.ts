@@ -2,7 +2,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 import * as csv from 'csv-parser'
 import { Client as ElasticClient, ApiResponse, RequestParams } from '@elastic/elasticsearch'
-
+import * as moment from 'moment'
 import { Expense } from './../src/declarations'
 
 const main  = async () => {
@@ -111,21 +111,25 @@ async function readInFile (sImportFile: string) {
 		fs.createReadStream(sImportFile)
 			.pipe(csv())
 			.on('data', (data: any) => {
-				// convert danish numbers to english numbers
-				let fAmount: number = parseFloat(data.Amount.replace('.', '').replace(',', '.'))
-				fAmount *= Number(process.env.DKK_TO_USD) // convert to dollars
-				fAmount *= -1 // make positive
-				let asDateParts: string[] = data.Date.split('/')
-				// remove certain properties
-				delete data.Payment
-				delete data.Currency
-				delete data.Note
-				delete data.ID
-				
-				return results.push({
-				...data,
-				Amount: fAmount,
-			})})
+				// only store past expenses
+				let oDate: moment.Moment = moment(data.Date, 'MM/DD/Y')
+				if (oDate.isBefore(moment())) {
+					// convert danish numbers to english numbers
+					let fAmount: number = parseFloat(data.Amount.replace('.', '').replace(',', '.'))
+					fAmount *= Number(process.env.DKK_TO_USD) // convert to dollars
+					fAmount *= -1 // make positive
+					// remove certain properties
+					delete data.Payment
+					delete data.Currency
+					delete data.Note
+					delete data.ID
+					
+					return results.push({
+						...data,
+						Amount: fAmount,
+					})
+				}
+			})
 			.on('end', () => {
 				resolve(results)
 			})
