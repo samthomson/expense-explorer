@@ -221,22 +221,26 @@ class App extends React.Component<IAppProps, {}> {
 			maintainAspectRatio: false
 		}
 
+		// https://flatuicolors.com/palette/cn
+		// https://flatuicolors.com/palette/nl
 		const oCategoryColours: any = {
-			'Auto/Transportation': 'green',		
-			'Bills/Utilities': 'blue',
-			'Entertainment': 'orange',
-			'Food/Drink': 'red',
-			'Miscellaneous': 'yellow',
-			'Personal Care': 'purple',
-			'Shopping': 'pink',
-			'Business/Office': 'teal',
-			'Health': 'lime',
-			'Travel': 'maroon',
+			'accomodation': '#EA2027', // red - red pigment	
+			'food': '#2ed573', // green - ufo green
+			'working': '#a4b0be', // grey - peace
+			'recreation': '#1e90ff', // blue - clear chill
+			'transport': '#5758BB', // lavendar - circumorbital ring
+			'non-food shopping': '#F79F1F', // orangish/gold - radiant yellow
+			'miscellaneous': '#833471', // light purple - hollyhock
+			'health': '#ff6b81', // pink - wild watermelon
+			'utility': '#747d8c', // darker grey - bay wharf
+			'giving': '#7bed9f' // light green - lime soap
 		}
 
 		const chartData = categories.map(oP => {
+			console.log(`category: ${oP.category}`)
 			return {
 				value: (Number(oP.percent)).toFixed(0),
+				// label: `"${oP.category}"`,
 				label: oP.category,
 				color: oCategoryColours[oP.category] ? oCategoryColours[oP.category] : 'white'
 			}
