@@ -72,7 +72,8 @@ const SummaryType = new GraphQLObjectType({
 		average_per_unit: { type: GraphQLFloat },
 		median_per_unit: { type: GraphQLFloat },
 		mode_per_unit: { type: GraphQLFloat },
-		projection_for_scope: { type: GraphQLFloat }
+		projection_for_scope: { type: GraphQLFloat },
+		prospective_budget_for_forecast: { type: GraphQLFloat }
 	})
 })	
 
@@ -105,8 +106,15 @@ const RootQuery = new GraphQLObjectType({
 		},
 		summary: {
 			type: SummaryType,
-			args: { date: { type: new GraphQLNonNull(GraphQLInt), description: "unix epoch date: number of seconds since 1970" }, scope: { type: new GraphQLNonNull(GraphQLString) } },
-			resolve: async (parentValue, { date, scope }) => {
+			args: { 
+				date: {
+					type: new GraphQLNonNull(GraphQLInt),
+					description: "unix epoch date: number of seconds since 1970",
+				},
+				budget: { type: GraphQLInt },
+				scope: { type: new GraphQLNonNull(GraphQLString) }
+			},
+			resolve: async (parentValue, { date, scope, budget }) => {
 
 				// build date range query
 				const oQueriedDate = moment.unix(date)
@@ -244,6 +252,11 @@ const RootQuery = new GraphQLObjectType({
 							const cDayNumberOfYear: number = moment().dayOfYear()
 							const fDecimalMonthsThroughYear: number = cDayNumberOfYear / 365 * 12
 							fNumberOfUnits = fDecimalMonthsThroughYear
+
+							if (oReturn['totalExpenditure'] && budget) {
+								oReturn['prospective_budget_for_forecast'] = (budget - oReturn['totalExpenditure']) / (12 - fDecimalMonthsThroughYear)
+							}
+
 						}
 						
 						// for each possible time unit, see if we have matching data - or return zeros (missing dates)
@@ -325,6 +338,9 @@ const RootQuery = new GraphQLObjectType({
 						}
 					}
 				}
+
+
+
 				return oReturn
 			}
 		}

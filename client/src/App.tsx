@@ -5,7 +5,7 @@ import { Line as LineChart, Pie as PieChart } from  'react-chartjs'
 import { connect } from 'react-redux'
 import './../node_modules/semantic-ui-css/semantic.min.css'
 import './App.css'
-import { changeMonth, changeScope, getSummary } from './redux/actions'
+import { changeMonth, changeScope, getSummary, setBudget } from './redux/actions'
 import { Store } from './redux/store'
 
 import NumberDisplay from './components/NumberDisplay'
@@ -13,12 +13,14 @@ import NumberDisplay from './components/NumberDisplay'
 import { Summary } from './declarations'
 
 interface IAppProps {
+	fYearlyBudget: number
 	iDate: number
 	oSummary: Summary
 	sScope: string
 	changeMonth: (bBackwards: boolean) => {}
 	changeScope: (sScope: string) => {}
 	getSummary: (iDate: number) => {}
+	setBudget: (fYearlyBudget: number) => {}
 }
 
 class App extends React.Component<IAppProps, {}> {
@@ -108,6 +110,11 @@ class App extends React.Component<IAppProps, {}> {
 		this.props.changeScope(sScope)
 		this.props.getSummary(this.props.iDate)
 	}
+
+	private eChangeBudget(fBudget: number) {
+		this.props.setBudget(fBudget)
+		this.props.getSummary(this.props.iDate)
+	}
 	
 	private renderSummary() {
 		const {
@@ -116,9 +123,10 @@ class App extends React.Component<IAppProps, {}> {
 			mode_per_unit,
 			numberOfExpenses,
 			projection_for_scope,
+			prospective_budget_for_forecast,
 			totalExpenditure
 		} = this.props.oSummary
-		const { sScope } = this.props
+		const { fYearlyBudget, sScope } = this.props
 
 		return (
 			<table className="ui table">
@@ -152,6 +160,22 @@ class App extends React.Component<IAppProps, {}> {
 								$<NumberDisplay number={Number(projection_for_scope.toFixed(2))} />
 							</td>
 						)}
+
+					</tr>
+					<tr>
+						<td />
+						<td />
+
+						{/* only show projection data if the current period is incomplete */}
+						<td>
+							projection for <input type="text" value={fYearlyBudget || ''} onChange={e => this.eChangeBudget(Number(e.currentTarget.value))} />
+
+						</td>
+						{fYearlyBudget && prospective_budget_for_forecast && (
+							<td className="collapsing">
+								$<NumberDisplay number={Number(prospective_budget_for_forecast.toFixed(2))} />
+							</td>
+						)}
 					</tr>
 				</tbody>
 			</table>
@@ -173,27 +197,24 @@ class App extends React.Component<IAppProps, {}> {
 				return (this.props.sScope === 'month') ? moment().date(Number(oP.date)).format("Do") : moment().month((Number(oP.date)-1)).format("MMM")
 			})
 
-			const chartData = {
-				labels: dataLabels,
-				datasets: [
-					{
-						label: "Spending over time",
-						fillColor: "rgba(151,187,205,0.2)",
-						strokeColor: "rgba(151,187,205,1)",
-						pointColor: "rgba(151,187,205,1)",
-						pointStrokeColor: "#fff",
-						pointHighlightFill: "#fff",
-						pointHighlightStroke: "rgba(151,187,205,1)",
-						data: afSpendingOverTime,
-					}
-				]
-			}
+			const aDataSets = [
+				{
+					label: "Spending over time",
+					fillColor: "rgba(151,187,205,0.2)",
+					strokeColor: "rgba(151,187,205,1)",
+					pointColor: "rgba(151,187,205,1)",
+					pointStrokeColor: "#fff",
+					pointHighlightFill: "#fff",
+					pointHighlightStroke: "rgba(151,187,205,1)",
+					data: afSpendingOverTime,
+				}
+			]
 
 			if (this.props.oSummary.projected_spending_over_time) {
 				// render projection data too
 				const afSpendingProjection = this.props.oSummary.projected_spending_over_time.map(oItem => oItem.total)
 				
-				chartData.datasets.push(
+				aDataSets.push(
 					{
 						label: "Projected Spending",
 						fillColor: "rgba(220,220,220,0.2)",
@@ -205,6 +226,34 @@ class App extends React.Component<IAppProps, {}> {
 						data: afSpendingProjection,
 					}
 				)
+				
+				// console.log(afSpendingProjection)
+				// and if they have a target adjusted forecast
+				if (this.props.oSummary.prospective_budget_for_forecast) {
+					// render projection data too
+					// const afAdjustedProjection = this.props.oSummary.projected_spending_over_time.map(oItem => this.props.oSummary.prospective_budget_for_forecast)
+					
+					// console.log(afAdjustedProjection)
+					
+					// not working :(
+					// aDataSets.push(
+					// 	{
+					// 		label: "Adjusted budget",
+					// 		fillColor: "rgba(50,50,50,0.2)",
+					// 		strokeColor: "rgba(50,50,50,1)",
+					// 		pointColor: "rgba(50,50,50,1)",
+					// 		pointStrokeColor: "#fff",
+					// 		pointHighlightFill: "#fff",
+					// 		pointHighlightStroke: "rgba(50,50,50,1)",
+					// 		data: afAdjustedProjection,
+					// 	}
+					// )
+				}
+			}
+			
+			const chartData = {
+				labels: dataLabels,
+				datasets: aDataSets
 			}
 
 			return (
@@ -240,7 +289,6 @@ class App extends React.Component<IAppProps, {}> {
 		}
 
 		const chartData = categories.map(oP => {
-			console.log(`category: ${oP.category}`)
 			return {
 				value: (Number(oP.percent)).toFixed(0),
 				// label: `"${oP.category}"`,
@@ -297,7 +345,6 @@ class App extends React.Component<IAppProps, {}> {
 		}
 
 		const chartData = categories.map(oP => {
-			console.log(`category: ${oP.category}`)
 			return {
 				value: (Number(oP.percent)).toFixed(0),
 				label: oP.category.replace('_', ' / '),
@@ -406,18 +453,20 @@ class App extends React.Component<IAppProps, {}> {
 }
 
 const mapStateToProps = (state: Store.App) => {
-	const { iDate, oSummary, sScope } = state
+	const { iDate, oSummary, sScope, fYearlyBudget } = state
 	return {
 		iDate,
 		oSummary,
-		sScope
+		sScope,
+		fYearlyBudget
 	}
 }
 
 const mapDispatchToProps = (dispatch: any) => ({
 	changeMonth: (bBackwards: boolean) => dispatch(changeMonth(bBackwards)),
 	changeScope: (sScope: string) => dispatch(changeScope(sScope)),
-	getSummary: (iDate: number) => dispatch(getSummary(iDate))
+	getSummary: (iDate: number) => dispatch(getSummary(iDate)),
+	setBudget: (fYearlyBudget: number) => dispatch(setBudget(fYearlyBudget))
 })
 
 export default connect(

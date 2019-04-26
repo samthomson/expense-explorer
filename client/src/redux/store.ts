@@ -3,5 +3,6 @@ export namespace Store {
 		iDate: number // unix epoch - milliseconds
 		oSummary: {},
 		sScope: string // month / year
+		fYearlyBudget: number | null
 	}
 }

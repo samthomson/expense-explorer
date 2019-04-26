@@ -3,6 +3,9 @@ export type Action =
 		type: 'SET_DATE'
 		iDate: number
 	} | {
+		type: 'SET_BUDGET'
+		fYearlyBudget: number
+	} | {
 		type: 'GET_SUMMARY'
 		iDate: number
 	} | {
@@ -23,6 +26,13 @@ export const setDate = (iDate: number): Action => {
 	return {
 		type: 'SET_DATE',
 		iDate
+	}
+}
+
+export const setBudget = (fYearlyBudget: number): Action => {
+	return {
+		type: 'SET_BUDGET',
+		fYearlyBudget
 	}
 }
   
