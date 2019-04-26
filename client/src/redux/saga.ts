@@ -51,6 +51,12 @@ function* getSummary(action: Action) {
 							total,
 							percent
 						},
+						spending_by_subcategory {
+							category,
+							expense_count,
+							total,
+							percent
+						},
 						spending_over_time {
 							date,
 							expense_count,

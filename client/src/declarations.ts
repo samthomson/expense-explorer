@@ -1,5 +1,6 @@
 export type Summary = {
 	spending_by_category: any[]
+	spending_by_subcategory: any[]
 	spending_over_time: any[]
 	projected_spending_over_time: any[]
 	average_per_unit: number
