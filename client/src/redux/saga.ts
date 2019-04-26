@@ -17,23 +17,26 @@ const client = new ApolloClient({
 
 export const getIDate = (state: Store.App) => state.iDate
 export const getScope = (state: Store.App) => state.sScope
+export const getBudget = (state: Store.App) => state.fYearlyBudget
 
 // worker Saga: will be fired on USER_FETCH_REQUESTED actions
 function* getSummary(action: Action) {
 	const iDate = yield select(getIDate) // epoch seconds
 	const sScope = yield select(getScope) // month / year
+	const iBudget = yield select(getBudget)
 	
    	try {
 		const data = yield client.query({
 			query: gql`
-				query GetSummary($date: Int!, $scope: String!) {					
-					summary(date: $date, scope: $scope){
+				query GetSummary($date: Int!, $scope: String!, $budget: Int) {					
+					summary(date: $date, scope: $scope, budget: $budget){
 						totalExpenditure,
 						numberOfExpenses,
 						average_per_unit,
 						median_per_unit,
 						mode_per_unit,
 						projection_for_scope,
+						prospective_budget_for_forecast,
 						projected_spending_over_time {
 							date,
 							total
@@ -67,7 +70,8 @@ function* getSummary(action: Action) {
 			`,
 			variables: {
 				date: iDate,
-				scope: sScope
+				scope: sScope,
+				budget: iBudget
 			}
 		})
 

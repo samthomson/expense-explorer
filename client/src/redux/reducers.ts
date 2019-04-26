@@ -5,7 +5,8 @@ import { Store } from './store'
 const initialState: Store.App = {
 	iDate: moment().unix(),
 	oSummary: {},
-	sScope: 'month'
+	sScope: 'month',
+	fYearlyBudget: null
 }
 
 export function appReducers(
@@ -18,29 +19,34 @@ export function appReducers(
 				...state,
 				iDate: action.iDate,
 			}
-			case 'CHANGE_MONTH':
-				const { bBackwards } = action
-				const { iDate, sScope } = state
-	
-				let oDate = moment.unix(iDate)
-				const sOffsetUnit = (sScope === 'month') ? 'months' : 'years'
-	
-				oDate = bBackwards ? oDate.subtract(1, sOffsetUnit) : oDate.add(1, sOffsetUnit)
-				
-				return {
-					...state,
-					iDate: oDate.unix(),
-					oSummary: {}
-				}
-			case 'CHANGE_SCOPE':
-				let sScopeFromAction = action.sScope
-	
-				sScopeFromAction = (sScopeFromAction === 'month') ? sScopeFromAction : 'year'
-				
-				return {
-					...state,
-					sScope: sScopeFromAction,
-				}
+		case 'SET_BUDGET':
+			return {
+				...state,
+				fYearlyBudget: action.fYearlyBudget,
+			}
+		case 'CHANGE_MONTH':
+			const { bBackwards } = action
+			const { iDate, sScope } = state
+
+			let oDate = moment.unix(iDate)
+			const sOffsetUnit = (sScope === 'month') ? 'months' : 'years'
+
+			oDate = bBackwards ? oDate.subtract(1, sOffsetUnit) : oDate.add(1, sOffsetUnit)
+			
+			return {
+				...state,
+				iDate: oDate.unix(),
+				oSummary: {}
+			}
+		case 'CHANGE_SCOPE':
+			let sScopeFromAction = action.sScope
+
+			sScopeFromAction = (sScopeFromAction === 'month') ? sScopeFromAction : 'year'
+			
+			return {
+				...state,
+				sScope: sScopeFromAction,
+			}
 		case 'GET_SUMMARY_SUCCEEDED':
 			return {
 				...state,
