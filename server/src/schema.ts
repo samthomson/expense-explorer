@@ -114,6 +114,7 @@ const RootQuery = new GraphQLObjectType({
 				const sAggregationScopePeriod: any = (scope === 'month') ? 'day' : 'month'
 				const sLowerDateRange = oQueriedDate.startOf(sScopePeriod).format('DD/MM/Y')
 				const sUpperDateRange = oQueriedDate.endOf(sScopePeriod).format('DD/MM/Y')
+				const iSize: number = 10000
 
 				const oQuery = {
 					index: process.env.ELASTIC_INDEX,
@@ -127,7 +128,7 @@ const RootQuery = new GraphQLObjectType({
 								}
 							}
 						},
-						size: 10000,
+						size: iSize,
 						aggs: {
 							time_spending_breakdown: {
 								date_histogram : {
@@ -139,13 +140,13 @@ const RootQuery = new GraphQLObjectType({
 								}
 							},
 							category_spending_breakdown: {
-								terms : { "field" : "Category" },
+								terms : { "field" : "Category", "size": iSize },
 								aggs: {
 									unit_total: { "sum" : { "field" : "Amount" } }
 								}
 							},
 							subcategory_spending_breakdown: {
-								terms : { "field" : "Fullcategory" },
+								terms : { "field" : "Fullcategory", "size": iSize },
 								aggs: {
 									unit_total: { "sum" : { "field" : "Amount" } }
 								}
@@ -153,6 +154,7 @@ const RootQuery = new GraphQLObjectType({
 						}
 					}
 				}
+				
 				// console.log(oQuery)
 				const result = await client.search(oQuery).catch((err: any) => console.log(err))
 
