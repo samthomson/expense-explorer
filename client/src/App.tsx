@@ -300,7 +300,7 @@ class App extends React.Component<IAppProps, {}> {
 			console.log(`category: ${oP.category}`)
 			return {
 				value: (Number(oP.percent)).toFixed(0),
-				label: oP.category,
+				label: oP.category.replace('_', ' / '),
 				color: `hsla(${Math.random() * 360}, 100%, 50%, 1)`
 			}
 		})
