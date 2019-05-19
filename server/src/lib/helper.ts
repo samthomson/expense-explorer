@@ -18,3 +18,17 @@ export const anMode = (aNumbersToFindModeOf: number[]): number[] => {
 				.filter((x: number) => x !== null),
 		)
 }
+
+export const nMedian = (afValues: number[]): number => {
+	if (afValues.length === 0) return 0
+
+	afValues.sort((a, b) => {
+		return a - b
+	})
+
+	const half = Math.floor(afValues.length / 2)
+
+	if (afValues.length % 2) return afValues[half]
+
+	return (afValues[half - 1] + afValues[half]) / 2
+}

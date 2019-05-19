@@ -1,4 +1,4 @@
-export type Expense = {
+export type ElasticExpenseDocument = {
 	Date: string //'06/01/2018',
 	Type: string //'N/A',
 	Category: string //'Food/Drink',
