@@ -30,7 +30,11 @@ export class ExpenseTable extends React.Component<IProps, {}> {
 						</thead>
 						<tbody>
 							{expenses.map((oSingleExpense, i) => {
-								const { vendor } = oSingleExpense
+								const {
+									category,
+									subcategory,
+									vendor,
+								} = oSingleExpense
 								return (
 									<tr key={i}>
 										<td>
@@ -48,8 +52,30 @@ export class ExpenseTable extends React.Component<IProps, {}> {
 												{vendor}
 											</a>
 										</td>
-										<td>{oSingleExpense.category}</td>
-										<td>{oSingleExpense.subcategory}</td>
+										<td>
+											<a
+												onClick={() =>
+													this.props.eSetFilter(
+														'Category',
+														category,
+													)
+												}
+											>
+												{category}
+											</a>
+										</td>
+										<td>
+											<a
+												onClick={() =>
+													this.props.eSetFilter(
+														'Subcategory',
+														subcategory,
+													)
+												}
+											>
+												{subcategory}
+											</a>
+										</td>
 										<td>
 											{this.sRenderPiciliLink(
 												oSingleExpense.date,
