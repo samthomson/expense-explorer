@@ -5,6 +5,7 @@ import { Store } from './store'
 const initialState: Store.App = {
 	nDate: moment().unix(),
 	oSummary: null,
+	oFilter: null,
 	sScope: 'month',
 	nYearlyBudget: null,
 }
@@ -23,6 +24,11 @@ export function appReducers(
 			return {
 				...state,
 				nYearlyBudget: action.nYearlyBudget,
+			}
+		case ActionType.SET_FILTER:
+			return {
+				...state,
+				oFilter: action.oFilter,
 			}
 		case ActionType.CHANGE_MONTH:
 			const { bBackwards } = action

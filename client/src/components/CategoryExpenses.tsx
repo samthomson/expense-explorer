@@ -8,6 +8,7 @@ import { CategoryColors } from 'src/declarations'
 interface IProps {
 	categories: Category[]
 	sCategoryName: string
+	eSetFilter: (term: string, match: string) => void
 }
 
 export class CategoryExpenses extends React.Component<IProps, {}> {
@@ -75,10 +76,19 @@ export class CategoryExpenses extends React.Component<IProps, {}> {
 										return (
 											<tr key={i}>
 												<td>
-													{category.replace(
-														'_',
-														' / ',
-													)}
+													<a
+														onClick={() =>
+															this.props.eSetFilter(
+																'Category',
+																category,
+															)
+														}
+													>
+														{category.replace(
+															'_',
+															' / ',
+														)}
+													</a>
 												</td>
 												<td>${total.toFixed(2)}</td>
 												<td>{expense_count}</td>

@@ -1,4 +1,4 @@
-import { Expense, Summary, TimeUnit } from '@shared/declarations'
+import { Expense, Filter, Summary, TimeUnit } from '@shared/declarations'
 import * as moment from 'moment'
 import * as React from 'react'
 // @ts-ignore
@@ -14,6 +14,7 @@ import {
 	changeScope,
 	getSummary,
 	setBudget,
+	setFilter,
 } from 'src/redux/actions'
 import { Store } from 'src/redux/store'
 import './../node_modules/semantic-ui-css/semantic.min.css'
@@ -27,6 +28,7 @@ interface IAppProps {
 	changeScope: (sScope: string) => {}
 	getSummary: (iDate: number) => {}
 	setBudget: (fYearlyBudget: number) => {}
+	setFilter: (oSummary: Filter) => {}
 }
 
 class App extends React.Component<IAppProps, {}> {
@@ -118,11 +120,13 @@ class App extends React.Component<IAppProps, {}> {
 						<br />
 						<CategoryExpenses
 							categories={spending_by_category}
+							eSetFilter={this.eSetFilter}
 							sCategoryName={'Category'}
 						/>
 						<br />
 						<CategoryExpenses
 							categories={spending_by_subcategory}
+							eSetFilter={this.eSetFilter}
 							sCategoryName={'Subcategory'}
 						/>
 						<br />
@@ -369,6 +373,11 @@ class App extends React.Component<IAppProps, {}> {
 		const sFormat: string = sScope === 'month' ? 'MMMM YYYY' : 'Y'
 		return moment.unix(iDate).format(sFormat)
 	}
+
+	private eSetFilter = (term: string, match: string) => {
+		this.props.setFilter({ term, match })
+		this.props.getSummary(this.props.nDate)
+	}
 }
 
 const mapStateToProps = (state: Store.App) => {
@@ -386,6 +395,7 @@ const mapDispatchToProps = (dispatch: React.Dispatch<Action>) => ({
 	changeScope: (sScope: string) => dispatch(changeScope(sScope)),
 	getSummary: (iDate: number) => dispatch(getSummary(iDate)),
 	setBudget: (fYearlyBudget: number) => dispatch(setBudget(fYearlyBudget)),
+	setFilter: (oFilter: Filter | null) => dispatch(setFilter(oFilter)),
 })
 
 export default connect(

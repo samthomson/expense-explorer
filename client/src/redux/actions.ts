@@ -1,4 +1,4 @@
-import { Summary } from '@shared/declarations'
+import { Filter, Summary } from '@shared/declarations'
 
 export enum ActionType {
 	CHANGE_MONTH = 'CHANGE_MONTH',
@@ -8,6 +8,7 @@ export enum ActionType {
 	GET_SUMMARY_FAILED = 'GET_SUMMARY_FAILED',
 	SET_BUDGET = 'SET_BUDGET',
 	SET_DATE = 'SET_DATE',
+	SET_FILTER = 'SET_FILTER',
 }
 
 export type Action =
@@ -39,6 +40,10 @@ export type Action =
 			type: ActionType.CHANGE_SCOPE
 			sScope: string
 			oSummary: Summary | null
+	  }
+	| {
+			type: ActionType.SET_FILTER
+			oFilter: Filter | null
 	  }
 
 export const setDate = (nDate: number): Action => {
@@ -88,5 +93,12 @@ export const changeScope = (sScope: string): Action => {
 		type: ActionType.CHANGE_SCOPE,
 		sScope,
 		oSummary: null,
+	}
+}
+
+export const setFilter = (oFilter: Filter | null): Action => {
+	return {
+		type: ActionType.SET_FILTER,
+		oFilter,
 	}
 }
