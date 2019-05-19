@@ -1,12 +1,12 @@
-import { Category, Expense, Summary, TimeUnit } from '@shared/declarations'
+import { Expense, Summary, TimeUnit } from '@shared/declarations'
 import * as moment from 'moment'
 import * as React from 'react'
 // @ts-ignore
 import { Line as LineChart, Pie as PieChart } from 'react-chartjs'
 import { connect } from 'react-redux'
 import 'src/App.css'
+import CategoryExpenses from 'src/components/CategoryExpenses'
 import NumberDisplay from 'src/components/NumberDisplay'
-import { CategoryColors } from 'src/declarations'
 import {
 	Action,
 	changeMonth,
@@ -116,11 +116,15 @@ class App extends React.Component<IAppProps, {}> {
 							{this.renderSummary()}
 							{this.renderSpendingOverTime(spending_over_time)}
 							<br />
-							{this.renderCategorySpending(spending_by_category)}
+							<CategoryExpenses
+								categories={spending_by_category}
+								sCategoryName={'category'}
+							/>
 							<br />
-							{this.renderSubcategorySpending(
-								spending_by_subcategory,
-							)}
+							<CategoryExpenses
+								categories={spending_by_subcategory}
+								sCategoryName={'subcategory'}
+							/>
 							<br />
 							{this.renderExpenses(expenses)}
 						</div>
@@ -348,181 +352,6 @@ class App extends React.Component<IAppProps, {}> {
 		} else {
 			return 'awaiting data'
 		}
-	}
-
-	private renderCategorySpending(categories: Category[]) {
-		const chartOptions = {
-			responsive: true,
-			maintainAspectRatio: false,
-		}
-
-		// https://flatuicolors.com/palette/cn
-		// https://flatuicolors.com/palette/nl
-		const oCategoryColours: CategoryColors = {
-			accomodation: '#EA2027', // red - red pigment
-			food: '#2ed573', // green - ufo green
-			working: '#a4b0be', // grey - peace
-			recreation: '#1e90ff', // blue - clear chill
-			transport: '#5758BB', // lavendar - circumorbital ring
-			'non-food shopping': '#F79F1F', // orangish/gold - radiant yellow
-			miscellaneous: '#833471', // light purple - hollyhock
-			health: '#ff6b81', // pink - wild watermelon
-			utility: '#747d8c', // darker grey - bay wharf
-			giving: '#7bed9f', // light green - lime soap
-		}
-
-		const chartData = categories.map(oP => {
-			return {
-				value: Number(oP.percent).toFixed(0),
-				label: oP.category,
-				color: oCategoryColours[oP.category]
-					? oCategoryColours[oP.category]
-					: 'white',
-			}
-		})
-
-		return (
-			categories.length > 0 && (
-				<div>
-					<h3>Spending by category</h3>
-					<div className="ui grid">
-						<div className="eight wide column">
-							<table className="ui celled table">
-								<thead>
-									<tr>
-										<th>Category</th>
-										<th>Total</th>
-										<th># expenses</th>
-										<th>%</th>
-									</tr>
-								</thead>
-								<tbody>
-									{categories.map((oSingleCategory, i) => {
-										return (
-											<tr key={i}>
-												<td>
-													{oSingleCategory.category}
-												</td>
-												<td>
-													$
-													{oSingleCategory.total.toFixed(
-														2,
-													)}
-												</td>
-												<td>
-													{
-														oSingleCategory.expense_count
-													}
-												</td>
-												<td>
-													{oSingleCategory.percent > 1
-														? oSingleCategory.percent.toFixed(
-																0,
-														  )
-														: oSingleCategory.percent.toFixed(
-																1,
-														  )}
-													%
-												</td>
-											</tr>
-										)
-									})}
-								</tbody>
-							</table>
-						</div>
-						<div className="eight wide column">
-							<PieChart
-								data={chartData}
-								options={chartOptions}
-								width="100%"
-								height="250"
-							/>
-						</div>
-					</div>
-				</div>
-			)
-		)
-	}
-
-	private renderSubcategorySpending(categories: Category[]) {
-		const chartOptions = {
-			responsive: true,
-			maintainAspectRatio: false,
-		}
-
-		const chartData = categories.map(oP => {
-			return {
-				value: Number(oP.percent).toFixed(0),
-				label: oP.category.replace('_', ' / '),
-				color: `hsla(${Math.random() * 360}, 100%, 50%, 1)`,
-			}
-		})
-
-		return (
-			categories.length > 0 && (
-				<div>
-					<h3>Spending by subcategory</h3>
-					<div className="ui grid">
-						<div className="eight wide column">
-							<table className="ui celled table">
-								<thead>
-									<tr>
-										<th>Category</th>
-										<th>Total</th>
-										<th># expenses</th>
-										<th>%</th>
-									</tr>
-								</thead>
-								<tbody>
-									{categories.map((oSingleCategory, i) => {
-										const sSubcategtoryFormatted: string = oSingleCategory.category.replace(
-											'_',
-											' / ',
-										)
-										return (
-											<tr key={i}>
-												<td>
-													{sSubcategtoryFormatted}
-												</td>
-												<td>
-													$
-													{oSingleCategory.total.toFixed(
-														2,
-													)}
-												</td>
-												<td>
-													{
-														oSingleCategory.expense_count
-													}
-												</td>
-												<td>
-													{oSingleCategory.percent > 1
-														? oSingleCategory.percent.toFixed(
-																0,
-														  )
-														: oSingleCategory.percent.toFixed(
-																1,
-														  )}
-													%
-												</td>
-											</tr>
-										)
-									})}
-								</tbody>
-							</table>
-						</div>
-						<div className="eight wide column">
-							<PieChart
-								data={chartData}
-								options={chartOptions}
-								width="100%"
-								height="250"
-							/>
-						</div>
-					</div>
-				</div>
-			)
-		)
 	}
 
 	private renderExpenses(expenses: Expense[]) {

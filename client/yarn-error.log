@@ -37,8 +37,10 @@ npm manifest:
   		"apollo-cache-inmemory": "^1.5.1",
   		"apollo-client": "^2.5.1",
   		"apollo-link-http": "^1.5.14",
+  		"chart.js": "^1.1.1",
   		"graphql": "^14.2.1",
   		"moment": "^2.24.0",
+  		"prettier": "^1.17.1",
   		"react": "^16.8.6",
   		"react-chartjs": "^1.2.0",
   		"react-dom": "^16.8.6",
@@ -60,7 +62,8 @@ npm manifest:
   		"start": "react-scripts-ts start",
   		"build": "react-scripts-ts build",
   		"test": "react-scripts-ts test --env=jsdom",
-  		"eject": "react-scripts-ts eject"
+  		"eject": "react-scripts-ts eject",
+  		"lint": "prettier --config=\".prettierrc\" --write \"src/**/*.ts\" \"src/**/*.tsx\""
   	}
   }
 
@@ -1844,6 +1847,11 @@ Lockfile:
     version "0.4.2"
     resolved "https://registry.yarnpkg.com/chardet/-/chardet-0.4.2.tgz#b5473b33dc97c424e5d98dc87d55d4d8a29c8bf2"
     integrity sha1-tUc7M9yXxCTl2Y3IfVXU2KKci/I=
+  
+  chart.js@^1.1.1:
+    version "1.1.1"
+    resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-1.1.1.tgz#a9b17054220bd45cbdb176fd6bcb8783ef871a7d"
+    integrity sha1-qbFwVCIL1Fy9sXb9a8uHg++HGn0=
   
   chokidar@^1.6.0, chokidar@^1.7.0:
     version "1.7.0"
@@ -6689,6 +6697,11 @@ Lockfile:
     version "0.2.0"
     resolved "https://registry.yarnpkg.com/preserve/-/preserve-0.2.0.tgz#815ed1f6ebc65926f865b310c0713bcb3315ce4b"
     integrity sha1-gV7R9uvGWSb4ZbMQwHE7yzMVzks=
+  
+  prettier@^1.17.1:
+    version "1.17.1"
+    resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.17.1.tgz#ed64b4e93e370cb8a25b9ef7fef3e4fd1c0995db"
+    integrity sha512-TzGRNvuUSmPgwivDqkZ9tM/qTGW9hqDKWOE9YHiyQdixlKbv7kvEqsmDPrcHJTKwthU774TQwZXVtaQ/mMsvjg==
   
   pretty-bytes@^4.0.2:
     version "4.0.2"
