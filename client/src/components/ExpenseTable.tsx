@@ -3,6 +3,7 @@ import * as moment from 'moment'
 import * as React from 'react'
 
 interface IProps {
+	eSetFilter: (term: string, match: string) => void
 	expenses: Expense[]
 }
 
@@ -29,12 +30,24 @@ export class ExpenseTable extends React.Component<IProps, {}> {
 						</thead>
 						<tbody>
 							{expenses.map((oSingleExpense, i) => {
+								const { vendor } = oSingleExpense
 								return (
 									<tr key={i}>
 										<td>
 											${oSingleExpense.amount.toFixed(2)}
 										</td>
-										<td>{oSingleExpense.vendor}</td>
+										<td>
+											<a
+												onClick={() =>
+													this.props.eSetFilter(
+														'Vendor',
+														vendor,
+													)
+												}
+											>
+												{vendor}
+											</a>
+										</td>
 										<td>{oSingleExpense.category}</td>
 										<td>{oSingleExpense.subcategory}</td>
 										<td>

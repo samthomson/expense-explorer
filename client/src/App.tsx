@@ -376,7 +376,10 @@ class App extends React.Component<IAppProps, {}> {
 		return (
 			<div>
 				<h3>Expenses</h3>
-				<ExpenseTable expenses={expenses} />
+				<ExpenseTable
+					eSetFilter={this.eSetFilter}
+					expenses={expenses}
+				/>
 			</div>
 		)
 	}
