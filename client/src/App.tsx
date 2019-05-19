@@ -174,6 +174,8 @@ class App extends React.Component<IAppProps, {}> {
 			totalExpenditure,
 		} = oSummary
 
+		const sDisplayPeriod: string = sScope === 'year' ? 'month' : 'day'
+
 		return (
 			<div className="ui grid">
 				<div className="eight wide column">
@@ -184,38 +186,39 @@ class App extends React.Component<IAppProps, {}> {
 							number={Number(totalExpenditure.toFixed(2))}
 						/>
 					</strong>
-					expenses: {numberOfExpenses}: ${mode_per_unit.toFixed(2)}
+					<br />
+					expenses: {numberOfExpenses}
 					<hr />
+					mode per {sDisplayPeriod}: ${mode_per_unit.toFixed(2)}
 					<br />
-					mean average per {sScope === 'year' && 'month'}
-					{sScope === 'month' && 'day'}:$
+					mean average per {sDisplayPeriod}:$
 					<NumberDisplay
 						number={Number(average_per_unit.toFixed(2))}
 					/>
 					<br />
-					median per {sScope === 'year' && 'month'}
-					{sScope === 'month' && 'day'}: $
+					median per {sDisplayPeriod}: $
 					<NumberDisplay
 						number={Number(average_per_unit.toFixed(2))}
 					/>
 					<br />
-					mode per {sScope === 'year' && 'month'}
-					{sScope === 'month' && 'day'}: ${median_per_unit.toFixed(2)}
+					mode per {sDisplayPeriod}: ${median_per_unit.toFixed(2)}
 				</div>
 				<div className="eight wide column">
 					{/* only show projection data if the current period is incomplete */}
-					{projection_for_scope && <td>projection for {sScope}</td>}
 					{projection_for_scope && (
-						<td className="collapsing">
+						<span>projection for {sScope}</span>
+					)}
+					{projection_for_scope && (
+						<span>
 							$
 							<NumberDisplay
 								number={Number(projection_for_scope.toFixed(2))}
 							/>
-						</td>
+						</span>
 					)}
 					<hr />
 					{/* only show projection data if the current period is incomplete */}
-					<td>
+					<div>
 						projection for{' '}
 						<input
 							type="text"
@@ -226,16 +229,16 @@ class App extends React.Component<IAppProps, {}> {
 								)
 							}
 						/>
-					</td>
+					</div>
 					{fYearlyBudget && prospective_budget_for_forecast && (
-						<td className="collapsing">
+						<span>
 							$
 							<NumberDisplay
 								number={Number(
 									prospective_budget_for_forecast.toFixed(2),
 								)}
 							/>
-						</td>
+						</span>
 					)}
 				</div>
 			</div>
