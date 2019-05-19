@@ -340,8 +340,6 @@ const getSummary = async (
 				const fDecimalDaysThroughMonth: number =
 					nPresentDateOfCurrentMonth / nTotalDaysInCurrentMonth
 
-				fNumberOfUnits = fDecimalDaysThroughMonth
-
 				if (oReturn['totalExpenditure'] && budget) {
 					oReturn['prospective_budget_for_forecast'] =
 						(budget - oReturn['totalExpenditure']) /
@@ -395,7 +393,6 @@ const getSummary = async (
 			//
 			// summary stats
 			//
-
 			const fAverage: number =
 				fTotalExpenditureForScopedPeriod / fNumberOfUnits
 			oReturn['average_per_unit'] = fAverage
