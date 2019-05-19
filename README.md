@@ -22,9 +22,6 @@ Stack:
 
 ## todo
 
-- single expense filter, ie. show a recurring expense over time (lunch/dinner/flights/beer/pad thai)
-	- add nicely to UI
-	- same for categories filter, ie. show a category over time (month/year)
 - split up schema file
 
 bigger features (maybe later):
