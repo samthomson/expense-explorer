@@ -27,8 +27,6 @@ function* getSummary() {
 	const nBudget = yield select(getBudget)
 	const oFilter = yield select(getFilter)
 
-	console.log('selected filter: ', oFilter)
-
 	try {
 		const data = yield client.query({
 			query: gql`
