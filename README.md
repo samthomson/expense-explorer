@@ -23,10 +23,7 @@ Stack:
 ## todo
 
 - beautify projection UX
-	- move in to right column
 	- style it like a form
-	- press return to submit
-	- loading state?
 	- info explainer?
 - standardize naming convention
 - remove breaks and use css instead
