@@ -329,6 +329,25 @@ const getSummary = async (
 						(12 - fDecimalMonthsThroughYear)
 				}
 			}
+			if (
+				scope === 'month' &&
+				moment(oQueriedDate).isSame(new Date(), scope)
+			) {
+				// get exact monthly average
+				const nPresentDateOfCurrentMonth: number = moment().date()
+				const nTotalDaysInCurrentMonth: number = moment().daysInMonth()
+
+				const fDecimalDaysThroughMonth: number =
+					nPresentDateOfCurrentMonth / nTotalDaysInCurrentMonth
+
+				fNumberOfUnits = fDecimalDaysThroughMonth
+
+				if (oReturn['totalExpenditure'] && budget) {
+					oReturn['prospective_budget_for_forecast'] =
+						(budget - oReturn['totalExpenditure']) /
+						(nTotalDaysInCurrentMonth - fDecimalDaysThroughMonth)
+				}
+			}
 
 			// for each possible time unit, see if we have matching data - or return zeros (missing dates)
 			let aTimeUnitSpending = Object.keys(oPossibleTimeUnits).map(
