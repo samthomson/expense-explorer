@@ -1,3 +1,4 @@
+import { Summary } from '@shared/declarations'
 import * as moment from 'moment'
 import * as React from 'react'
 // @ts-ignore
@@ -14,7 +15,6 @@ import {
 import { Store } from './redux/store'
 
 import NumberDisplay from './components/NumberDisplay'
-import { Summary } from '@shared/declarations'
 
 interface IAppProps {
 	fYearlyBudget: number
@@ -32,7 +32,11 @@ class App extends React.Component<IAppProps, {}> {
 		super(props)
 	}
 
-	public render() {
+	public renderError() {
+		return '...no data.. (loading?)'
+	}
+
+	public renderEverything() {
 		const { iDate, oSummary, sScope } = this.props
 		const {
 			spending_by_category,
@@ -41,7 +45,6 @@ class App extends React.Component<IAppProps, {}> {
 			expenses,
 			totalExpenditure,
 		}: Summary = oSummary
-
 		return (
 			<div className="App ui container">
 				<h1>expense explorer</h1>
@@ -125,6 +128,12 @@ class App extends React.Component<IAppProps, {}> {
 					)}
 			</div>
 		)
+	}
+
+	public render() {
+		return this.props.oSummary
+			? this.renderEverything()
+			: this.renderError()
 	}
 
 	private eChangeMonth(bBackwards: boolean) {

@@ -4,7 +4,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 import ApolloClient from 'apollo-client'
 import { createHttpLink } from 'apollo-link-http'
 import gql from 'graphql-tag'
-import { Action, ActionType, getSummarySucceded } from './actions'
+import { ActionType, getSummaryFailed, getSummarySucceded } from './actions'
 import { Store } from './store'
 
 const client = new ApolloClient({
@@ -20,7 +20,7 @@ export const getScope = (state: Store.App) => state.sScope
 export const getBudget = (state: Store.App) => state.fYearlyBudget
 
 // worker Saga: will be fired on USER_FETCH_REQUESTED actions
-function* getSummary(action: Action) {
+function* getSummary() {
 	const iDate = yield select(getIDate) // epoch seconds
 	const sScope = yield select(getScope) // month / year
 	const iBudget = yield select(getBudget)
@@ -80,8 +80,7 @@ function* getSummary(action: Action) {
 
 			yield put(getSummarySucceded(summary))
 		} else {
-			// return {...state}
-			put(getSummarySucceded({}))
+			put(getSummaryFailed())
 		}
 	} catch (e) {
 		console.log('error getting summary? ', e.message)

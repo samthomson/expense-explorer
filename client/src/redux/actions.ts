@@ -5,6 +5,7 @@ export enum ActionType {
 	CHANGE_SCOPE = 'CHANGE_SCOPE',
 	GET_SUMMARY = 'GET_SUMMARY',
 	GET_SUMMARY_SUCCEEDED = 'GET_SUMMARY_SUCCEEDED',
+	GET_SUMMARY_FAILED = 'GET_SUMMARY_FAILED',
 	SET_BUDGET = 'SET_BUDGET',
 	SET_DATE = 'SET_DATE',
 }
@@ -25,6 +26,9 @@ export type Action =
 	| {
 			type: ActionType.GET_SUMMARY_SUCCEEDED
 			oSummary: Summary
+	  }
+	| {
+			type: ActionType.GET_SUMMARY_FAILED
 	  }
 	| {
 			type: ActionType.CHANGE_MONTH
@@ -56,10 +60,17 @@ export const getSummary = (iDate: number): Action => {
 		type: ActionType.GET_SUMMARY,
 	}
 }
+
 export const getSummarySucceded = (oSummary: Summary): Action => {
 	return {
 		type: ActionType.GET_SUMMARY_SUCCEEDED,
 		oSummary,
+	}
+}
+
+export const getSummaryFailed = (): Action => {
+	return {
+		type: ActionType.GET_SUMMARY_FAILED,
 	}
 }
 
