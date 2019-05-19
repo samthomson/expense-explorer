@@ -207,7 +207,7 @@ class App extends React.Component<IAppProps, {}> {
 				<div className="six wide column">
 					{/* only show projection data if the current period is incomplete */}
 					{projection_for_scope && (
-						<span>projection for {sDisplayPeriod}</span>
+						<span>projection for {sScope}:&nbsp;</span>
 					)}
 					{projection_for_scope && (
 						<span>
@@ -217,10 +217,10 @@ class App extends React.Component<IAppProps, {}> {
 							/>
 						</span>
 					)}
-					<br />
+					<hr />
 					{/* only show projection data if the current period is incomplete */}
 					<div>
-						projection for{' '}
+						target budget for {sScope}:&nbsp;
 						<input
 							type="text"
 							value={fYearlyBudget || ''}
@@ -233,12 +233,13 @@ class App extends React.Component<IAppProps, {}> {
 					</div>
 					{fYearlyBudget && prospective_budget_for_forecast && (
 						<span>
-							$
+							spend up to $
 							<NumberDisplay
 								number={Number(
 									prospective_budget_for_forecast.toFixed(2),
 								)}
 							/>
+							&nbsp; per {sDisplayPeriod}
 						</span>
 					)}
 				</div>
