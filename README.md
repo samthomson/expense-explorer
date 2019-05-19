@@ -33,6 +33,7 @@ Stack:
 bigger features (maybe later):
 - filterable table of expenses
 - tests..
+- three prettier files could be condensed to one ideally. Need root file for editor, how to map it to each container as read only?
 
 ## usecases
 
