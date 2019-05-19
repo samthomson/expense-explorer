@@ -22,7 +22,6 @@ Stack:
 
 ## todo
 
-- componetization
 - beautify projection UX
 - single expense filter, ie. show a recurring expense over time (lunch/dinner/flights/beer/pad thai)
 	- add nicely to UI
