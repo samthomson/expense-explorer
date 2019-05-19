@@ -24,7 +24,6 @@ Stack:
 
 BUG
 - spending by sub category - format out underscore
-- dont show targetting outwith current period
 
 - beautify projection UX
 	- move in to right column

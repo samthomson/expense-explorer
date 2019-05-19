@@ -176,6 +176,13 @@ class App extends React.Component<IAppProps, {}> {
 
 		const sDisplayPeriod: string = sScope === 'year' ? 'month' : 'day'
 
+		// is the current date within the current month/year. e.g. if current date is may 12th, and it is may 19th. Then it is in the current period (both month and year scope)
+		const bInCurrentPeriod: boolean = moment.unix(this.props.iDate).isSame(
+			new Date(),
+			// @ts-ignore
+			sScope,
+		)
+
 		return (
 			<div className="ui grid">
 				<div className="five wide column">
@@ -205,42 +212,50 @@ class App extends React.Component<IAppProps, {}> {
 					mode per {sDisplayPeriod}: ${median_per_unit.toFixed(2)}
 				</div>
 				<div className="six wide column">
-					{/* only show projection data if the current period is incomplete */}
-					{projection_for_scope && (
-						<span>projection for {sScope}:&nbsp;</span>
-					)}
-					{projection_for_scope && (
-						<span>
-							$
-							<NumberDisplay
-								number={Number(projection_for_scope.toFixed(2))}
-							/>
-						</span>
-					)}
-					<hr />
-					{/* only show projection data if the current period is incomplete */}
-					<div>
-						target budget for {sScope}:&nbsp;
-						<input
-							type="text"
-							value={fYearlyBudget || ''}
-							onChange={e =>
-								this.eChangeBudget(
-									Number(e.currentTarget.value),
-								)
-							}
-						/>
-					</div>
-					{fYearlyBudget && prospective_budget_for_forecast && (
-						<span>
-							spend up to $
-							<NumberDisplay
-								number={Number(
-									prospective_budget_for_forecast.toFixed(2),
-								)}
-							/>
-							&nbsp; per {sDisplayPeriod}
-						</span>
+					{bInCurrentPeriod && (
+						<div>
+							{/* only show projection data if the current period is incomplete */}
+							{projection_for_scope && (
+								<span>projection for {sScope}:&nbsp;</span>
+							)}
+							{projection_for_scope && (
+								<span>
+									$
+									<NumberDisplay
+										number={Number(
+											projection_for_scope.toFixed(2),
+										)}
+									/>
+								</span>
+							)}
+							<hr />
+							{/* only show projection data if the current period is incomplete */}
+							<div>
+								target budget for {sScope}:&nbsp;
+								<input
+									type="text"
+									value={fYearlyBudget || ''}
+									onChange={e =>
+										this.eChangeBudget(
+											Number(e.currentTarget.value),
+										)
+									}
+								/>
+							</div>
+							{fYearlyBudget && prospective_budget_for_forecast && (
+								<span>
+									spend up to $
+									<NumberDisplay
+										number={Number(
+											prospective_budget_for_forecast.toFixed(
+												2,
+											),
+										)}
+									/>
+									&nbsp; per {sDisplayPeriod}
+								</span>
+							)}
+						</div>
 					)}
 				</div>
 			</div>
