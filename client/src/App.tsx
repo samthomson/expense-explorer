@@ -1,4 +1,4 @@
-import { Summary } from '@shared/declarations'
+import { Category, Summary } from '@shared/declarations'
 import * as moment from 'moment'
 import * as React from 'react'
 // @ts-ignore
@@ -353,7 +353,7 @@ class App extends React.Component<IAppProps, {}> {
 		}
 	}
 
-	private renderCategorySpending(categories: any[]) {
+	private renderCategorySpending(categories: Category[]) {
 		const chartOptions = {
 			responsive: true,
 			maintainAspectRatio: false,
@@ -377,7 +377,6 @@ class App extends React.Component<IAppProps, {}> {
 		const chartData = categories.map(oP => {
 			return {
 				value: Number(oP.percent).toFixed(0),
-				// label: `"${oP.category}"`,
 				label: oP.category,
 				color: oCategoryColours[oP.category]
 					? oCategoryColours[oP.category]
@@ -448,7 +447,7 @@ class App extends React.Component<IAppProps, {}> {
 		)
 	}
 
-	private renderSubcategorySpending(categories: any[]) {
+	private renderSubcategorySpending(categories: Category[]) {
 		const chartOptions = {
 			responsive: true,
 			maintainAspectRatio: false,

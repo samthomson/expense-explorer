@@ -20,3 +20,10 @@ export type Expense = {
 	subcategory: string
 	date: string
 }
+
+export type Category = {
+	category: string
+	expense_count: number
+	percent: number
+	total: number
+}
