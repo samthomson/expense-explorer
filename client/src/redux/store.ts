@@ -1,7 +1,7 @@
 export namespace Store {
 	export type App = {
 		iDate: number // unix epoch - milliseconds
-		oSummary: {},
+		oSummary: {}
 		sScope: string // month / year
 		fYearlyBudget: number | null
 	}

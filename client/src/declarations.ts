@@ -13,9 +13,9 @@ export type Summary = {
 	prospective_budget_for_forecast: number
 }
 export type Expense = {
-	amount: number,
-	vendor: string,
-	category: string,
-	subcategory: string,
+	amount: number
+	vendor: string
+	category: string
+	subcategory: string
 	date: string
 }

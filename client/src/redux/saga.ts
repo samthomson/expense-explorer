@@ -10,9 +10,9 @@ import { Store } from './store'
 const client = new ApolloClient({
 	link: createHttpLink({
 		uri: 'http://localhost:3300/graphql',
-		credentials: 'include'
+		credentials: 'include',
 	}),
-	cache: new InMemoryCache()
+	cache: new InMemoryCache(),
 })
 
 export const getIDate = (state: Store.App) => state.iDate
@@ -24,77 +24,75 @@ function* getSummary(action: Action) {
 	const iDate = yield select(getIDate) // epoch seconds
 	const sScope = yield select(getScope) // month / year
 	const iBudget = yield select(getBudget)
-	
-   	try {
+
+	try {
 		const data = yield client.query({
 			query: gql`
-				query GetSummary($date: Int!, $scope: String!, $budget: Int) {					
-					summary(date: $date, scope: $scope, budget: $budget){
-						totalExpenditure,
-						numberOfExpenses,
-						average_per_unit,
-						median_per_unit,
-						mode_per_unit,
-						projection_for_scope,
-						prospective_budget_for_forecast,
+				query GetSummary($date: Int!, $scope: String!, $budget: Int) {
+					summary(date: $date, scope: $scope, budget: $budget) {
+						totalExpenditure
+						numberOfExpenses
+						average_per_unit
+						median_per_unit
+						mode_per_unit
+						projection_for_scope
+						prospective_budget_for_forecast
 						projected_spending_over_time {
-							date,
+							date
 							total
 						}
 						expenses {
-							vendor,
-							amount,
-							category,
-							subcategory,
+							vendor
+							amount
+							category
+							subcategory
 							date
-						},
+						}
 						spending_by_category {
-							category,
-							expense_count,
-							total,
+							category
+							expense_count
+							total
 							percent
-						},
+						}
 						spending_by_subcategory {
-							category,
-							expense_count,
-							total,
+							category
+							expense_count
+							total
 							percent
-						},
+						}
 						spending_over_time {
-							date,
-							expense_count,
+							date
+							expense_count
 							total
 						}
-					} 
+					}
 				}
 			`,
 			variables: {
 				date: iDate,
 				scope: sScope,
-				budget: iBudget
-			}
+				budget: iBudget,
+			},
 		})
 
 		if (data && data.data && data.data.summary) {
 			const { summary } = data.data
 
 			yield put(getSummarySucceded(summary))
-		}else {
+		} else {
 			// return {...state}
 			put(getSummarySucceded({}))
 		}
-   	} catch (e) {
+	} catch (e) {
 		console.log('error getting summary? ', e.message)
-	   // yield put({type: "USER_FETCH_FAILED", message: e.message});
-   }
+		// yield put({type: "USER_FETCH_FAILED", message: e.message});
+	}
 }
 
 function* watchGetSummary() {
-	yield takeLatest("GET_SUMMARY", getSummary);
+	yield takeLatest('GET_SUMMARY', getSummary)
 }
 
 export default function* rootSaga() {
-	yield all([
-		watchGetSummary()
-	])
-  }
+	yield all([watchGetSummary()])
+}

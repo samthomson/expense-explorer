@@ -10,12 +10,11 @@ import { appReducers } from './redux/reducers'
 import rootSaga from './redux/saga'
 import { Store } from './redux/store'
 
-
 const sagaMiddleware = createSagaMiddleware()
 
 const store: ReduxStore<Store.App> = createStore(
 	appReducers,
-	applyMiddleware(sagaMiddleware)
+	applyMiddleware(sagaMiddleware),
 )
 
 sagaMiddleware.run(rootSaga)
@@ -28,5 +27,5 @@ ReactDOM.render(
 			<App />
 		</Provider>
 	</div>,
-	document.getElementById('root') as HTMLElement
+	document.getElementById('root') as HTMLElement,
 )
