@@ -300,7 +300,7 @@ class App extends React.Component<IAppProps, {}> {
 			if (this.props.oSummary.projected_spending_over_time) {
 				// render projection data too
 				const afSpendingProjection = this.props.oSummary.projected_spending_over_time.map(
-					oItem => oItem.total,
+					oItem => Number(oItem.total.toFixed(2)),
 				)
 
 				aDataSets.push({
