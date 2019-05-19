@@ -4,7 +4,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 import ApolloClient from 'apollo-client'
 import { createHttpLink } from 'apollo-link-http'
 import gql from 'graphql-tag'
-import { Action, getSummarySucceded } from './actions'
+import { Action, ActionType, getSummarySucceded } from './actions'
 import { Store } from './store'
 
 const client = new ApolloClient({
@@ -90,7 +90,7 @@ function* getSummary(action: Action) {
 }
 
 function* watchGetSummary() {
-	yield takeLatest('GET_SUMMARY', getSummary)
+	yield takeLatest(ActionType.GET_SUMMARY, getSummary)
 }
 
 export default function* rootSaga() {

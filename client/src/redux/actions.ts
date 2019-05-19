@@ -1,40 +1,49 @@
+export enum ActionType {
+	CHANGE_MONTH,
+	CHANGE_SCOPE,
+	GET_SUMMARY,
+	GET_SUMMARY_SUCCEEDED,
+	SET_BUDGET,
+	SET_DATE,
+}
+
 export type Action =
 	| {
-			type: 'SET_DATE'
+			type: ActionType.SET_DATE
 			iDate: number
 	  }
 	| {
-			type: 'SET_BUDGET'
+			type: ActionType.SET_BUDGET
 			fYearlyBudget: number
 	  }
 	| {
-			type: 'GET_SUMMARY'
+			type: ActionType.GET_SUMMARY
 			iDate: number
 	  }
 	| {
-			type: 'GET_SUMMARY_SUCCEEDED'
+			type: ActionType.GET_SUMMARY_SUCCEEDED
 			oSummary: {}
 	  }
 	| {
-			type: 'CHANGE_MONTH'
+			type: ActionType.CHANGE_MONTH
 			bBackwards: boolean
 			oSummary: {}
 	  }
 	| {
-			type: 'CHANGE_SCOPE'
+			type: ActionType.CHANGE_SCOPE
 			sScope: string
 	  }
 
 export const setDate = (iDate: number): Action => {
 	return {
-		type: 'SET_DATE',
+		type: ActionType.SET_DATE,
 		iDate,
 	}
 }
 
 export const setBudget = (fYearlyBudget: number): Action => {
 	return {
-		type: 'SET_BUDGET',
+		type: ActionType.SET_BUDGET,
 		fYearlyBudget,
 	}
 }
@@ -42,12 +51,12 @@ export const setBudget = (fYearlyBudget: number): Action => {
 export const getSummary = (iDate: number): Action => {
 	return {
 		iDate,
-		type: 'GET_SUMMARY',
+		type: ActionType.GET_SUMMARY,
 	}
 }
 export const getSummarySucceded = (oSummary: {}): Action => {
 	return {
-		type: 'GET_SUMMARY_SUCCEEDED',
+		type: ActionType.GET_SUMMARY_SUCCEEDED,
 		oSummary,
 	}
 }

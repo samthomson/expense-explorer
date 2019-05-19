@@ -1,5 +1,5 @@
 import * as moment from 'moment'
-import { Action } from './actions'
+import { Action, ActionType } from './actions'
 import { Store } from './store'
 
 const initialState: Store.App = {
@@ -14,17 +14,17 @@ export function appReducers(
 	action: Action,
 ): Store.App {
 	switch (action.type) {
-		case 'SET_DATE':
+		case ActionType.SET_DATE:
 			return {
 				...state,
 				iDate: action.iDate,
 			}
-		case 'SET_BUDGET':
+		case ActionType.SET_BUDGET:
 			return {
 				...state,
 				fYearlyBudget: action.fYearlyBudget,
 			}
-		case 'CHANGE_MONTH':
+		case ActionType.CHANGE_MONTH:
 			const { bBackwards } = action
 			const { iDate, sScope } = state
 
@@ -40,7 +40,7 @@ export function appReducers(
 				iDate: oDate.unix(),
 				oSummary: {},
 			}
-		case 'CHANGE_SCOPE':
+		case ActionType.CHANGE_SCOPE:
 			let sScopeFromAction = action.sScope
 
 			sScopeFromAction =
@@ -50,7 +50,7 @@ export function appReducers(
 				...state,
 				sScope: sScopeFromAction,
 			}
-		case 'GET_SUMMARY_SUCCEEDED':
+		case ActionType.GET_SUMMARY_SUCCEEDED:
 			return {
 				...state,
 				oSummary: action.oSummary,
