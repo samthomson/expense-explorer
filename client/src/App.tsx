@@ -107,11 +107,12 @@ class App extends React.Component<IAppProps, {}> {
 								{this.renderScopeLabel(nDate, sScope)}
 								{oFilter && (
 									<span>
-										&nbsp;-&nbsp;
+										&nbsp;(&nbsp;
 										{oFilter.term}:{oFilter.match}
 										<a onClick={() => this.eRemoveFilter()}>
 											<i className="icon trash" />
 										</a>
+										&nbsp;)
 									</span>
 								)}
 							</h2>
