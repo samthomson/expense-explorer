@@ -6,6 +6,7 @@ import { Line as LineChart, Pie as PieChart } from 'react-chartjs'
 import { connect } from 'react-redux'
 import 'src/App.css'
 import CategoryExpenses from 'src/components/CategoryExpenses'
+import ExpenseTable from 'src/components/ExpenseTable'
 import NumberDisplay from 'src/components/NumberDisplay'
 import {
 	Action,
@@ -356,60 +357,16 @@ class App extends React.Component<IAppProps, {}> {
 
 	private renderExpenses(expenses: Expense[]) {
 		return (
-			expenses.length > 0 && (
-				<div>
-					<h3>expenses</h3>
-					<table className="ui celled table">
-						<thead>
-							<tr>
-								<th>usd</th>
-								<th>item</th>
-								<th>category</th>
-								<th>subcategory</th>
-								<th>date</th>
-							</tr>
-						</thead>
-						<tbody>
-							{expenses.map((oSingleExpense, i) => {
-								return (
-									<tr key={i}>
-										<td>
-											${oSingleExpense.amount.toFixed(2)}
-										</td>
-										<td>{oSingleExpense.vendor}</td>
-										<td>{oSingleExpense.category}</td>
-										<td>{oSingleExpense.subcategory}</td>
-										<td>
-											{this.sRenderPiciliLink(
-												oSingleExpense.date,
-											)}
-										</td>
-									</tr>
-								)
-							})}
-						</tbody>
-					</table>
-				</div>
-			)
+			<div>
+				<h3>expenses</h3>
+				<ExpenseTable expenses={expenses} />
+			</div>
 		)
 	}
 
 	private renderScopeLabel(iDate: number, sScope: string) {
 		const sFormat: string = sScope === 'month' ? 'MMMM YYYY' : 'Y'
 		return moment.unix(iDate).format(sFormat)
-	}
-
-	private sRenderPiciliLink(sDate: string) {
-		const oTargetDate: moment.Moment = moment(sDate, 'MM/DD/YYYY') // format that went into elastic (raw)
-		const sDisplayDate: string = oTargetDate.format('ddd Do')
-		const sQueryValueDate: string = oTargetDate.format('DD/MM/YYYY')
-		const sPiciliURL: string = `https://test-instance.picili.com/1/calendar?filters=[{"type":"calendar","display":"${sDisplayDate}","value":"day:${sQueryValueDate}"}]`
-
-		return (
-			<a target="_blank" href={sPiciliURL}>
-				{sDisplayDate}
-			</a>
-		)
 	}
 }
 
