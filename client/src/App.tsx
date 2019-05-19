@@ -110,35 +110,33 @@ class App extends React.Component<IAppProps, {}> {
 				</div>
 
 				{/* render expenses for current date */}
-				{typeof totalExpenditure !== 'undefined' &&
-					totalExpenditure > 0 && (
-						<div>
-							<br />
-							{this.renderSummary()}
-							{this.renderSpendingOverTime(spending_over_time)}
-							<br />
-							<CategoryExpenses
-								categories={spending_by_category}
-								sCategoryName={'category'}
-							/>
-							<br />
-							<CategoryExpenses
-								categories={spending_by_subcategory}
-								sCategoryName={'subcategory'}
-							/>
-							<br />
-							{this.renderExpenses(expenses)}
-						</div>
-					)}
-				{typeof totalExpenditure !== 'undefined' &&
-					totalExpenditure === 0 && (
-						<div>
-							<br />
-							<h2 className="centered-text">
-								no expense data for current period..
-							</h2>
-						</div>
-					)}
+				{totalExpenditure > 0 && (
+					<div>
+						<br />
+						{this.renderSummary()}
+						{this.renderSpendingOverTime(spending_over_time)}
+						<br />
+						<CategoryExpenses
+							categories={spending_by_category}
+							sCategoryName={'category'}
+						/>
+						<br />
+						<CategoryExpenses
+							categories={spending_by_subcategory}
+							sCategoryName={'subcategory'}
+						/>
+						<br />
+						{this.renderExpenses(expenses)}
+					</div>
+				)}
+				{totalExpenditure === 0 && (
+					<div>
+						<br />
+						<h2 className="centered-text">
+							no expense data for current period..
+						</h2>
+					</div>
+				)}
 			</div>
 		)
 	}
