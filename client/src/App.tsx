@@ -22,6 +22,7 @@ import './../node_modules/semantic-ui-css/semantic.min.css'
 interface IAppProps {
 	nYearlyBudget: number
 	nDate: number
+	oFilter: Filter
 	oSummary: Summary
 	sScope: string
 	changeMonth: (bBackwards: boolean) => {}
@@ -83,7 +84,7 @@ class App extends React.Component<IAppProps, {}> {
 	}
 
 	public renderEverything() {
-		const { nDate, oSummary, sScope } = this.props
+		const { nDate, oFilter, oSummary, sScope } = this.props
 		const {
 			spending_by_category,
 			spending_by_subcategory,
@@ -102,7 +103,18 @@ class App extends React.Component<IAppProps, {}> {
 						</div>
 						<div className="column centered-text">
 							{/* current period */}
-							<h2>{this.renderScopeLabel(nDate, sScope)}</h2>
+							<h2>
+								{this.renderScopeLabel(nDate, sScope)}
+								{oFilter && (
+									<span>
+										&nbsp;-&nbsp;
+										{oFilter.term}:{oFilter.match}
+										<a onClick={() => this.eRemoveFilter()}>
+											<i className="icon trash" />
+										</a>
+									</span>
+								)}
+							</h2>
 						</div>
 						<div className="column">
 							{/* date navigation */}
@@ -204,7 +216,6 @@ class App extends React.Component<IAppProps, {}> {
 					<NumberDisplay
 						number={Number(average_per_unit.toFixed(2))}
 					/>
-					<a onClick={() => this.eRemoveFilter()}>remove filter</a>
 				</div>
 				<div className="five wide column">
 					mode per {sDisplayPeriod}: ${mode_per_unit.toFixed(2)}
@@ -386,9 +397,10 @@ class App extends React.Component<IAppProps, {}> {
 }
 
 const mapStateToProps = (state: Store.App) => {
-	const { nDate, oSummary, sScope, nYearlyBudget } = state
+	const { nDate, oFilter, oSummary, sScope, nYearlyBudget } = state
 	return {
 		nDate,
+		oFilter,
 		oSummary,
 		sScope,
 		nYearlyBudget,
