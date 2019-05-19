@@ -65,30 +65,27 @@ export class CategoryExpenses extends React.Component<IProps, {}> {
 								</thead>
 								<tbody>
 									{categories.map((oSingleCategory, i) => {
+										const {
+											category,
+											expense_count,
+											percent,
+											total,
+										} = oSingleCategory
+
 										return (
 											<tr key={i}>
 												<td>
-													{oSingleCategory.category}
-												</td>
-												<td>
-													$
-													{oSingleCategory.total.toFixed(
-														2,
+													{category.replace(
+														'_',
+														' / ',
 													)}
 												</td>
+												<td>${total.toFixed(2)}</td>
+												<td>{expense_count}</td>
 												<td>
-													{
-														oSingleCategory.expense_count
-													}
-												</td>
-												<td>
-													{oSingleCategory.percent > 1
-														? oSingleCategory.percent.toFixed(
-																0,
-														  )
-														: oSingleCategory.percent.toFixed(
-																1,
-														  )}
+													{percent > 1
+														? percent.toFixed(0)
+														: percent.toFixed(1)}
 													%
 												</td>
 											</tr>

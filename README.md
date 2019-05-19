@@ -22,9 +22,6 @@ Stack:
 
 ## todo
 
-BUG
-- spending by sub category - format out underscore
-
 - beautify projection UX
 	- move in to right column
 	- style it like a form
