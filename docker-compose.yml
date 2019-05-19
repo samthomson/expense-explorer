@@ -7,6 +7,7 @@ services:
       - "3400:3000"
     volumes:
       - ./client:/client
+      - ./shared:/shared
   server:
     build:
       context: ./server
@@ -20,6 +21,7 @@ services:
       - "3300:3100"
     volumes:
       - ./server:/server
+      - ./shared:/shared
       - /home/sam/Dropbox/Apps/Iexpense lite:/server/importer/data
     depends_on:
       - elasticsearch
