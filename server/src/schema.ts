@@ -478,13 +478,18 @@ const fMedian = (afValues: number[]) => {
 
 // @ts-ignore
 const mode = arr => {
-	if (arr.filter((x, index) => arr.indexOf(x) == index).length == arr.length)
+	if (
+		arr.filter((x: number, index: number) => arr.indexOf(x) == index)
+			.length == arr.length
+	)
 		return arr
 	else
 		return mode(
 			arr
-				.sort((x, index) => x - index)
-				.map((x, index) => (arr.indexOf(x) != index ? x : null))
-				.filter(x => x != null),
+				.sort((x: number, index: number) => x - index)
+				.map((x: number, index: number) =>
+					arr.indexOf(x) != index ? x : null,
+				)
+				.filter((x: number) => x != null),
 		)
 }
