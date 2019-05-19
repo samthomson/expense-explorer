@@ -207,7 +207,7 @@ class App extends React.Component<IAppProps, {}> {
 				<div className="six wide column">
 					{/* only show projection data if the current period is incomplete */}
 					{projection_for_scope && (
-						<span>projection for {sScope}</span>
+						<span>projection for {sDisplayPeriod}</span>
 					)}
 					{projection_for_scope && (
 						<span>
