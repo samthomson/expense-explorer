@@ -228,9 +228,9 @@ class App extends React.Component<IAppProps, {}> {
 									/>
 								</span>
 							)}
-							<hr />
+							<br />
 							{/* only show projection data if the current period is incomplete */}
-							<div>
+							<div className="ui input">
 								target budget for {sScope}:&nbsp;
 								<input
 									type="text"
@@ -243,7 +243,7 @@ class App extends React.Component<IAppProps, {}> {
 								/>
 							</div>
 							{fYearlyBudget && prospective_budget_for_forecast && (
-								<span>
+								<div>
 									spend up to $
 									<NumberDisplay
 										number={Number(
@@ -252,8 +252,9 @@ class App extends React.Component<IAppProps, {}> {
 											),
 										)}
 									/>
-									&nbsp; per {sDisplayPeriod}
-								</span>
+									&nbsp; per {sDisplayPeriod} to come in at $
+									{fYearlyBudget} for the {sScope}.
+								</div>
 							)}
 						</div>
 					)}

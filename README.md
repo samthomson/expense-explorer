@@ -22,9 +22,6 @@ Stack:
 
 ## todo
 
-- beautify projection UX
-	- style it like a form
-	- info explainer?
 - standardize naming convention
 - remove breaks and use css instead
 - single expense filter, ie. show a recurring expense over time (lunch/dinner/flights/beer/pad thai)
