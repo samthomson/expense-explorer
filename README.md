@@ -17,15 +17,22 @@ Stack:
 	- import script assumes all CSVs in that folder are named like `ix_20190417.csv`
 - `docker-compose up` to start
 - `docker-compose run server yarn run import`
-- browse to `http://localhost:3400`
+- browse to `http://localhost:3400` for the client, or `http://localhost:3300/graphql` to explore the API
 
 ## todo
 
+- pretttier
+- action type enums
+- shared types
+- componetization
+- beautify projection UX
+- single expense filter, ie. show a recurring expense over time (lunch/dinner/flights/beer/pad thai)
+	- add nicely to UI
+	- same for categories filter, ie. show a category over time (month/year)
+
 bigger features (maybe later):
 - filterable table of expenses
-- category filter, ie. show a category over time (month/year)
-- single expense filter, ie. show a recurring expense over time (lunch/dinner/flights/beer/pad thai)
-- subcategory breakdown too
+
 
 ## usecases
 
