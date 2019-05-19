@@ -175,88 +175,70 @@ class App extends React.Component<IAppProps, {}> {
 		} = oSummary
 
 		return (
-			<table className="ui table">
-				<tbody>
-					<tr>
-						<td>total expenditure</td>
-						<td className="collapsing">
-							<strong>
-								$
-								<NumberDisplay
-									number={Number(totalExpenditure.toFixed(2))}
-								/>
-							</strong>
-						</td>
-
-						<td>expenses</td>
-						<td className="collapsing">{numberOfExpenses}</td>
-					</tr>
-					<tr>
-						<td>
-							mean average per {sScope === 'year' && 'month'}
-							{sScope === 'month' && 'day'}
-							<br />
-							median per {sScope === 'year' && 'month'}
-							{sScope === 'month' && 'day'}
-							<br />
-							mode per {sScope === 'year' && 'month'}
-							{sScope === 'month' && 'day'}
-						</td>
+			<div className="ui grid">
+				<div className="eight wide column">
+					total expenditure:{' '}
+					<strong>
+						$
+						<NumberDisplay
+							number={Number(totalExpenditure.toFixed(2))}
+						/>
+					</strong>
+					expenses: {numberOfExpenses}: ${mode_per_unit.toFixed(2)}
+					<hr />
+					<br />
+					mean average per {sScope === 'year' && 'month'}
+					{sScope === 'month' && 'day'}:$
+					<NumberDisplay
+						number={Number(average_per_unit.toFixed(2))}
+					/>
+					<br />
+					median per {sScope === 'year' && 'month'}
+					{sScope === 'month' && 'day'}: $
+					<NumberDisplay
+						number={Number(average_per_unit.toFixed(2))}
+					/>
+					<br />
+					mode per {sScope === 'year' && 'month'}
+					{sScope === 'month' && 'day'}: ${median_per_unit.toFixed(2)}
+				</div>
+				<div className="eight wide column">
+					{/* only show projection data if the current period is incomplete */}
+					{projection_for_scope && <td>projection for {sScope}</td>}
+					{projection_for_scope && (
 						<td className="collapsing">
 							$
 							<NumberDisplay
-								number={Number(average_per_unit.toFixed(2))}
-							/>
-							<br />${median_per_unit.toFixed(2)}
-							<br />${mode_per_unit.toFixed(2)}
-						</td>
-						{/* only show projection data if the current period is incomplete */}
-						{projection_for_scope && (
-							<td>projection for {sScope}</td>
-						)}
-						{projection_for_scope && (
-							<td className="collapsing">
-								$
-								<NumberDisplay
-									number={Number(
-										projection_for_scope.toFixed(2),
-									)}
-								/>
-							</td>
-						)}
-					</tr>
-					<tr>
-						<td />
-						<td />
-
-						{/* only show projection data if the current period is incomplete */}
-						<td>
-							projection for{' '}
-							<input
-								type="text"
-								value={fYearlyBudget || ''}
-								onChange={e =>
-									this.eChangeBudget(
-										Number(e.currentTarget.value),
-									)
-								}
+								number={Number(projection_for_scope.toFixed(2))}
 							/>
 						</td>
-						{fYearlyBudget && prospective_budget_for_forecast && (
-							<td className="collapsing">
-								$
-								<NumberDisplay
-									number={Number(
-										prospective_budget_for_forecast.toFixed(
-											2,
-										),
-									)}
-								/>
-							</td>
-						)}
-					</tr>
-				</tbody>
-			</table>
+					)}
+					<hr />
+					{/* only show projection data if the current period is incomplete */}
+					<td>
+						projection for{' '}
+						<input
+							type="text"
+							value={fYearlyBudget || ''}
+							onChange={e =>
+								this.eChangeBudget(
+									Number(e.currentTarget.value),
+								)
+							}
+						/>
+					</td>
+					{fYearlyBudget && prospective_budget_for_forecast && (
+						<td className="collapsing">
+							$
+							<NumberDisplay
+								number={Number(
+									prospective_budget_for_forecast.toFixed(2),
+								)}
+							/>
+						</td>
+					)}
+				</div>
+			</div>
 		)
 	}
 
