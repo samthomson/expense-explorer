@@ -178,7 +178,7 @@ class App extends React.Component<IAppProps, {}> {
 
 		return (
 			<div className="ui grid">
-				<div className="eight wide column">
+				<div className="five wide column">
 					total expenditure:{' '}
 					<strong>
 						$
@@ -188,13 +188,14 @@ class App extends React.Component<IAppProps, {}> {
 					</strong>
 					<br />
 					expenses: {numberOfExpenses}
-					<hr />
-					mode per {sDisplayPeriod}: ${mode_per_unit.toFixed(2)}
 					<br />
 					mean average per {sDisplayPeriod}:$
 					<NumberDisplay
 						number={Number(average_per_unit.toFixed(2))}
 					/>
+				</div>
+				<div className="five wide column">
+					mode per {sDisplayPeriod}: ${mode_per_unit.toFixed(2)}
 					<br />
 					median per {sDisplayPeriod}: $
 					<NumberDisplay
@@ -203,7 +204,7 @@ class App extends React.Component<IAppProps, {}> {
 					<br />
 					mode per {sDisplayPeriod}: ${median_per_unit.toFixed(2)}
 				</div>
-				<div className="eight wide column">
+				<div className="six wide column">
 					{/* only show projection data if the current period is incomplete */}
 					{projection_for_scope && (
 						<span>projection for {sScope}</span>
@@ -216,7 +217,7 @@ class App extends React.Component<IAppProps, {}> {
 							/>
 						</span>
 					)}
-					<hr />
+					<br />
 					{/* only show projection data if the current period is incomplete */}
 					<div>
 						projection for{' '}
