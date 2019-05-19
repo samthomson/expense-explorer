@@ -23,6 +23,11 @@ Stack:
 ## todo
 
 - beautify projection UX
+	- move in to right column
+	- style it like a form
+	- press return to submit
+	- loading state?
+	- info explainer?
 - single expense filter, ie. show a recurring expense over time (lunch/dinner/flights/beer/pad thai)
 	- add nicely to UI
 	- same for categories filter, ie. show a category over time (month/year)
@@ -31,6 +36,7 @@ bigger features (maybe later):
 - filterable table of expenses
 - tests..
 - three prettier files could be condensed to one ideally. Need root file for editor, how to map it to each container as read only?
+- loading state while requests are being made
 
 ## usecases
 
