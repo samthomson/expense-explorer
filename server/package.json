@@ -12,6 +12,7 @@
     "express-graphql": "^0.8.0",
     "graphql": "^14.2.1",
     "moment": "^2.24.0",
+    "prettier": "^1.17.1",
     "ts-node": "^8.1.0",
     "typescript": "^3.4.3"
   },
@@ -30,6 +31,7 @@
     "import": "ts-node importer/import.ts",
     "search": "ts-node importer/searchtest.ts",
     "wipe": "ts-node importer/wipe-index.ts",
-    "re-index": "yarn run wipe && yarn run import"
+    "re-index": "yarn run wipe && yarn run import",
+    "lint": "prettier --config=\".prettierrc\" --write \"src/**/*.ts\""
   }
 }
