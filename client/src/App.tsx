@@ -15,7 +15,7 @@ import { Store } from './redux/store'
 
 import NumberDisplay from './components/NumberDisplay'
 
-import { Summary } from './declarations'
+import { Summary } from '@shared/declarations'
 
 interface IAppProps {
 	fYearlyBudget: number
