@@ -14,7 +14,6 @@ import {
 import { Store } from './redux/store'
 
 import NumberDisplay from './components/NumberDisplay'
-
 import { Summary } from '@shared/declarations'
 
 interface IAppProps {
@@ -144,6 +143,7 @@ class App extends React.Component<IAppProps, {}> {
 	}
 
 	private renderSummary() {
+		const { fYearlyBudget, oSummary, sScope } = this.props
 		const {
 			average_per_unit,
 			median_per_unit,
@@ -152,8 +152,7 @@ class App extends React.Component<IAppProps, {}> {
 			projection_for_scope,
 			prospective_budget_for_forecast,
 			totalExpenditure,
-		} = this.props.oSummary
-		const { fYearlyBudget, sScope } = this.props
+		} = oSummary
 
 		return (
 			<table className="ui table">

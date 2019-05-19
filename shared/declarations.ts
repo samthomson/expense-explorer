@@ -12,6 +12,7 @@ export type Summary = {
 	numberOfExpenses: number
 	prospective_budget_for_forecast: number
 }
+
 export type Expense = {
 	amount: number
 	vendor: string

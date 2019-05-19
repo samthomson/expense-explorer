@@ -15,7 +15,8 @@ Stack:
 
 - update left hand side of data volume import (`/home/sam/Dropbox/Apps/Iexpense lite:/server/importer/data`)` to contain your own export folder
 	- import script assumes all CSVs in that folder are named like `ix_20190417.csv`
-- `docker-compose up` to start
+- `docker-compose up -d` to start
+	- or in dev: `docker-compose up -d elasticsearch dejavu && docker-compose up client server`
 - `docker-compose run server yarn run import`
 - browse to `http://localhost:3400` for the client, or `http://localhost:3300/graphql` to explore the API
 

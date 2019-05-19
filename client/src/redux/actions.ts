@@ -1,3 +1,5 @@
+import { Summary } from '@shared/declarations'
+
 export enum ActionType {
 	CHANGE_MONTH = 'CHANGE_MONTH',
 	CHANGE_SCOPE = 'CHANGE_SCOPE',
@@ -22,12 +24,12 @@ export type Action =
 	  }
 	| {
 			type: ActionType.GET_SUMMARY_SUCCEEDED
-			oSummary: {}
+			oSummary: Summary
 	  }
 	| {
 			type: ActionType.CHANGE_MONTH
 			bBackwards: boolean
-			oSummary: {}
+			oSummary: Summary
 	  }
 	| {
 			type: ActionType.CHANGE_SCOPE
@@ -54,7 +56,7 @@ export const getSummary = (iDate: number): Action => {
 		type: ActionType.GET_SUMMARY,
 	}
 }
-export const getSummarySucceded = (oSummary: {}): Action => {
+export const getSummarySucceded = (oSummary: Summary): Action => {
 	return {
 		type: ActionType.GET_SUMMARY_SUCCEEDED,
 		oSummary,

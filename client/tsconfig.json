@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"baseUrl": ".",
+		"baseUrl": "./",
 		"outDir": "build/dist",
 		"module": "esnext",
 		"target": "es2017",
@@ -9,7 +9,6 @@
 		"allowJs": true,
 		"jsx": "react",
 		"moduleResolution": "node",
-		"rootDir": "src",
 		"forceConsistentCasingInFileNames": true,
 		"noImplicitReturns": true,
 		"noImplicitThis": true,
@@ -18,6 +17,7 @@
 		"strictNullChecks": true,
 		"suppressImplicitAnyIndexErrors": true,
 		"noUnusedLocals": true,
+		"noUnusedParameters": true,
 		"paths": {
 			"@shared/*": ["../shared/*"]
 		}

@@ -4,7 +4,7 @@ import { Store } from './store'
 
 const initialState: Store.App = {
 	iDate: moment().unix(),
-	oSummary: {},
+	oSummary: null,
 	sScope: 'month',
 	fYearlyBudget: null,
 }
@@ -38,7 +38,7 @@ export function appReducers(
 			return {
 				...state,
 				iDate: oDate.unix(),
-				oSummary: {},
+				oSummary: null,
 			}
 		case ActionType.CHANGE_SCOPE:
 			let sScopeFromAction = action.sScope
