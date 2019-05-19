@@ -1,20 +1,21 @@
-import { Category, Summary } from '@shared/declarations'
+import { Category, Expense, Summary, TimeUnit } from '@shared/declarations'
 import * as moment from 'moment'
 import * as React from 'react'
 // @ts-ignore
 import { Line as LineChart, Pie as PieChart } from 'react-chartjs'
 import { connect } from 'react-redux'
-import './../node_modules/semantic-ui-css/semantic.min.css'
-import './App.css'
+import 'src/App.css'
+import NumberDisplay from 'src/components/NumberDisplay'
+import { CategoryColors } from 'src/declarations'
 import {
+	Action,
 	changeMonth,
 	changeScope,
 	getSummary,
 	setBudget,
-} from './redux/actions'
-import { Store } from './redux/store'
-
-import NumberDisplay from './components/NumberDisplay'
+} from 'src/redux/actions'
+import { Store } from 'src/redux/store'
+import './../node_modules/semantic-ui-css/semantic.min.css'
 
 interface IAppProps {
 	fYearlyBudget: number
@@ -28,10 +29,6 @@ interface IAppProps {
 }
 
 class App extends React.Component<IAppProps, {}> {
-	constructor(props: any) {
-		super(props)
-	}
-
 	public renderError() {
 		return '...no data.. (loading?)'
 	}
@@ -260,7 +257,7 @@ class App extends React.Component<IAppProps, {}> {
 		)
 	}
 
-	private renderSpendingOverTime(timeunits: any[]) {
+	private renderSpendingOverTime(timeunits: TimeUnit[]) {
 		if (timeunits.length > 0) {
 			const chartOptions = {
 				responsive: true,
@@ -361,7 +358,7 @@ class App extends React.Component<IAppProps, {}> {
 
 		// https://flatuicolors.com/palette/cn
 		// https://flatuicolors.com/palette/nl
-		const oCategoryColours: any = {
+		const oCategoryColours: CategoryColors = {
 			accomodation: '#EA2027', // red - red pigment
 			food: '#2ed573', // green - ufo green
 			working: '#a4b0be', // grey - peace
@@ -528,7 +525,7 @@ class App extends React.Component<IAppProps, {}> {
 		)
 	}
 
-	private renderExpenses(expenses: any[]) {
+	private renderExpenses(expenses: Expense[]) {
 		return (
 			expenses.length > 0 && (
 				<div>
@@ -597,7 +594,7 @@ const mapStateToProps = (state: Store.App) => {
 	}
 }
 
-const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = (dispatch: React.Dispatch<Action>) => ({
 	changeMonth: (bBackwards: boolean) => dispatch(changeMonth(bBackwards)),
 	changeScope: (sScope: string) => dispatch(changeScope(sScope)),
 	getSummary: (iDate: number) => dispatch(getSummary(iDate)),

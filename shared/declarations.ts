@@ -1,8 +1,8 @@
 export type Summary = {
-	spending_by_category: any[]
-	spending_by_subcategory: any[]
-	spending_over_time: any[]
-	projected_spending_over_time: any[]
+	spending_by_category: Category[]
+	spending_by_subcategory: Category[]
+	spending_over_time: TimeUnit[]
+	projected_spending_over_time: TimeUnit[]
 	average_per_unit: number
 	median_per_unit: number
 	mode_per_unit: number
@@ -25,5 +25,10 @@ export type Category = {
 	category: string
 	expense_count: number
 	percent: number
+	total: number
+}
+
+export type TimeUnit = {
+	date: number
 	total: number
 }

@@ -33,11 +33,12 @@ export type Action =
 	| {
 			type: ActionType.CHANGE_MONTH
 			bBackwards: boolean
-			oSummary: Summary
+			oSummary: Summary | null
 	  }
 	| {
 			type: ActionType.CHANGE_SCOPE
 			sScope: string
+			oSummary: Summary | null
 	  }
 
 export const setDate = (iDate: number): Action => {
@@ -74,16 +75,18 @@ export const getSummaryFailed = (): Action => {
 	}
 }
 
-export const changeMonth = (bBackwards: boolean) => {
+export const changeMonth = (bBackwards: boolean): Action => {
 	return {
-		type: 'CHANGE_MONTH',
+		type: ActionType.CHANGE_MONTH,
 		bBackwards,
+		oSummary: null,
 	}
 }
 
-export const changeScope = (sScope: string) => {
+export const changeScope = (sScope: string): Action => {
 	return {
-		type: 'CHANGE_SCOPE',
+		type: ActionType.CHANGE_SCOPE,
 		sScope,
+		oSummary: null,
 	}
 }
