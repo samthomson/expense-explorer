@@ -15,15 +15,15 @@ const client = new ApolloClient({
 	cache: new InMemoryCache(),
 })
 
-export const getIDate = (state: Store.App) => state.iDate
+export const getIDate = (state: Store.App) => state.nDate
 export const getScope = (state: Store.App) => state.sScope
-export const getBudget = (state: Store.App) => state.fYearlyBudget
+export const getBudget = (state: Store.App) => state.nYearlyBudget
 
 // worker Saga: will be fired on USER_FETCH_REQUESTED actions
 function* getSummary() {
-	const iDate = yield select(getIDate) // epoch seconds
+	const nDate = yield select(getIDate) // epoch seconds
 	const sScope = yield select(getScope) // month / year
-	const iBudget = yield select(getBudget)
+	const nBudget = yield select(getBudget)
 
 	try {
 		const data = yield client.query({
@@ -69,9 +69,9 @@ function* getSummary() {
 				}
 			`,
 			variables: {
-				date: iDate,
+				date: nDate,
 				scope: sScope,
-				budget: iBudget,
+				budget: nBudget,
 			},
 		})
 

@@ -11,6 +11,7 @@ import {
 import * as moment from 'moment'
 import { Expense } from './declarations'
 import { Summary } from '@shared/declarations'
+import { anMode } from './lib/helper'
 
 const { Client } = require('@elastic/elasticsearch')
 const client = new Client({ node: 'http://elasticsearch:9200' })
@@ -152,17 +153,17 @@ const fMedian = (afValues: number[]) => {
 }
 
 const getSummary = async (
-	date: number,
-	scope: 'month' | 'year',
-	budget?: number,
+	nDate: number,
+	sScope: 'month' | 'year',
+	nBudget?: number,
 ): Promise<Summary> => {
 	// build date range query
-	const oQueriedDate = moment.unix(date)
-	const sScopePeriod: any = scope === 'month' ? 'month' : 'year'
-	const sAggregationScopePeriod: any = scope === 'month' ? 'day' : 'month'
+	const oQueriedDate = moment.unix(nDate)
+	const sScopePeriod: any = sScope === 'month' ? 'month' : 'year'
+	const sAggregationScopePeriod: any = sScope === 'month' ? 'day' : 'month'
 	const sLowerDateRange = oQueriedDate.startOf(sScopePeriod).format('DD/MM/Y')
 	const sUpperDateRange = oQueriedDate.endOf(sScopePeriod).format('DD/MM/Y')
-	const iSize: number = 10000
+	const nSize: number = 10000
 
 	const oQuery = {
 		index: process.env.ELASTIC_INDEX,
@@ -176,7 +177,7 @@ const getSummary = async (
 					},
 				},
 			},
-			size: iSize,
+			size: nSize,
 			aggs: {
 				time_spending_breakdown: {
 					date_histogram: {
@@ -188,13 +189,13 @@ const getSummary = async (
 					},
 				},
 				category_spending_breakdown: {
-					terms: { field: 'Category', size: iSize },
+					terms: { field: 'Category', size: nSize },
 					aggs: {
 						unit_total: { sum: { field: 'Amount' } },
 					},
 				},
 				subcategory_spending_breakdown: {
-					terms: { field: 'Fullcategory', size: iSize },
+					terms: { field: 'Fullcategory', size: nSize },
 					aggs: {
 						unit_total: { sum: { field: 'Amount' } },
 					},
@@ -291,7 +292,7 @@ const getSummary = async (
 			// build up empty state objects
 			let oPossibleTimeUnits: any = {}
 			// dates of the month
-			if (scope === 'month') {
+			if (sScope === 'month') {
 				// get all dates for the month
 				const iNumberOfDays: number = oQueriedDate.daysInMonth() // get number of days in current month
 				for (
@@ -303,7 +304,7 @@ const getSummary = async (
 				}
 			}
 			// months of the year
-			if (scope === 'year') {
+			if (sScope === 'year') {
 				for (let cUnitCreate = 0; cUnitCreate < 12; cUnitCreate++) {
 					oPossibleTimeUnits[cUnitCreate + 1] = {}
 				}
@@ -314,8 +315,8 @@ const getSummary = async (
 
 			// current year and year mode
 			if (
-				scope === 'year' &&
-				moment(oQueriedDate).isSame(new Date(), scope)
+				sScope === 'year' &&
+				moment(oQueriedDate).isSame(new Date(), sScope)
 			) {
 				// get exact monthly average
 				const cDayNumberOfYear: number = moment().dayOfYear()
@@ -323,15 +324,15 @@ const getSummary = async (
 					(cDayNumberOfYear / 365) * 12
 				fNumberOfUnits = fDecimalMonthsThroughYear
 
-				if (oReturn['totalExpenditure'] && budget) {
+				if (oReturn['totalExpenditure'] && nBudget) {
 					oReturn['prospective_budget_for_forecast'] =
-						(budget - oReturn['totalExpenditure']) /
+						(nBudget - oReturn['totalExpenditure']) /
 						(12 - fDecimalMonthsThroughYear)
 				}
 			}
 			if (
-				scope === 'month' &&
-				moment(oQueriedDate).isSame(new Date(), scope)
+				sScope === 'month' &&
+				moment(oQueriedDate).isSame(new Date(), sScope)
 			) {
 				// get exact monthly average
 				const nPresentDateOfCurrentMonth: number = moment().date()
@@ -340,9 +341,9 @@ const getSummary = async (
 				const fDecimalDaysThroughMonth: number =
 					nPresentDateOfCurrentMonth / nTotalDaysInCurrentMonth
 
-				if (oReturn['totalExpenditure'] && budget) {
+				if (oReturn['totalExpenditure'] && nBudget) {
 					oReturn['prospective_budget_for_forecast'] =
-						(budget - oReturn['totalExpenditure']) /
+						(nBudget - oReturn['totalExpenditure']) /
 						(nTotalDaysInCurrentMonth - fDecimalDaysThroughMonth)
 				}
 			}
@@ -357,7 +358,7 @@ const getSummary = async (
 								'MM/DD/Y',
 							)
 
-							if (scope === 'month') {
+							if (sScope === 'month') {
 								return oPeriodDate.date() === Number(sKey)
 							} else {
 								return oPeriodDate.month() + 1 === Number(sKey)
@@ -400,19 +401,19 @@ const getSummary = async (
 			oReturn['median_per_unit'] = fMedian(
 				aTimeUnitSpending.map(oItem => Number(oItem.total)),
 			) // past period
-			let aMaybeMode = mode(
+			let aMaybeMode = anMode(
 				aTimeUnitSpending.map(oItem => Number(oItem.total)),
 			)
 			oReturn['mode_per_unit'] =
 				aMaybeMode && aMaybeMode.length > 0 ? aMaybeMode[0] : 0
 
 			// projection = average_per_unit * number of units (year scope - 12, month scope - number of days in current month)
-			if (moment(oQueriedDate).isSame(new Date(), scope)) {
+			if (moment(oQueriedDate).isSame(new Date(), sScope)) {
 				// current scope
 				// projected 'scope expenditure'
-				const iNumberOfUnits: number =
-					scope === 'year' ? 12 : oQueriedDate.daysInMonth()
-				oReturn['projection_for_scope'] = fAverage * iNumberOfUnits
+				const nNumberOfUnits: number =
+					sScope === 'year' ? 12 : oQueriedDate.daysInMonth()
+				oReturn['projection_for_scope'] = fAverage * nNumberOfUnits
 
 				// projected dated spending
 				const aSpendingProjection: any[] = aTimeUnitSpending.map(oP => {
@@ -423,8 +424,8 @@ const getSummary = async (
 				})
 
 				// projection data is from now until end of period, until now should be real data
-				const iCurrentUnitTime =
-					scope === 'year' ? moment().month() + 1 : moment().date()
+				const nCurrentUnitTime =
+					sScope === 'year' ? moment().month() + 1 : moment().date()
 				// year mode - before current month, so in april, take month jan feb mar
 				// april = 3, so we add one
 				// month mode - before current date, so on 4th, take 1st 2nd 3rd
@@ -432,7 +433,7 @@ const getSummary = async (
 				let aMedianData = []
 				for (
 					let cReplacePeriod = 0;
-					cReplacePeriod < iCurrentUnitTime - 1;
+					cReplacePeriod < nCurrentUnitTime - 1;
 					cReplacePeriod++
 				) {
 					// console.log(aTimeUnitSpending)
@@ -442,7 +443,7 @@ const getSummary = async (
 				}
 				// override median data
 				oReturn['median_per_unit'] = fMedian(aMedianData) // current period
-				let aMaybeMode = mode(aMedianData)
+				let aMaybeMode = anMode(aMedianData)
 				oReturn['mode_per_unit'] =
 					aMaybeMode && aMaybeMode.length > 0 ? aMaybeMode[0] : 0
 
@@ -455,21 +456,4 @@ const getSummary = async (
 	}
 
 	return oReturn
-}
-// @ts-ignore
-const mode = arr => {
-	if (
-		arr.filter((x: number, index: number) => arr.indexOf(x) == index)
-			.length == arr.length
-	)
-		return arr
-	else
-		return mode(
-			arr
-				.sort((x: number, index: number) => x - index)
-				.map((x: number, index: number) =>
-					arr.indexOf(x) != index ? x : null,
-				)
-				.filter((x: number) => x != null),
-		)
 }

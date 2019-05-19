@@ -13,15 +13,15 @@ export enum ActionType {
 export type Action =
 	| {
 			type: ActionType.SET_DATE
-			iDate: number
+			nDate: number
 	  }
 	| {
 			type: ActionType.SET_BUDGET
-			fYearlyBudget: number
+			nYearlyBudget: number
 	  }
 	| {
 			type: ActionType.GET_SUMMARY
-			iDate: number
+			nDate: number
 	  }
 	| {
 			type: ActionType.GET_SUMMARY_SUCCEEDED
@@ -41,23 +41,23 @@ export type Action =
 			oSummary: Summary | null
 	  }
 
-export const setDate = (iDate: number): Action => {
+export const setDate = (nDate: number): Action => {
 	return {
 		type: ActionType.SET_DATE,
-		iDate,
+		nDate,
 	}
 }
 
-export const setBudget = (fYearlyBudget: number): Action => {
+export const setBudget = (nYearlyBudget: number): Action => {
 	return {
 		type: ActionType.SET_BUDGET,
-		fYearlyBudget,
+		nYearlyBudget,
 	}
 }
 
-export const getSummary = (iDate: number): Action => {
+export const getSummary = (nDate: number): Action => {
 	return {
-		iDate,
+		nDate,
 		type: ActionType.GET_SUMMARY,
 	}
 }

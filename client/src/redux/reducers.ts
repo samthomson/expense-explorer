@@ -3,10 +3,10 @@ import { Action, ActionType } from './actions'
 import { Store } from './store'
 
 const initialState: Store.App = {
-	iDate: moment().unix(),
+	nDate: moment().unix(),
 	oSummary: null,
 	sScope: 'month',
-	fYearlyBudget: null,
+	nYearlyBudget: null,
 }
 
 export function appReducers(
@@ -17,18 +17,18 @@ export function appReducers(
 		case ActionType.SET_DATE:
 			return {
 				...state,
-				iDate: action.iDate,
+				nDate: action.nDate,
 			}
 		case ActionType.SET_BUDGET:
 			return {
 				...state,
-				fYearlyBudget: action.fYearlyBudget,
+				nYearlyBudget: action.nYearlyBudget,
 			}
 		case ActionType.CHANGE_MONTH:
 			const { bBackwards } = action
-			const { iDate, sScope } = state
+			const { nDate, sScope } = state
 
-			let oDate = moment.unix(iDate)
+			let oDate = moment.unix(nDate)
 			const sOffsetUnit = sScope === 'month' ? 'months' : 'years'
 
 			oDate = bBackwards
@@ -37,7 +37,7 @@ export function appReducers(
 
 			return {
 				...state,
-				iDate: oDate.unix(),
+				nDate: oDate.unix(),
 				oSummary: null,
 			}
 		case ActionType.CHANGE_SCOPE:

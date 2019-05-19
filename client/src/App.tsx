@@ -19,8 +19,8 @@ import { Store } from 'src/redux/store'
 import './../node_modules/semantic-ui-css/semantic.min.css'
 
 interface IAppProps {
-	fYearlyBudget: number
-	iDate: number
+	nYearlyBudget: number
+	nDate: number
 	oSummary: Summary
 	sScope: string
 	changeMonth: (bBackwards: boolean) => {}
@@ -81,7 +81,7 @@ class App extends React.Component<IAppProps, {}> {
 	}
 
 	public renderEverything() {
-		const { iDate, oSummary, sScope } = this.props
+		const { nDate, oSummary, sScope } = this.props
 		const {
 			spending_by_category,
 			spending_by_subcategory,
@@ -100,7 +100,7 @@ class App extends React.Component<IAppProps, {}> {
 						</div>
 						<div className="column centered-text">
 							{/* current period */}
-							<h2>{this.renderScopeLabel(iDate, sScope)}</h2>
+							<h2>{this.renderScopeLabel(nDate, sScope)}</h2>
 						</div>
 						<div className="column">
 							{/* date navigation */}
@@ -149,21 +149,21 @@ class App extends React.Component<IAppProps, {}> {
 
 	private eChangeMonth(bBackwards: boolean) {
 		this.props.changeMonth(bBackwards)
-		this.props.getSummary(this.props.iDate)
+		this.props.getSummary(this.props.nDate)
 	}
 
 	private eChangeScope(sScope: string) {
 		this.props.changeScope(sScope)
-		this.props.getSummary(this.props.iDate)
+		this.props.getSummary(this.props.nDate)
 	}
 
 	private eChangeBudget(fBudget: number) {
 		this.props.setBudget(fBudget)
-		this.props.getSummary(this.props.iDate)
+		this.props.getSummary(this.props.nDate)
 	}
 
 	private renderSummary() {
-		const { fYearlyBudget, oSummary, sScope } = this.props
+		const { nYearlyBudget, oSummary, sScope } = this.props
 		const {
 			average_per_unit,
 			median_per_unit,
@@ -177,7 +177,7 @@ class App extends React.Component<IAppProps, {}> {
 		const sDisplayPeriod: string = sScope === 'year' ? 'month' : 'day'
 
 		// is the current date within the current month/year. e.g. if current date is may 12th, and it is may 19th. Then it is in the current period (both month and year scope)
-		const bInCurrentPeriod: boolean = moment.unix(this.props.iDate).isSame(
+		const bInCurrentPeriod: boolean = moment.unix(this.props.nDate).isSame(
 			new Date(),
 			// @ts-ignore
 			sScope,
@@ -234,7 +234,7 @@ class App extends React.Component<IAppProps, {}> {
 								target budget for {sScope}:&nbsp;
 								<input
 									type="text"
-									value={fYearlyBudget || ''}
+									value={nYearlyBudget || ''}
 									onChange={e =>
 										this.eChangeBudget(
 											Number(e.currentTarget.value),
@@ -242,7 +242,7 @@ class App extends React.Component<IAppProps, {}> {
 									}
 								/>
 							</div>
-							{fYearlyBudget && prospective_budget_for_forecast && (
+							{nYearlyBudget && prospective_budget_for_forecast && (
 								<div>
 									spend up to $
 									<NumberDisplay
@@ -253,7 +253,7 @@ class App extends React.Component<IAppProps, {}> {
 										)}
 									/>
 									&nbsp; per {sDisplayPeriod} to come in at $
-									{fYearlyBudget} for the {sScope}.
+									{nYearlyBudget} for the {sScope}.
 								</div>
 							)}
 						</div>
@@ -372,12 +372,12 @@ class App extends React.Component<IAppProps, {}> {
 }
 
 const mapStateToProps = (state: Store.App) => {
-	const { iDate, oSummary, sScope, fYearlyBudget } = state
+	const { nDate, oSummary, sScope, nYearlyBudget } = state
 	return {
-		iDate,
+		nDate,
 		oSummary,
 		sScope,
-		fYearlyBudget,
+		nYearlyBudget,
 	}
 }
 
