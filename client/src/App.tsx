@@ -36,6 +36,52 @@ class App extends React.Component<IAppProps, {}> {
 		return '...no data.. (loading?)'
 	}
 
+	public renderScopeInputUI() {
+		const { sScope } = this.props
+		return (
+			<div className="ui small buttons">
+				<button
+					onClick={() => this.eChangeScope('month')}
+					className={
+						'ui button' + (sScope === 'month' ? ' active' : '')
+					}
+				>
+					month
+				</button>
+				<div className="or" />
+				<button
+					onClick={() => this.eChangeScope('year')}
+					className={
+						'ui button' + (sScope === 'year' ? ' active' : '')
+					}
+				>
+					year
+				</button>
+			</div>
+		)
+	}
+
+	public renderDateInputUI() {
+		return (
+			<div className="ui small buttons right floated">
+				<button
+					className="ui labeled icon button"
+					onClick={() => this.eChangeMonth(true)}
+				>
+					<i className="left chevron icon" />
+					Back
+				</button>
+				<button
+					className="ui right labeled icon button"
+					onClick={() => this.eChangeMonth(false)}
+				>
+					Forward
+					<i className="right chevron icon" />
+				</button>
+			</div>
+		)
+	}
+
 	public renderEverything() {
 		const { iDate, oSummary, sScope } = this.props
 		const {
@@ -52,27 +98,7 @@ class App extends React.Component<IAppProps, {}> {
 					<div className="three column row">
 						<div className="column">
 							{/* month / year changer */}
-							<div className="ui small buttons">
-								<button
-									onClick={() => this.eChangeScope('month')}
-									className={
-										'ui button' +
-										(sScope === 'month' ? ' active' : '')
-									}
-								>
-									month
-								</button>
-								<div className="or" />
-								<button
-									onClick={() => this.eChangeScope('year')}
-									className={
-										'ui button' +
-										(sScope === 'year' ? ' active' : '')
-									}
-								>
-									year
-								</button>
-							</div>
+							{this.renderScopeInputUI()}
 						</div>
 						<div className="column centered-text">
 							{/* current period */}
@@ -80,22 +106,7 @@ class App extends React.Component<IAppProps, {}> {
 						</div>
 						<div className="column">
 							{/* date navigation */}
-							<div className="ui small buttons right floated">
-								<button
-									className="ui labeled icon button"
-									onClick={() => this.eChangeMonth(true)}
-								>
-									<i className="left chevron icon" />
-									Back
-								</button>
-								<button
-									className="ui right labeled icon button"
-									onClick={() => this.eChangeMonth(false)}
-								>
-									Forward
-									<i className="right chevron icon" />
-								</button>
-							</div>
+							{this.renderDateInputUI()}
 						</div>
 					</div>
 				</div>
