@@ -21,7 +21,6 @@ Stack:
 
 ## todo
 
-- action type enums
 - shared types
 - componetization
 - beautify projection UX
