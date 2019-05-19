@@ -28,7 +28,7 @@ interface IAppProps {
 	changeScope: (sScope: string) => {}
 	getSummary: (iDate: number) => {}
 	setBudget: (fYearlyBudget: number) => {}
-	setFilter: (oSummary: Filter) => {}
+	setFilter: (oSummary: Filter | null) => {}
 }
 
 class App extends React.Component<IAppProps, {}> {
@@ -204,6 +204,7 @@ class App extends React.Component<IAppProps, {}> {
 					<NumberDisplay
 						number={Number(average_per_unit.toFixed(2))}
 					/>
+					<a onClick={() => this.eRemoveFilter()}>remove filter</a>
 				</div>
 				<div className="five wide column">
 					mode per {sDisplayPeriod}: ${mode_per_unit.toFixed(2)}
@@ -376,6 +377,10 @@ class App extends React.Component<IAppProps, {}> {
 
 	private eSetFilter = (term: string, match: string) => {
 		this.props.setFilter({ term, match })
+		this.props.getSummary(this.props.nDate)
+	}
+	private eRemoveFilter = () => {
+		this.props.setFilter(null)
 		this.props.getSummary(this.props.nDate)
 	}
 }
