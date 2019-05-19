@@ -21,7 +21,6 @@ Stack:
 
 ## todo
 
-- pretttier
 - action type enums
 - shared types
 - componetization
