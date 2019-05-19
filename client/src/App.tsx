@@ -118,12 +118,12 @@ class App extends React.Component<IAppProps, {}> {
 						<br />
 						<CategoryExpenses
 							categories={spending_by_category}
-							sCategoryName={'category'}
+							sCategoryName={'Category'}
 						/>
 						<br />
 						<CategoryExpenses
 							categories={spending_by_subcategory}
-							sCategoryName={'subcategory'}
+							sCategoryName={'Subcategory'}
 						/>
 						<br />
 						{this.renderExpenses(expenses)}
@@ -356,7 +356,7 @@ class App extends React.Component<IAppProps, {}> {
 	private renderExpenses(expenses: Expense[]) {
 		return (
 			<div>
-				<h3>expenses</h3>
+				<h3>Expenses</h3>
 				<ExpenseTable expenses={expenses} />
 			</div>
 		)
