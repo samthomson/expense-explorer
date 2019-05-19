@@ -32,7 +32,7 @@ Stack:
 
 bigger features (maybe later):
 - filterable table of expenses
-
+- tests..
 
 ## usecases
 
