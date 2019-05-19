@@ -7,10 +7,11 @@ import {
 	GraphQLFloat,
 	GraphQLInt,
 	GraphQLList,
+	GraphQLInputObjectType,
 } from 'graphql'
 import * as moment from 'moment'
 import { Expense } from './declarations'
-import { Summary } from '@shared/declarations'
+import { Summary, Filter } from '@shared/declarations'
 import { anMode } from './lib/helper'
 
 const { Client } = require('@elastic/elasticsearch')
@@ -37,6 +38,7 @@ const CategorySpendType = new GraphQLObjectType({
 		percent: { type: GraphQLFloat },
 	}),
 })
+
 const TimeSpendType = new GraphQLObjectType({
 	name: 'TimeSpend',
 	fields: () => ({
@@ -45,6 +47,15 @@ const TimeSpendType = new GraphQLObjectType({
 		total: { type: GraphQLFloat },
 	}),
 })
+
+const FilterInputType = new GraphQLInputObjectType({
+	name: 'Filter',
+	fields: () => ({
+		term: { type: GraphQLString },
+		match: { type: GraphQLString },
+	}),
+})
+
 const ProjectedTimeSpendType = new GraphQLObjectType({
 	name: 'ProjectedTimeSpend',
 	fields: () => ({
@@ -116,9 +127,19 @@ const RootQuery = new GraphQLObjectType({
 				},
 				budget: { type: GraphQLInt },
 				scope: { type: new GraphQLNonNull(GraphQLString) },
+				filter: {
+					type: FilterInputType,
+					description:
+						'an object containing term (column) and match (value) properties',
+				},
 			},
-			resolve: async (parentValue, { date, scope, budget }) =>
-				await getSummary(date, scope, budget),
+			resolve: async (parentValue, { date, scope, filter, budget }) =>
+				await getSummary(
+					date,
+					scope,
+					filter, //{ term: 'Category', match: 'utility' },
+					budget,
+				),
 		},
 	}),
 })
@@ -155,6 +176,7 @@ const fMedian = (afValues: number[]) => {
 const getSummary = async (
 	nDate: number,
 	sScope: 'month' | 'year',
+	oFilter: Filter | null = null,
 	nBudget?: number,
 ): Promise<Summary> => {
 	// build date range query
@@ -165,16 +187,40 @@ const getSummary = async (
 	const sUpperDateRange = oQueriedDate.endOf(sScopePeriod).format('DD/MM/Y')
 	const nSize: number = 10000
 
+	let aMustQueries: {}[] = []
+
+	aMustQueries.push({
+		range: {
+			Date: {
+				gte: sLowerDateRange,
+				lte: sUpperDateRange,
+				format: 'dd/MM/yyyy',
+			},
+		},
+	})
+
+	// add filters
+	// for (const oFilter of aFilters)
+	// 	// switch (oFilter.term) {
+	// 	// 	cas
+	// 	// }
+	// 	const { term, match } = oFilter
+	// 	aMustQueries.push({
+	// 		'match': { Category: `food` },
+	// 	})
+	// }
+	if (oFilter) {
+		aMustQueries.push({
+			match: { [oFilter.term]: oFilter.match },
+		})
+	}
+
 	const oQuery = {
 		index: process.env.ELASTIC_INDEX,
 		body: {
 			query: {
-				range: {
-					Date: {
-						gte: sLowerDateRange,
-						lte: sUpperDateRange,
-						format: 'dd/MM/yyyy',
-					},
+				bool: {
+					must: aMustQueries,
 				},
 			},
 			size: nSize,

@@ -32,3 +32,8 @@ export type TimeUnit = {
 	date: number
 	total: number
 }
+
+export type Filter = {
+	term: string // Category, Subcategory
+	match: string // food,utility,transport,prepared
+}
