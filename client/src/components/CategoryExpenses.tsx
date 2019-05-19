@@ -7,7 +7,7 @@ import { CategoryColors } from 'src/declarations'
 
 interface IProps {
 	categories: Category[]
-	sCategoryName: string
+	sCategoryName: 'Category' | 'Subcategory'
 	eSetFilter: (term: string, match: string) => void
 }
 
@@ -73,14 +73,22 @@ export class CategoryExpenses extends React.Component<IProps, {}> {
 											total,
 										} = oSingleCategory
 
+										const asCategoryParts = category.split(
+											'_',
+										)
+										const sDisplayCategory: string =
+											asCategoryParts[
+												asCategoryParts.length - 1
+											]
+
 										return (
 											<tr key={i}>
 												<td>
 													<a
 														onClick={() =>
 															this.props.eSetFilter(
-																'Category',
-																category,
+																sCategoryName,
+																sDisplayCategory,
 															)
 														}
 													>
