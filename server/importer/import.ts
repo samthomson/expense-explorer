@@ -1,9 +1,9 @@
 import * as path from 'path'
 import * as fs from 'fs'
 import * as csv from 'csv-parser'
-import { Client as ElasticClient, ApiResponse, RequestParams } from '@elastic/elasticsearch'
+import { Client as ElasticClient } from '@elastic/elasticsearch'
 import * as moment from 'moment'
-import { Expense } from './../src/declarations'
+import { ICSVExpenseRow, IElasticExpenseDocument } from './../src/declarations'
 
 const main  = async () => {
 	// @ts-ignore
@@ -35,7 +35,7 @@ const main  = async () => {
 	console.log(`importing from ${sImportFile}`)
 
 
-	const results: Expense[] = await readInFile(sImportFile)
+	const results: IElasticExpenseDocument[] = await readInFile(sImportFile)
 	
 	console.log(`${results.length} expenses read from csv`)
 
@@ -88,7 +88,7 @@ const main  = async () => {
 	//
 	let aBody: any[] = []
 
-	results.forEach( async (oExpense: Expense) => {
+	results.forEach( async (oExpense: IElasticExpenseDocument) => {
 
 		aBody.push({ index: { _index: sIndex, _id: oExpense.ID }})
 		aBody.push({
@@ -106,13 +106,13 @@ const main  = async () => {
 main()
 
 async function readInFile (sImportFile: string) {
-	return new Promise<Expense[]>(resolve => {
+	return new Promise<IElasticExpenseDocument[]>(resolve => {
 
-		let results: Expense[] = []
+		let results: IElasticExpenseDocument[] = []
 
 		fs.createReadStream(sImportFile)
 			.pipe(csv())
-			.on('data', (data: any) => {
+			.on('data', (data: ICSVExpenseRow) => {
 				// only store past expenses
 				let oDate: moment.Moment = moment(data.Date, 'MM/DD/Y')
 				if (oDate.isBefore(moment())) {

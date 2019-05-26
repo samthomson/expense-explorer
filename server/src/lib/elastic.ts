@@ -1,5 +1,5 @@
 import { Summary, Filter } from '@shared/declarations'
-import { ElasticExpenseDocument } from '../declarations'
+import { IElasticExpenseDocument } from '../declarations'
 import * as moment from 'moment'
 import { anMode, nMedian } from './helper'
 const { Client } = require('@elastic/elasticsearch')
@@ -7,7 +7,7 @@ const client = new Client({ node: 'http://elasticsearch:9200' })
 
 export const getDocument = async (
 	id: string | number,
-): Promise<ElasticExpenseDocument | null> => {
+): Promise<IElasticExpenseDocument | null> => {
 	const result = await client.get({
 		index: process.env.ELASTIC_INDEX,
 		type: process.env.ELASTIC_TYPE,
@@ -113,7 +113,7 @@ export const getSummary = async (
 		}
 
 		let iSum: number = aReturn.reduce(
-			(iTotal: number, oExpense: ElasticExpenseDocument) =>
+			(iTotal: number, oExpense: IElasticExpenseDocument) =>
 				iTotal + oExpense.Amount,
 			0,
 		)
@@ -349,7 +349,7 @@ export const getSummary = async (
 	return oReturn
 }
 
-const elasticDocumentToObject = (oDocument: ElasticExpenseDocument) => {
+const elasticDocumentToObject = (oDocument: IElasticExpenseDocument) => {
 	return {
 		...oDocument,
 		vendor: oDocument.Vendor,

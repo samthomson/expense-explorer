@@ -10,7 +10,7 @@ import {
 	GraphQLInputObjectType,
 } from 'graphql'
 import * as moment from 'moment'
-import { ElasticExpenseDocument } from './declarations'
+import { IElasticExpenseDocument } from './declarations'
 import { getSummary, getDocument } from './lib/elastic'
 
 const ExpenseType = new GraphQLObjectType({
