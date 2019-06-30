@@ -291,7 +291,6 @@ class App extends React.Component<IAppProps, {}> {
 
 	private renderSpendingOverTime(timeunits: TimeUnit[]) {
 		if (timeunits.length > 0) {
-			console.log(timeunits)
 			const chartOptions = {
 				responsive: true,
 				maintainAspectRatio: false,
