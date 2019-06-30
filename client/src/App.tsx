@@ -291,6 +291,7 @@ class App extends React.Component<IAppProps, {}> {
 
 	private renderSpendingOverTime(timeunits: TimeUnit[]) {
 		if (timeunits.length > 0) {
+			console.log(timeunits)
 			const chartOptions = {
 				responsive: true,
 				maintainAspectRatio: false,
@@ -311,10 +312,10 @@ class App extends React.Component<IAppProps, {}> {
 			const dataLabels = timeunits.map(oP => {
 				// make nice date rendered label
 				return this.props.sScope === 'month'
-					? moment()
+					? moment(this.props.nDate) // create from currently selected date so that we can correctly render the number of that months days on the x axis
 							.date(Number(oP.date))
 							.format('Do')
-					: moment()
+					: moment() // a year only ever has 12 months..
 							.month(Number(oP.date) - 1)
 							.format('MMM')
 			})
