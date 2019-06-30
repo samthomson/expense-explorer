@@ -22,6 +22,7 @@ export class CategoryExpenses extends React.Component<IProps, {}> {
 		const chartOptions = {
 			responsive: true,
 			maintainAspectRatio: false,
+			tooltipTemplate: '<%= label %>',
 		}
 
 		// https://flatuicolors.com/palette/cn
@@ -42,7 +43,9 @@ export class CategoryExpenses extends React.Component<IProps, {}> {
 		const chartData = categories.map(oP => {
 			return {
 				value: Number(oP.percent).toFixed(0),
-				label: oP.category,
+				label: `${oP.category}: $${Number(oP.total).toFixed(
+					0,
+				)} - ${Number(oP.percent).toFixed(0)}%`,
 				color: oCategoryColours[oP.category]
 					? oCategoryColours[oP.category]
 					: `hsla(${Math.random() * 360}, 100%, 50%, 1)`,
