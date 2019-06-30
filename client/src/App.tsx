@@ -294,6 +294,15 @@ class App extends React.Component<IAppProps, {}> {
 			const chartOptions = {
 				responsive: true,
 				maintainAspectRatio: false,
+				scales: {
+					yAxes: [
+						{
+							ticks: {
+								beginAtZero: true,
+							},
+						},
+					],
+				},
 			}
 
 			const afSpendingOverTime: number[] = timeunits.map(oP =>
