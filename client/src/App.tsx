@@ -219,14 +219,23 @@ class App extends React.Component<IAppProps, {}> {
 					/>
 				</div>
 				<div className="five wide column">
-					mode per {sDisplayPeriod}: ${mode_per_unit.toFixed(2)}
+					<span title="the most frequently appearing value">
+						mode
+					</span>{' '}
+					per {sDisplayPeriod}: ${mode_per_unit.toFixed(2)}
 					<br />
-					median per {sDisplayPeriod}: $
+					<span title="cumulative total divided by number of items - the classic average">
+						mean
+					</span>{' '}
+					per {sDisplayPeriod}: $
 					<NumberDisplay
 						number={Number(average_per_unit.toFixed(2))}
 					/>
 					<br />
-					mode per {sDisplayPeriod}: ${median_per_unit.toFixed(2)}
+					<span title="the middle value if all values are ordered">
+						median
+					</span>{' '}
+					per {sDisplayPeriod}: ${median_per_unit.toFixed(2)}
 				</div>
 				<div className="six wide column">
 					{bInCurrentPeriod && (
