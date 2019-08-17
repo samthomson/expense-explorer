@@ -20,6 +20,10 @@ Stack:
 - `docker-compose run server yarn run import`
 - browse to `http://localhost:3400` for the client, or `http://localhost:3300/graphql` to explore the API
 
+
+
+Run `./sai.sh` to start the containers *and* run the importer.
+
 ## todo
 
 - split up schema file
