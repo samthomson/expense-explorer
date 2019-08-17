@@ -94,7 +94,7 @@ export class ExpenseTable extends React.Component<IProps, {}> {
 
 	private sRenderPiciliLink(sDate: string) {
 		const oTargetDate: moment.Moment = moment(sDate, 'MM/DD/YYYY') // format that went into elastic (raw)
-		const sDisplayDate: string = oTargetDate.format('ddd Do')
+		const sDisplayDate: string = oTargetDate.format('ddd Do MMM')
 		const sQueryValueDate: string = oTargetDate.format('DD/MM/YYYY')
 		const sPiciliURL: string = `https://test-instance.picili.com/1/calendar?filters=[{"type":"calendar","display":"${sDisplayDate}","value":"day:${sQueryValueDate}"}]`
 
