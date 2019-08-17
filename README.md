@@ -41,3 +41,16 @@ bigger features (maybe later):
 - summary and calendar view
 - see a yearly view
 - option to omit certain items from a report (like bhutan trip)
+
+## gql
+
+```
+{
+  summary(date:1566017598, scope: "month") {
+    expenses {
+      date,
+      vendor
+    }
+  }
+}
+```

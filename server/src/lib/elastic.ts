@@ -91,13 +91,20 @@ export const getSummary = async (
 					},
 				},
 			},
+			sort: [
+				{
+					Date: {
+						order: 'asc',
+					},
+				},
+			],
 		},
 	}
 
-	// console.log(oQuery)
+	// console.log(JSON.stringify(oQuery, null, 4));
 	const result = await client
 		.search(oQuery)
-		.catch((err: any) => console.log(err))
+		.catch((err: any) => console.log(JSON.stringify(err, null, 4)))
 
 	let oReturn: any = {}
 
