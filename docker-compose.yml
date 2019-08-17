@@ -27,6 +27,7 @@ services:
       - elasticsearch
   elasticsearch:
     build: ./elasticsearch
+    restart: always
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
       - elasticsearch-plugins:/usr/share/elasticsearch/plugins
