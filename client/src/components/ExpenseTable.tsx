@@ -21,6 +21,7 @@ export class ExpenseTable extends React.Component<IProps, {}> {
 					<table className="ui celled table">
 						<thead>
 							<tr>
+								<th>#</th>
 								<th>usd</th>
 								<th>item</th>
 								<th>category</th>
@@ -37,6 +38,7 @@ export class ExpenseTable extends React.Component<IProps, {}> {
 								} = oSingleExpense
 								return (
 									<tr key={i}>
+										<td>{i + 1}</td>
 										<td>
 											${oSingleExpense.amount.toFixed(2)}
 										</td>
