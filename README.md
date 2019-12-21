@@ -10,6 +10,18 @@ Stack:
 - Node TS / graphQL API / elasticsearch
 - docker / docker-compose
 
+## setup
+
+### inital setup
+
+1. [clone repo & cd in]
+2. build containers: `docker-compose build`
+3. let each container install its js dependencies: `docker-compose run client yarn` and `docker-compose run server yarn`
+4. start the containers: `docker-compose up -d`
+
+### subsequent runs
+
+1. `docker-compose up -d` to start
 
 ## work on / run
 

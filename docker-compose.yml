@@ -1,6 +1,7 @@
 version: "2"
 services:
   client:
+    command: yarn run start
     build:
       context: ./client
     ports:
@@ -11,7 +12,7 @@ services:
   server:
     build:
       context: ./server
-    command: yarn run watch
+    command: yarn start #yarn run watch
     environment:
       - PORT=3100
       - ELASTIC_INDEX=expense-explorer-index

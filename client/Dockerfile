@@ -8,6 +8,6 @@ ADD . /client
 
 RUN yarn --silent
 
-RUN yarn run build
+# RUN yarn run build
 
-CMD yarn run start
+# CMD yarn run start
