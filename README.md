@@ -12,25 +12,27 @@ Stack:
 
 ## setup
 
-### inital setup
+### pre-run setup
 
 1. [clone repo & cd in]
 2. build containers: `docker-compose build`
-3. let each container install its js dependencies: `docker-compose run client yarn` and `docker-compose run server yarn`
-4. start the containers: `docker-compose up -d`
+3. let each container install its js dependencies: `docker-compose run client yarn && docker-compose run server yarn`
 
-### subsequent runs
+### run
 
 1. `docker-compose up -d` to start
+2. browse to
+  - `http://localhost:3400` for the client
+  - `http://localhost:3300/graphql` to explore the API
 
-## work on / run
+## data import
 
 - update left hand side of data volume import (`/home/sam/Dropbox/Apps/Iexpense lite:/server/importer/data`)` to contain your own export folder
 	- import script assumes all CSVs in that folder are named like `ix_20190417.csv`
-- `docker-compose up -d` to start
+- after starting the project (`docker-compose up -d`)
 	- or in dev: `docker-compose up -d elasticsearch dejavu && docker-compose up client server`
-- `docker-compose run server yarn run import`
-- browse to `http://localhost:3400` for the client, or `http://localhost:3300/graphql` to explore the API
+- run `docker-compose run server yarn run import` to read in expenses
+
 
 
 
