@@ -9,7 +9,7 @@ import { Store } from './store'
 
 const client = new ApolloClient({
 	link: createHttpLink({
-		uri: 'http://localhost:3300/graphql',
+		uri: `http://${window.location.hostname}:3300/graphql`,
 		credentials: 'include',
 	}),
 	cache: new InMemoryCache(),
