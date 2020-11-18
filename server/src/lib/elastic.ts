@@ -1,4 +1,4 @@
-import { Summary, Filter } from '@shared/declarations'
+import { Summary, Filter, ElasticSummaryResponse } from '@shared/declarations'
 import { IElasticExpenseDocument } from '../declarations'
 import * as moment from 'moment'
 import { anMode, nMedian } from './helper'
@@ -103,13 +103,13 @@ export const getSummary = async (
 	}
 
 	// console.log(JSON.stringify(oQuery, null, 4));
-	const result = await client
+	const result: ElasticSummaryResponse = await client
 		.search(oQuery)
 		.catch((err: any) => console.log(JSON.stringify(err, null, 4)))
 
 	let oReturn: any = {}
 
-	if (result && result.body && result.body.hits && result.body.hits.hits) {
+	if (result?.body?.hits?.hits) {
 		const { hits } = result.body.hits
 		const aReturn: any[] = []
 
@@ -133,7 +133,7 @@ export const getSummary = async (
 		}
 	}
 
-	if (result && result.body && result.body.aggregations) {
+	if (result?.body?.aggregations) {
 		const aggDump = result.body.aggregations
 
 		if (

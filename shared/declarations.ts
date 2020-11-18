@@ -37,3 +37,53 @@ export type Filter = {
 	term: string // Category, Subcategory
 	match: string // food,utility,transport,prepared
 }
+
+type ElasticExpense = {
+	_source: {
+		Date: string,
+		Type: string,
+		Category: string,
+		Subcategory: string,
+		Vendor: string,
+		Amount: number,
+		Fullcategory: string
+	}
+}
+
+export type ElasticSummaryResponse = {
+	body: {
+		hits: {
+			hits: ElasticExpense[]
+		}
+		aggregations: {
+			category_spending_breakdown: {
+				buckets: {
+					key: string,
+					doc_count: number,
+					unit_total: {
+						value: number
+					}
+				}[]
+			},
+			subcategory_spending_breakdown: {
+				buckets: {
+					key: string,
+					doc_count: number,
+					unit_total: {
+						value: number
+					}
+				}[]
+			},
+			time_spending_breakdown: {
+				buckets: {
+					key_as_string: string,
+					key: number,
+					doc_count: number,
+					unit_total: {
+						value: number
+					}
+				}[]
+			}
+		}
+	}
+}
