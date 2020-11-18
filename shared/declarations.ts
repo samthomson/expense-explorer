@@ -62,32 +62,32 @@ export type ElasticSummaryResponse = {
 		}
 		aggregations: {
 			category_spending_breakdown: {
-				buckets: {
+				buckets: Array<{
 					key: string,
 					doc_count: number,
 					unit_total: {
 						value: number
 					}
-				}[]
+				}>
 			},
 			subcategory_spending_breakdown: {
-				buckets: {
+				buckets: Array<{
 					key: string,
 					doc_count: number,
 					unit_total: {
 						value: number
 					}
-				}[]
+				}>
 			},
 			time_spending_breakdown: {
-				buckets: {
+				buckets: Array<{
 					key_as_string: string,
 					key: number,
 					doc_count: number,
 					unit_total: {
 						value: number
 					}
-				}[]
+				}>
 			}
 		}
 	}
