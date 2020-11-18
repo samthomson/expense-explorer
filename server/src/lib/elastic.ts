@@ -272,9 +272,9 @@ export const getSummary = async (
 								: 0,
 						total:
 							aoMatchingTimePeriods.length > 0
-								? aoMatchingTimePeriods[0].unit_total.value.toFixed(
+								? Number(aoMatchingTimePeriods[0].unit_total.value.toFixed(
 									0,
-								)
+								))
 								: 0,
 					}
 				},
@@ -296,14 +296,12 @@ export const getSummary = async (
 				fTotalExpenditureForScopedPeriod / fNumberOfUnits
 			oReturn['average_per_unit'] = fAverage
 
-			const medianPerUnit = nMedian(
-				aTimeUnitSpending.map(oItem => Number(oItem.total)),
-			)
-			// debug medianPerUnit value
+			const itemTotals = aTimeUnitSpending.map(oItem => Number(oItem.total))
+
+			const medianPerUnit = nMedian(itemTotals)
 			oReturn['median_per_unit'] = medianPerUnit
-			let aMaybeMode = anMode(
-				aTimeUnitSpending.map(oItem => Number(oItem.total)),
-			)
+
+			let aMaybeMode = anMode(itemTotals)
 			oReturn['mode_per_unit'] =
 				aMaybeMode && aMaybeMode.length > 0 ? aMaybeMode[0] : 0
 
