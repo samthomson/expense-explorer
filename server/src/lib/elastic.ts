@@ -1,4 +1,4 @@
-import { Summary, Filter, ElasticSummaryResponse } from '@shared/declarations'
+import { Summary, Filter, ElasticSummaryResponse, Expense, PossibleTimeUnits } from '@shared/declarations'
 import { IElasticExpenseDocument } from '../declarations'
 import * as moment from 'moment'
 import { anMode, nMedian } from './helper'
@@ -105,31 +105,28 @@ export const getSummary = async (
 	// console.log(JSON.stringify(oQuery, null, 4));
 	const result: ElasticSummaryResponse = await client
 		.search(oQuery)
-		.catch((err: any) => console.log(JSON.stringify(err, null, 4)))
+		.catch((err: Error) => console.log(JSON.stringify(err, null, 4)))
 
-	let oReturn: any = {}
+	let oReturn: Summary = {}
 
 	if (result?.body?.hits?.hits) {
 		const { hits } = result.body.hits
-		const aReturn: any[] = []
+		const expensesToReturn: Expense[] = []
 
 		for (let cMatch = 0; cMatch < hits.length; cMatch++) {
-			// hits.foreach((oHit: any) => {
-			const oDocument = hits[cMatch]
-			// console.log('len: ', oDocument)
-			aReturn.push(elasticDocumentToObject(oDocument._source))
+			expensesToReturn.push(elasticDocumentToObject(hits[cMatch]._source))
 		}
 
-		const iSum: number = aReturn.reduce(
-			(iTotal: number, oExpense: IElasticExpenseDocument) =>
-				iTotal + oExpense.Amount,
+		const summedExpenses: number = expensesToReturn.reduce(
+			(runningTotal: number, { amount }) =>
+				runningTotal + amount,
 			0,
 		)
 
 		oReturn = {
-			totalExpenditure: iSum,
-			numberOfExpenses: aReturn.length,
-			expenses: aReturn,
+			totalExpenditure: summedExpenses,
+			numberOfExpenses: expensesToReturn.length,
+			expenses: expensesToReturn,
 		}
 	}
 
@@ -142,7 +139,7 @@ export const getSummary = async (
 			aggDump.time_spending_breakdown
 		) {
 			const fTotalExpenditureForScopedPeriod: number = aggDump.category_spending_breakdown.buckets.reduce(
-				(iTotal: number, oBucket: any) =>
+				(iTotal: number, oBucket) =>
 					iTotal + oBucket.unit_total.value,
 				0,
 			)
@@ -152,13 +149,13 @@ export const getSummary = async (
 			//
 
 			const aCategorySpending = aggDump.category_spending_breakdown.buckets.map(
-				(oCategoryBucket: any) => {
+				({ key, doc_count, unit_total }) => {
 					return {
-						category: oCategoryBucket.key,
-						expense_count: oCategoryBucket.doc_count,
-						total: oCategoryBucket.unit_total.value,
+						category: key,
+						expense_count: doc_count,
+						total: unit_total.value,
 						percent:
-							(oCategoryBucket.unit_total.value /
+							(unit_total.value /
 								fTotalExpenditureForScopedPeriod) *
 							100,
 					}
@@ -170,7 +167,7 @@ export const getSummary = async (
 			// spending by subcategory
 			//
 			const aSubcategorySpending = aggDump.subcategory_spending_breakdown.buckets.map(
-				(oSubcategoryBucket: any) => {
+				(oSubcategoryBucket) => {
 					return {
 						category: oSubcategoryBucket.key,
 						expense_count: oSubcategoryBucket.doc_count,
@@ -189,7 +186,7 @@ export const getSummary = async (
 			//
 
 			// build up empty state objects
-			const oPossibleTimeUnits: any = {}
+			const oPossibleTimeUnits: PossibleTimeUnits = {}
 			// dates of the month
 			if (sScope === 'month') {
 				// get all dates for the month
@@ -250,8 +247,8 @@ export const getSummary = async (
 			// for each possible time unit, see if we have matching data - or return zeros (missing dates)
 			const aTimeUnitSpending = Object.keys(oPossibleTimeUnits).map(
 				(sKey: string) => {
-					const aoMatchingTimePeriods: any[] = aggDump.time_spending_breakdown.buckets.filter(
-						(oSpendingSummary: any) => {
+					const aoMatchingTimePeriods = aggDump.time_spending_breakdown.buckets.filter(
+						(oSpendingSummary) => {
 							const oPeriodDate = moment(
 								oSpendingSummary.key_as_string,
 								'MM/DD/Y',
@@ -281,7 +278,7 @@ export const getSummary = async (
 				},
 			)
 
-			aggDump.time_spending_breakdown.buckets.map((oBucket: any) => {
+			aggDump.time_spending_breakdown.buckets.map((oBucket) => {
 				return {
 					date: oBucket.key_as_string,
 					expense_count: oBucket.doc_count,
@@ -315,7 +312,7 @@ export const getSummary = async (
 				oReturn['projection_for_scope'] = fAverage * nNumberOfUnits
 
 				// projected dated spending
-				const aSpendingProjection: any[] = aTimeUnitSpending.map(oP => {
+				const aSpendingProjection = aTimeUnitSpending.map(oP => {
 					return {
 						...oP,
 						total: fAverage || 0,
@@ -357,7 +354,7 @@ export const getSummary = async (
 	return oReturn
 }
 
-const elasticDocumentToObject = (oDocument: IElasticExpenseDocument) => {
+const elasticDocumentToObject = (oDocument: IElasticExpenseDocument): Expense => {
 	return {
 		...oDocument,
 		vendor: oDocument.Vendor,
