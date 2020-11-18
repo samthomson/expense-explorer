@@ -1,4 +1,3 @@
-// @ts-ignore
 export const anMode = (aNumbersToFindModeOf: number[]): number[] => {
 	if (
 		aNumbersToFindModeOf.filter(
@@ -7,16 +6,17 @@ export const anMode = (aNumbersToFindModeOf: number[]): number[] => {
 		).length == aNumbersToFindModeOf.length
 	)
 		return aNumbersToFindModeOf
-	else
-		return anMode(
-			aNumbersToFindModeOf
-				.sort((x: number, index: number) => x - index)
-				.map((x: number, index: number) =>
-					aNumbersToFindModeOf.indexOf(x) !== index ? x : null,
-				)
-				// @ts-ignore
-				.filter((x: number) => x !== null),
+	else {
+		const sortedValues = aNumbersToFindModeOf.sort((x: number, index: number) => x - index)
+
+		const someNulledValues = sortedValues.map((x: number, index: number) =>
+			aNumbersToFindModeOf.indexOf(x) !== index ? x : null,
 		)
+		const numericOnly: number[] = someNulledValues.filter((x: number | null) => x !== null) as number[]
+
+
+		return anMode(numericOnly)
+	}
 }
 
 export const nMedian = (afValues: number[]): number => {

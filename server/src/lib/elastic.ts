@@ -2,7 +2,7 @@ import { Summary, Filter } from '@shared/declarations'
 import { IElasticExpenseDocument } from '../declarations'
 import * as moment from 'moment'
 import { anMode, nMedian } from './helper'
-const { Client } = require('@elastic/elasticsearch')
+import { Client } from '@elastic/elasticsearch'
 const client = new Client({ node: 'http://elasticsearch:9200' })
 
 export const getDocument = async (
@@ -14,7 +14,7 @@ export const getDocument = async (
 		id,
 	})
 	if (result?.body?._source) {
-		let oExpense = result.body._source
+		const oExpense = result.body._source
 		return {
 			...oExpense,
 			vendor: oExpense.Vendor,
@@ -35,13 +35,14 @@ export const getSummary = async (
 ): Promise<Summary> => {
 	// build date range query
 	const oQueriedDate = moment.unix(nDate)
-	const sScopePeriod: any = sScope === 'month' ? 'month' : 'year'
-	const sAggregationScopePeriod: any = sScope === 'month' ? 'day' : 'month'
+	const sScopePeriod = sScope === 'month' ? 'month' : 'year'
+	const sAggregationScopePeriod = sScope === 'month' ? 'day' : 'month'
 	const sLowerDateRange = oQueriedDate.startOf(sScopePeriod).format('DD/MM/Y')
 	const sUpperDateRange = oQueriedDate.endOf(sScopePeriod).format('DD/MM/Y')
-	const nSize: number = 10000
+	const nSize = 10000
 
-	let aMustQueries: {}[] = []
+	// const aMustQueries: { range: { Date: { gte: string, lte: string, format: string } } }[] = []
+	const aMustQueries: unknown[] = []
 
 	aMustQueries.push({
 		range: {
@@ -109,17 +110,17 @@ export const getSummary = async (
 	let oReturn: any = {}
 
 	if (result && result.body && result.body.hits && result.body.hits.hits) {
-		let { hits } = result.body.hits
-		let aReturn: any[] = []
+		const { hits } = result.body.hits
+		const aReturn: any[] = []
 
-		for (let cMatch: number = 0; cMatch < hits.length; cMatch++) {
+		for (let cMatch = 0; cMatch < hits.length; cMatch++) {
 			// hits.foreach((oHit: any) => {
-			let oDocument = hits[cMatch]
+			const oDocument = hits[cMatch]
 			// console.log('len: ', oDocument)
 			aReturn.push(elasticDocumentToObject(oDocument._source))
 		}
 
-		let iSum: number = aReturn.reduce(
+		const iSum: number = aReturn.reduce(
 			(iTotal: number, oExpense: IElasticExpenseDocument) =>
 				iTotal + oExpense.Amount,
 			0,
@@ -188,7 +189,7 @@ export const getSummary = async (
 			//
 
 			// build up empty state objects
-			let oPossibleTimeUnits: any = {}
+			const oPossibleTimeUnits: any = {}
 			// dates of the month
 			if (sScope === 'month') {
 				// get all dates for the month
@@ -247,11 +248,11 @@ export const getSummary = async (
 			}
 
 			// for each possible time unit, see if we have matching data - or return zeros (missing dates)
-			let aTimeUnitSpending = Object.keys(oPossibleTimeUnits).map(
+			const aTimeUnitSpending = Object.keys(oPossibleTimeUnits).map(
 				(sKey: string) => {
 					const aoMatchingTimePeriods: any[] = aggDump.time_spending_breakdown.buckets.filter(
 						(oSpendingSummary: any) => {
-							let oPeriodDate = moment(
+							const oPeriodDate = moment(
 								oSpendingSummary.key_as_string,
 								'MM/DD/Y',
 							)
@@ -301,7 +302,7 @@ export const getSummary = async (
 			const medianPerUnit = nMedian(itemTotals)
 			oReturn['median_per_unit'] = medianPerUnit
 
-			let aMaybeMode = anMode(itemTotals)
+			const aMaybeMode = anMode(itemTotals)
 			oReturn['mode_per_unit'] =
 				aMaybeMode && aMaybeMode.length > 0 ? aMaybeMode[0] : 0
 
@@ -328,7 +329,7 @@ export const getSummary = async (
 				// april = 3, so we add one
 				// month mode - before current date, so on 4th, take 1st 2nd 3rd
 				// 18th = 18
-				let aMedianData = []
+				const aMedianData = []
 				for (
 					let cReplacePeriod = 0;
 					cReplacePeriod < nCurrentUnitTime - 1;
@@ -341,7 +342,7 @@ export const getSummary = async (
 				}
 				// override median data
 				oReturn['median_per_unit'] = nMedian(aMedianData) // current period
-				let aMaybeMode = anMode(aMedianData)
+				const aMaybeMode = anMode(aMedianData)
 				oReturn['mode_per_unit'] =
 					aMaybeMode && aMaybeMode.length > 0 ? aMaybeMode[0] : 0
 
