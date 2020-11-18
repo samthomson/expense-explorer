@@ -98,9 +98,9 @@ const RootQuery = new GraphQLObjectType({
 			type: SummaryType,
 			args: {
 				date: {
-					type: new GraphQLNonNull(GraphQLInt),
+					type: new GraphQLNonNull(GraphQLString),
 					description:
-						'unix epoch date: number of seconds since 1970',
+						'ISO date eg 2020-01-16',
 				},
 				budget: { type: GraphQLInt },
 				scope: { type: new GraphQLNonNull(GraphQLString) },

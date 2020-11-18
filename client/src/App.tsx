@@ -125,7 +125,8 @@ class App extends React.Component<IAppProps, {}> {
 				</div>
 
 				{/* render expenses for current date */}
-				{totalExpenditure > 0 && (
+				{/* {totalExpenditure > 0 && ( */}
+				{!!totalExpenditure && totalExpenditure > 0 && spending_over_time && spending_by_category && spending_by_subcategory && expenses && oSummary.average_per_unit && (
 					<div>
 						<br />
 						{this.renderSummary()}
@@ -181,14 +182,15 @@ class App extends React.Component<IAppProps, {}> {
 
 	private renderSummary() {
 		const { nYearlyBudget, oSummary, sScope } = this.props
+		// todo: defaults of -1 to shut linter up, later types should be updated to be non nullable, that means changing API elastic.ts file
 		const {
-			average_per_unit,
-			median_per_unit,
-			mode_per_unit,
+			average_per_unit = -1,
+			median_per_unit = -1,
+			mode_per_unit = -1,
 			numberOfExpenses,
 			projection_for_scope,
 			prospective_budget_for_forecast,
-			totalExpenditure,
+			totalExpenditure = -1,
 		} = oSummary
 
 		const sDisplayPeriod: string = sScope === 'year' ? 'month' : 'day'
@@ -201,7 +203,7 @@ class App extends React.Component<IAppProps, {}> {
 		)
 
 		return (
-			<div className="ui grid">
+			<div className="ui grid" >
 				<div className="five wide column">
 					total expenditure:{' '}
 					<strong>
@@ -312,11 +314,11 @@ class App extends React.Component<IAppProps, {}> {
 				// make nice date rendered label
 				return this.props.sScope === 'month'
 					? moment(this.props.nDate) // create from currently selected date so that we can correctly render the number of that months days on the x axis
-							.date(Number(oP.date))
-							.format('Do')
+						.date(Number(oP.date))
+						.format('Do')
 					: moment() // a year only ever has 12 months..
-							.month(Number(oP.date) - 1)
-							.format('MMM')
+						.month(Number(oP.date) - 1)
+						.format('MMM')
 			})
 
 			const aDataSets = [
