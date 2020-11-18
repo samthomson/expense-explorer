@@ -8,11 +8,11 @@ const client = new Client({ node: 'http://elasticsearch:9200' })
 export const getDocument = async (
 	id: string | number,
 ): Promise<IElasticExpenseDocument | null> => {
-	const result = await client.get({
+	const result = await client.get(() => ({
 		index: process.env.ELASTIC_INDEX,
 		type: process.env.ELASTIC_TYPE,
 		id,
-	})
+	}))
 	if (result?.body?._source) {
 		const oExpense = result.body._source
 		return {
