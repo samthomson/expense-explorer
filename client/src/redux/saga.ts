@@ -4,6 +4,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 import ApolloClient from 'apollo-client'
 import { createHttpLink } from 'apollo-link-http'
 import gql from 'graphql-tag'
+import * as moment from 'moment'
 import { ActionType, getSummaryFailed, getSummarySucceded } from './actions'
 import { Store } from './store'
 
@@ -31,7 +32,7 @@ function* getSummary() {
 		const data = yield client.query({
 			query: gql`
 				query GetSummary(
-					$date: Int!
+					$date: String!
 					$scope: String!
 					$budget: Int
 					$filter: Filter
@@ -81,7 +82,7 @@ function* getSummary() {
 				}
 			`,
 			variables: {
-				date: nDate,
+				date: moment.unix(nDate).format(),
 				scope: sScope,
 				budget: nBudget,
 				filter: oFilter,
