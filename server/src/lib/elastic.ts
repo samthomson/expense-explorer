@@ -28,13 +28,13 @@ export const getDocument = async (
 	}
 }
 export const getSummary = async (
-	nDate: number,
+	nDate: string,
 	sScope: 'month' | 'year',
 	oFilter: Filter | null = null,
 	nBudget?: number,
 ): Promise<Summary> => {
 	// build date range query
-	const oQueriedDate = moment.unix(nDate)
+	const oQueriedDate = moment(nDate)
 	const sScopePeriod = sScope === 'month' ? 'month' : 'year'
 	const sAggregationScopePeriod = sScope === 'month' ? 'day' : 'month'
 	const sLowerDateRange = oQueriedDate.startOf(sScopePeriod).format('DD/MM/Y')
