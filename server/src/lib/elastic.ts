@@ -13,7 +13,7 @@ export const getDocument = async (
 		type: process.env.ELASTIC_TYPE,
 		id,
 	})
-	if (result && result.body && result.body._source) {
+	if (result?.body?._source) {
 		let oExpense = result.body._source
 		return {
 			...oExpense,
