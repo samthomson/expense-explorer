@@ -7,7 +7,7 @@ import schema from './schema'
 const app = express()
 const port = process.env.PORT
 
-var allowCrossDomain = function (req: any, res: any, next: any) {
+const allowCrossDomain = function (req: any, res: any, next: any) {
 	// console.log(req)
 	res.header('Access-Control-Allow-Origin', '*')
 	res.header('Access-Control-Allow-Headers', 'Content-Type,token')
@@ -16,7 +16,7 @@ var allowCrossDomain = function (req: any, res: any, next: any) {
 app.use(allowCrossDomain)
 
 // enable cors
-var corsOptions = {
+const corsOptions = {
 	origin: 'http://127.0.0.1:3400',
 	credentials: true, // <-- REQUIRED backend setting
 }

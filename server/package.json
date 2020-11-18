@@ -23,7 +23,10 @@
     "@types/express-graphql": "^0.6.2",
     "@types/graphql": "^14.2.0",
     "@types/mocha": "^8.0.4",
+    "@typescript-eslint/eslint-plugin": "^4.8.1",
+    "@typescript-eslint/parser": "^4.8.1",
     "chai": "^4.2.0",
+    "eslint": "^7.13.0",
     "mocha": "^8.2.1",
     "tsc": "^1.20150623.0",
     "tsc-watch": "^2.1.2"
@@ -31,12 +34,13 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc-watch --onSuccess \"yarn run start\"",
-    "start": "ts-node src/server.ts",
+    "start": "yarn run lint && ts-node src/server.ts",
     "import": "ts-node importer/import.ts",
     "search": "ts-node importer/searchtest.ts",
     "wipe": "ts-node importer/wipe-index.ts",
     "re-index": "yarn run wipe && yarn run import",
-    "lint": "prettier --config=\".prettierrc\" --write \"src/**/*.ts\"",
-    "test": "NODE_ENV=testing mocha --timeout 30000 -r ts-node/register 'src/**/*.spec.ts' --exit"
+    "old-prettier": "prettier --config=\".prettierrc\" --write \"src/**/*.ts\"",
+    "test": "NODE_ENV=testing mocha --timeout 30000 -r ts-node/register 'src/**/*.spec.ts' --exit",
+    "lint": "eslint 'src/**/*.ts' --quiet --fix"
   }
 }
