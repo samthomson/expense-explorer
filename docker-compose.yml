@@ -20,6 +20,7 @@ services:
       - DKK_TO_USD=0.15
     ports:
       - "3300:3100"
+      - "9222:9222"
     volumes:
       - ./server:/server
       - ./shared:/shared
