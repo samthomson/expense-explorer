@@ -34,7 +34,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc-watch --onSuccess \"yarn run start\"",
-    "start": "yarn run lint && ts-node src/server.ts",
+    "start": "yarn run lint && ts-node  --inspect=0.0.0.0:9222 src/server.ts",
     "import": "ts-node importer/import.ts",
     "search": "ts-node importer/searchtest.ts",
     "wipe": "ts-node importer/wipe-index.ts",
