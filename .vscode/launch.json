@@ -1,0 +1,15 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "node",
+			"request": "attach",
+			"name": "Docker attach debugger to server",
+			"port": 9222,
+			"address": "127.0.0.1",
+			"sourceMapPathOverrides": {
+				"/server/*": "${workspaceRoot}/server/*"
+			}
+		},
+	]
+}

@@ -6,11 +6,21 @@
 		"declaration": true,
 		"outDir": "./dist",
 		"strict": true,
-		"lib": ["es2015"],
+		"lib": [
+			"es2015"
+		],
 		"paths": {
-			"@shared/*": ["../shared/*"]
-		}
+			"@shared/*": [
+				"../shared/*"
+			]
+		},
+		"sourceMap": true
 	},
-	"include": ["src/**/*.ts"],
-	"exclude": ["node_modules", "test"]
+	"include": [
+		"src/**/*.ts"
+	],
+	"exclude": [
+		"node_modules",
+		"test"
+	]
 }
