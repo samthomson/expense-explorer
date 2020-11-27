@@ -3,52 +3,49 @@ import * as fs from 'fs'
 import * as csv from 'csv-parser'
 import { Client as ElasticClient } from '@elastic/elasticsearch'
 import * as moment from 'moment'
-import { ICSVExpenseRow, IElasticExpenseDocument } from './../src/declarations'
+import { ICSVExpenseRow, Expense, IElasticExpenseDocument } from './../src/declarations'
 
-const main  = async () => {
-	// @ts-ignore
+const main = async () => {
 	console.log('\nimporter script\n')
 
 	// get path of file to import
-	const sImportDir: string =  path.resolve(path.dirname(__filename), 'data')
-	let asFiles: string[] = fs.readdirSync(sImportDir)
-	// only csvs
-	asFiles = asFiles.filter(sPath => sPath.endsWith('.csv'))
+	const importDir = path.resolve(path.dirname(__filename), 'data')
+	// find CSVs in specified data dir
+	const filesPaths: string[] = fs.readdirSync(importDir).filter(sPath => sPath.endsWith('.csv'))
 
-	if (asFiles.length < 1) {
+	if (filesPaths.length < 1) {
 		console.log('no data files to import')
 		return
 	}
-	console.log(`found ${asFiles.length} csv files`)
-	const aiDates: number[] = asFiles.map(
+	console.log(`found ${filesPaths.length} csv files`)
+	const filePathDatesAsNumbers: number[] = filesPaths.map(
 		sPath => Number(
 			sPath
 				.replace('.csv', '')
 				.replace('ix_', '')
 		)
 	)
-	const iBiggest:number = Math.max(...aiDates)
-	const sImportFileName: string = `ix_${iBiggest}.csv`
-	console.log('determined the latest is: ', sImportFileName)
+	const latestDate = Math.max(...filePathDatesAsNumbers)
+	const importFileName = `ix_${latestDate}.csv`
+	console.log('determined the latest is: ', importFileName)
 
-	const sImportFile: string = path.resolve(sImportDir, sImportFileName)
-	console.log(`importing from ${sImportFile}`)
+	const importFilePath = path.resolve(importDir, importFileName)
+	console.log(`importing from ${importFilePath}`)
 
+	const results: IElasticExpenseDocument[] = await readInFile(importFilePath)
 
-	const results: IElasticExpenseDocument[] = await readInFile(sImportFile)
-	
 	console.log(`${results.length} expenses read from csv`)
 
 	const client = new ElasticClient({ node: 'http://elasticsearch:9200' })
-	const sIndex: string = String(process.env.ELASTIC_INDEX)
-	const sType: string = String(process.env.ELASTIC_TYPE)
+	const indexName = String(process.env.ELASTIC_INDEX)
+	const elasticDocumentType = String(process.env.ELASTIC_TYPE)
 
 	//
 	// put mapping
 	//
-	const oMapping = {
-		mappings: {				
-			expense:{
+	const elasticIndexMapping = {
+		mappings: {
+			expense: {
 				properties: {
 					Category: { "type": "keyword" },
 					Date: { "type": "date", "format": "MM/dd/yyyy" },
@@ -58,77 +55,77 @@ const main  = async () => {
 			}
 		}
 	}
-	
-	try { 
-		await client.indices.delete({ index: sIndex })
-	}catch(err) {
-		console.log('\nerror deleting index:\n')
-		// console.log('\nerror deleting index:\n', err.message, '\n\n', err, '\n\n')
+
+	try {
+		await client.indices.delete({ index: indexName })
+	} catch (err) {
+		console.log('\nerror deleting index:\n', err.message, '\n\n', err, '\n\n')
 	}
-	try { 
+	try {
 		await client.indices.create({
-			index: sIndex,
-			body: oMapping
+			index: indexName,
+			body: elasticIndexMapping
 		})
-	}catch(err) {
+	} catch (err) {
 		console.log('\nerror applying mapping:\n', err.message, '\n\n', err, '\n\n')
 	}
 
-	try { 
-		const oFetchedMapping = await client.indices.getMapping()
-		let oExpenseMapping = oFetchedMapping.body['expense-explorer-index'].mappings
-		// console.log(oExpenseMapping)
-		// console.log('\n\ndate: ', oExpenseMapping.expense.properties.Date.type, '\n\n')
-	}catch(err) {
-		console.log('error getting mapping')
-	}
+	// try {
+	// 	const oFetchedMapping = await client.indices.getMapping()
+	// 	// @ts-ignore
+	// 	let expenseObjectMapping = oFetchedMapping.body['expense-explorer-index'].mappings
+	// 	// console.log(expenseObjectMapping)
+	// 	// console.log('\n\ndate: ', expenseObjectMapping.expense.properties.Date.type, '\n\n')
+	// } catch (err) {
+	// 	console.log('error getting mapping')
+	// }
 
 	// 
 	// store expenses
 	//
-	let aBody: any[] = []
+	const elasticBulkInsertDocumentBody: any[] = []
 
-	results.forEach( async (oExpense: IElasticExpenseDocument) => {
+	results.forEach(async (expenseObject) => {
 
-		aBody.push({ index: { _index: sIndex, _id: oExpense.ID }})
-		aBody.push({
-			...oExpense
+		elasticBulkInsertDocumentBody.push({ index: { _index: indexName, _id: expenseObject.ID } })
+		elasticBulkInsertDocumentBody.push({
+			...expenseObject
 		})
 	})
 
 	const { body: bulkResponse } = await client.bulk({
-        index: sIndex,
-        type: sType,
-		body: aBody
+		index: indexName,
+		type: elasticDocumentType,
+		body: elasticBulkInsertDocumentBody
 	})
 }
 
 main()
 
-async function readInFile (sImportFile: string) {
+async function readInFile(importFilePath: string) {
 	return new Promise<IElasticExpenseDocument[]>(resolve => {
 
-		let results: IElasticExpenseDocument[] = []
+		const results: IElasticExpenseDocument[] = []
 
-		fs.createReadStream(sImportFile)
+		fs.createReadStream(importFilePath)
 			.pipe(csv())
 			.on('data', (data: ICSVExpenseRow) => {
 				// only store past expenses
-				let oDate: moment.Moment = moment(data.Date, 'MM/DD/Y')
-				if (oDate.isBefore(moment())) {
+				const expenseDate: moment.Moment = moment(data.Date, 'MM/DD/Y')
+				if (expenseDate.isBefore(moment())) {
 					// convert danish numbers to english numbers
-					let fAmount: number = parseFloat(data.Amount.replace('.', '').replace(',', '.'))
-					fAmount *= Number(process.env.DKK_TO_USD) // convert to dollars
-					fAmount *= -1 // make positive
+					let amount = parseFloat(data.Amount.replace('.', '').replace(',', '.'))
+					amount *= Number(process.env.DKK_TO_USD) // convert to dollars
+					amount *= -1 // make positive
 					// remove certain properties
 					delete data.Payment
 					delete data.Currency
 					delete data.Note
 					delete data.ID
-					
+
 					return results.push({
 						...data,
-						Amount: fAmount,
+						Amount: amount,
 						Fullcategory: data.Category + '_' + data.Subcategory
 					})
 				}
