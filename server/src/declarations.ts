@@ -1,7 +1,7 @@
-type Expense = {
+export type Expense = {
 	Category: string //'Food/Drink',
 	Date: string //'06/01/2018',
-	// ID: string // '6B1A25B8-5BCD-431A-9190-73F32F91ACC3' }
+	ID?: string // '6B1A25B8-5BCD-431A-9190-73F32F91ACC3' }
 	Subcategory: string // 'Fast Food',
 	// Type: string //'N/A',
 	Vendor: string // 'Pad thai',
@@ -10,10 +10,11 @@ type Expense = {
 export interface IElasticExpenseDocument extends Expense {
 	_id?: string // auto set by elastic (Since we don't explicitly set it)
 	Amount: number // -76,55,
-	// Fullcategory: string
+	Fullcategory: string
 }
 
 export interface ICSVExpenseRow extends Expense {
+	ID: string // '6B1A25B8-5BCD-431A-9190-73F32F91ACC3' }
 	Amount: string // '-76,55',
 	Payment: string // 'N/A',
 	Currency: string // 'DKK',
