@@ -1,4 +1,4 @@
-export const anMode = (aNumbersToFindModeOf: number[]): number[] => {
+export const mode = (aNumbersToFindModeOf: number[]): number[] => {
 	if (
 		aNumbersToFindModeOf.filter(
 			(x: number, index: number) =>
@@ -15,11 +15,11 @@ export const anMode = (aNumbersToFindModeOf: number[]): number[] => {
 		const numericOnly: number[] = someNulledValues.filter((x: number | null) => x !== null) as number[]
 
 
-		return anMode(numericOnly)
+		return mode(numericOnly)
 	}
 }
 
-export const nMedian = (afValues: number[]): number => {
+export const median = (afValues: number[]): number => {
 	if (afValues.length === 0) return 0
 
 	afValues.sort((a, b) => {

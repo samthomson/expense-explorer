@@ -3,7 +3,7 @@ import { Summary, Filter, ElasticSummaryResponse, Expense, PossibleTimeUnits } f
 import * as ServerTypes from '../declarations'
 import { IElasticExpenseDocument } from '../declarations'
 import * as moment from 'moment'
-import { anMode, nMedian } from './helper'
+import * as HelperUtil from './helper'
 import { Client } from '@elastic/elasticsearch'
 const client = new Client({ node: 'http://elasticsearch:9200' })
 
@@ -237,12 +237,12 @@ const spendingOverTime = ({ sScope, oQueriedDate, spendingOverTimeBucket, totalE
 		const nTotalDaysInCurrentMonth: number = moment().daysInMonth()
 
 		const fDecimalDaysThroughMonth: number =
-			nPresentDateOfCurrentMonth / nTotalDaysInCurrentMonth
+			(nPresentDateOfCurrentMonth / nTotalDaysInCurrentMonth) * nTotalDaysInCurrentMonth
 
 		if (totalExpenditure && nBudget) {
-			prospectiveBudgetForForecast =
-				(nBudget - totalExpenditure) /
-				(nTotalDaysInCurrentMonth - fDecimalDaysThroughMonth)
+			const budgetRemaining = nBudget - totalExpenditure
+			const daysRemaining = nTotalDaysInCurrentMonth - fDecimalDaysThroughMonth
+			prospectiveBudgetForForecast = budgetRemaining / daysRemaining
 		}
 	}
 
@@ -324,18 +324,16 @@ const spendingProjection = ({ oQueriedDate, fAverage, sScope, spendingOverTimeDa
 			cReplacePeriod < nCurrentUnitTime - 1;
 			cReplacePeriod++
 		) {
-			// console.log(aTimeUnitSpending)
 			aMedianData.push(spendingOverTimeData[cReplacePeriod].total)
 			aSpendingProjection[cReplacePeriod].total =
 				spendingOverTimeData[cReplacePeriod].total
 		}
 		// override median data
-		const aMaybeMode = anMode(aMedianData)
-		aMaybeMode && aMaybeMode.length > 0 ? aMaybeMode[0] : 0
+		const aMaybeMode = HelperUtil.mode(aMedianData)
 
 		return {
-			medianPerUnit: nMedian(aMedianData),
-			modePerUnit: aMaybeMode && aMaybeMode.length > 0 ? aMaybeMode[0] : 0,
+			medianPerUnit: HelperUtil.median(aMedianData),
+			modePerUnit: aMaybeMode?.[0] ?? 0,
 			projectionForScope: fAverage * nNumberOfUnits,
 			projectedSpendingOverTime: aSpendingProjection
 		}
@@ -377,57 +375,47 @@ export const getSummary = async (
 		throw Error('missing required result data from elastic query')
 	}
 
-	let oReturn: Summary = {}
-
 	const expenseData = getExpenseDataFromResults(result)
 	const { totalExpenditure } = expenseData
 
-	oReturn = {
-		...expenseData
-	}
 
 	const aggDump = result.body.aggregations
 
 
 	const categorySpendingData = categorySpending(aggDump.category_spending_breakdown, aggDump.subcategory_spending_breakdown)
 
-	oReturn['spending_by_category'] = categorySpendingData.categorySpending
-	oReturn['spending_by_subcategory'] = categorySpendingData.subcategorySpending
-
-	//
-	// spending over time
-	//
-
 	const spendingOverTimeData = spendingOverTime({ sScope, oQueriedDate, spendingOverTimeBucket: aggDump.time_spending_breakdown, totalExpenditure, nBudget })
-
-	oReturn['spending_over_time'] = spendingOverTimeData.spendingOverTime
-	oReturn['prospective_budget_for_forecast'] = spendingOverTimeData.prospectiveBudgetForForecast
-	//
-	// summary stats
-	//
 	const fNumberOfUnits = numberOfUnits(aggDump.time_spending_breakdown, sScope)
-	const fAverage: number =
-		totalExpenditure / fNumberOfUnits
-	oReturn['average_per_unit'] = Number(fAverage.toFixed(2))
+	const fAverage = (totalExpenditure / fNumberOfUnits)
 
-	const itemTotals = spendingOverTimeData.spendingOverTime.map(oItem => Number(oItem.total))
-	const medianPerUnit = nMedian(itemTotals)
-	const aMaybeMode = anMode(itemTotals)
+	const totalsPerPeriod = spendingOverTimeData.spendingOverTime.map(oItem => Number(oItem.total))
 
-
-
-	// projection = average_per_unit * number of units (year scope - 12, month scope - number of days in current month)
+	const medianPerUnit = HelperUtil.median(totalsPerPeriod)
+	const aMaybeMode = HelperUtil.mode(totalsPerPeriod)
 
 	const spendingProjectionData = spendingProjection({ spendingOverTimeData: spendingOverTimeData.spendingOverTime, sScope, oQueriedDate, fAverage })
 
-	oReturn['projected_spending_over_time'] = spendingProjectionData.projectedSpendingOverTime
-	oReturn['projection_for_scope'] = spendingProjectionData.projectionForScope
 
-	oReturn['median_per_unit'] = spendingProjectionData?.medianPerUnit ?? medianPerUnit
-	oReturn['mode_per_unit'] = spendingProjectionData?.modePerUnit ?? (aMaybeMode && aMaybeMode.length > 0 ? aMaybeMode[0] : 0)
+	const returnSummary: Summary = {
+		// historic data
+		expenses: expenseData.expenses,
+		spending_over_time: spendingOverTimeData.spendingOverTime,
+		spending_by_category: categorySpendingData.categorySpending,
+		spending_by_subcategory: categorySpendingData.subcategorySpending,
+		// projected data
+		projected_spending_over_time: spendingProjectionData.projectedSpendingOverTime,
+		projection_for_scope: spendingProjectionData.projectionForScope,
+		// budget
+		prospective_budget_for_forecast: spendingOverTimeData.prospectiveBudgetForForecast,
+		// stats
+		totalExpenditure,
+		numberOfExpenses: expenseData.numberOfExpenses,
+		average_per_unit: Number(fAverage.toFixed(2)),
+		median_per_unit: spendingProjectionData?.medianPerUnit ?? medianPerUnit,
+		mode_per_unit: spendingProjectionData?.modePerUnit ?? (aMaybeMode?.[0] ?? 0),
+	}
 
-
-	return oReturn
+	return returnSummary
 }
 
 const elasticDocumentToObject = (oDocument: IElasticExpenseDocument): Expense => {
