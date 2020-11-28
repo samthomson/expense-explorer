@@ -109,14 +109,14 @@ export const getExpenseDataFromResults = (queryResult: ElasticSummaryResponse): 
 		expensesToReturn.push(elasticDocumentToObject(hits[cMatch]._source))
 	}
 
-	const totalExpenditure: number = expensesToReturn.reduce(
+	const totalExpenditure = expensesToReturn.reduce(
 		(runningTotal: number, { amount }) =>
 			runningTotal + amount,
 		0,
 	)
 
 	return {
-		totalExpenditure,
+		totalExpenditure: Number(totalExpenditure.toFixed(2)),
 		numberOfExpenses: expensesToReturn.length,
 		expenses: expensesToReturn,
 	}
@@ -312,7 +312,7 @@ export const getSummary = async (
 			//
 			const fAverage: number =
 				fTotalExpenditureForScopedPeriod / fNumberOfUnits
-			oReturn['average_per_unit'] = fAverage
+			oReturn['average_per_unit'] = Number(fAverage.toFixed(2))
 
 			const itemTotals = aTimeUnitSpending.map(oItem => Number(oItem.total))
 
@@ -380,7 +380,7 @@ const elasticDocumentToObject = (oDocument: IElasticExpenseDocument): Expense =>
 		vendor: oDocument.Vendor,
 		category: oDocument.Category,
 		subcategory: oDocument.Subcategory,
-		amount: oDocument.Amount,
+		amount: Number(oDocument.Amount.toFixed(2)),
 		date: oDocument.Date,
 	}
 }
