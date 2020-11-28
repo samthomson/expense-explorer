@@ -1,3 +1,5 @@
+import * as SharedTypes from '@shared/declarations'
+
 export type Expense = {
 	Category: string //'Food/Drink',
 	Date: string //'06/01/2018',
@@ -19,4 +21,16 @@ export interface ICSVExpenseRow extends Expense {
 	Payment: string // 'N/A',
 	Currency: string // 'DKK',
 	Note: string // 'GBP: 9,00 £\nExchange rate: 8.50545829\n',
+}
+
+export type BuildElasticQueryInput = {
+	sLowerDateRange: string
+	sUpperDateRange: string
+	oFilter?: SharedTypes.Filter
+	sScope: string
+}
+export type ExpenseData = {
+	totalExpenditure: number
+	numberOfExpenses: number,
+	expenses: SharedTypes.Expense[],
 }

@@ -1,4 +1,5 @@
 import { Summary, Filter, ElasticSummaryResponse, Expense, PossibleTimeUnits } from '@shared/declarations'
+import * as ServerTypes from '../declarations'
 import { IElasticExpenseDocument } from '../declarations'
 import * as moment from 'moment'
 import { anMode, nMedian } from './helper'
@@ -27,21 +28,12 @@ export const getDocument = async (
 		return null
 	}
 }
-export const getSummary = async (
-	nDate: string,
-	sScope: 'month' | 'year',
-	oFilter: Filter | null = null,
-	nBudget?: number,
-): Promise<Summary> => {
-	// build date range query
-	const oQueriedDate = moment(nDate)
-	const sScopePeriod = sScope === 'month' ? 'month' : 'year'
-	const sAggregationScopePeriod = sScope === 'month' ? 'day' : 'month'
-	const sLowerDateRange = oQueriedDate.startOf(sScopePeriod).format('DD/MM/Y')
-	const sUpperDateRange = oQueriedDate.endOf(sScopePeriod).format('DD/MM/Y')
-	const nSize = 10000
 
-	// const aMustQueries: { range: { Date: { gte: string, lte: string, format: string } } }[] = []
+const buildElasticQuery = ({ sLowerDateRange, sUpperDateRange, oFilter, sScope }: ServerTypes.BuildElasticQueryInput) => {
+
+	const nSize = 10000
+	const sAggregationScopePeriod = sScope === 'month' ? 'day' : 'month'
+
 	const aMustQueries: unknown[] = []
 
 	aMustQueries.push({
@@ -54,13 +46,14 @@ export const getSummary = async (
 		},
 	})
 
+	// option free text matching
 	if (oFilter) {
 		aMustQueries.push({
 			match: { [oFilter.term]: oFilter.match },
 		})
 	}
 
-	const oQuery = {
+	const query = {
 		index: process.env.ELASTIC_INDEX,
 		body: {
 			query: {
@@ -102,32 +95,59 @@ export const getSummary = async (
 		},
 	}
 
-	// console.log(JSON.stringify(oQuery, null, 4));
-	const result: ElasticSummaryResponse = await client
-		.search(oQuery)
+	return query
+}
+
+export const getExpenseDataFromResults = (queryResult: ElasticSummaryResponse): ServerTypes.ExpenseData => {
+	if (!queryResult?.body?.hits?.hits) {
+		throw Error
+	}
+	const { hits } = queryResult.body.hits
+	const expensesToReturn: Expense[] = []
+
+	for (let cMatch = 0; cMatch < hits.length; cMatch++) {
+		expensesToReturn.push(elasticDocumentToObject(hits[cMatch]._source))
+	}
+
+	const totalExpenditure: number = expensesToReturn.reduce(
+		(runningTotal: number, { amount }) =>
+			runningTotal + amount,
+		0,
+	)
+
+	return {
+		totalExpenditure,
+		numberOfExpenses: expensesToReturn.length,
+		expenses: expensesToReturn,
+	}
+
+}
+
+export const getSummary = async (
+	nDate: string,
+	sScope: 'month' | 'year',
+	oFilter: Filter | undefined,
+	nBudget?: number,
+): Promise<Summary> => {
+	// build date range query
+	const oQueriedDate = moment(nDate)
+	const sScopePeriod = sScope === 'month' ? 'month' : 'year'
+
+	const sLowerDateRange = oQueriedDate.startOf(sScopePeriod).format('DD/MM/Y')
+	const sUpperDateRange = oQueriedDate.endOf(sScopePeriod).format('DD/MM/Y')
+
+
+	const oQuery = buildElasticQuery({ oFilter, sLowerDateRange, sUpperDateRange, sScope })
+
+	const result: ElasticSummaryResponse = await client.search(oQuery)
 		.catch((err: Error) => console.log(JSON.stringify(err, null, 4)))
 
 	let oReturn: Summary = {}
 
-	if (result?.body?.hits?.hits) {
-		const { hits } = result.body.hits
-		const expensesToReturn: Expense[] = []
+	const expenseData = getExpenseDataFromResults(result)
 
-		for (let cMatch = 0; cMatch < hits.length; cMatch++) {
-			expensesToReturn.push(elasticDocumentToObject(hits[cMatch]._source))
-		}
-
-		const summedExpenses: number = expensesToReturn.reduce(
-			(runningTotal: number, { amount }) =>
-				runningTotal + amount,
-			0,
-		)
-
-		oReturn = {
-			totalExpenditure: summedExpenses,
-			numberOfExpenses: expensesToReturn.length,
-			expenses: expensesToReturn,
-		}
+	oReturn = {
+		...expenseData
 	}
 
 	if (result?.body?.aggregations) {
