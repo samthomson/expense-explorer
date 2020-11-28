@@ -55,3 +55,23 @@ export type SpendingOverTimeData = {
 	spendingOverTime: TimeUnitSpending[]
 	prospectiveBudgetForForecast?: number
 }
+
+export type SpendingProjection = {
+	total: number
+	date: string
+	expense_count: number
+}
+
+export type ProjectionData = {
+	projectionForScope?: number
+	projectedSpendingOverTime?: SpendingProjection[]
+	modePerUnit?: number
+	medianPerUnit?: number
+}
+
+export type ProjectionDataInput = {
+	sScope: SharedTypes.Scope
+	oQueriedDate: moment.Moment
+	fAverage: number
+	spendingOverTimeData: TimeUnitSpending[]
+}

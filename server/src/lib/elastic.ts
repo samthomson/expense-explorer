@@ -291,6 +291,62 @@ const spendingOverTime = ({ sScope, oQueriedDate, spendingOverTimeBucket, totalE
 	return { spendingOverTime: aTimeUnitSpending, prospectiveBudgetForForecast }
 }
 
+const spendingProjection = ({ oQueriedDate, fAverage, sScope, spendingOverTimeData }: ServerTypes.ProjectionDataInput) => {
+
+	const projectedSpendingOverTime = null
+	const projectionForScope = null
+
+	if (moment(oQueriedDate).isSame(new Date(), sScope)) {
+		// current scope
+		// projected 'scope expenditure'
+		const nNumberOfUnits: number =
+			sScope === 'year' ? 12 : oQueriedDate.daysInMonth()
+		// oReturn['projection_for_scope'] = fAverage * nNumberOfUnits
+
+		// projected dated spending
+		const aSpendingProjection = spendingOverTimeData.map(oP => {
+			return {
+				...oP,
+				total: fAverage || 0,
+			}
+		})
+
+		// projection data is from now until end of period, until now should be real data
+		const nCurrentUnitTime =
+			sScope === 'year' ? moment().month() + 1 : moment().date()
+		// year mode - before current month, so in april, take month jan feb mar
+		// april = 3, so we add one
+		// month mode - before current date, so on 4th, take 1st 2nd 3rd
+		// 18th = 18
+		const aMedianData = []
+		for (
+			let cReplacePeriod = 0;
+			cReplacePeriod < nCurrentUnitTime - 1;
+			cReplacePeriod++
+		) {
+			// console.log(aTimeUnitSpending)
+			aMedianData.push(spendingOverTimeData[cReplacePeriod].total)
+			aSpendingProjection[cReplacePeriod].total =
+				spendingOverTimeData[cReplacePeriod].total
+		}
+		// override median data
+		const aMaybeMode = anMode(aMedianData)
+		aMaybeMode && aMaybeMode.length > 0 ? aMaybeMode[0] : 0
+
+		return {
+			medianPerUnit: nMedian(aMedianData),
+			modePerUnit: aMaybeMode && aMaybeMode.length > 0 ? aMaybeMode[0] : 0,
+			projectionForScope: fAverage * nNumberOfUnits,
+			projectedSpendingOverTime: aSpendingProjection
+		}
+	}
+
+	return {
+		projectionForScope,
+		projectedSpendingOverTime
+	}
+}
+
 export const getSummary = async (
 	nDate: string,
 	sScope: 'month' | 'year',
@@ -358,56 +414,18 @@ export const getSummary = async (
 	const medianPerUnit = nMedian(itemTotals)
 	const aMaybeMode = anMode(itemTotals)
 
-	oReturn['median_per_unit'] = medianPerUnit
 
-	oReturn['mode_per_unit'] =
-		aMaybeMode && aMaybeMode.length > 0 ? aMaybeMode[0] : 0
 
 	// projection = average_per_unit * number of units (year scope - 12, month scope - number of days in current month)
-	if (moment(oQueriedDate).isSame(new Date(), sScope)) {
-		// current scope
-		// projected 'scope expenditure'
-		const nNumberOfUnits: number =
-			sScope === 'year' ? 12 : oQueriedDate.daysInMonth()
-		oReturn['projection_for_scope'] = fAverage * nNumberOfUnits
 
-		// projected dated spending
-		const aSpendingProjection = spendingOverTimeData.spendingOverTime.map(oP => {
-			return {
-				...oP,
-				total: fAverage || 0,
-			}
-		})
+	const spendingProjectionData = spendingProjection({ spendingOverTimeData: spendingOverTimeData.spendingOverTime, sScope, oQueriedDate, fAverage })
 
-		// projection data is from now until end of period, until now should be real data
-		const nCurrentUnitTime =
-			sScope === 'year' ? moment().month() + 1 : moment().date()
-		// year mode - before current month, so in april, take month jan feb mar
-		// april = 3, so we add one
-		// month mode - before current date, so on 4th, take 1st 2nd 3rd
-		// 18th = 18
-		const aMedianData = []
-		for (
-			let cReplacePeriod = 0;
-			cReplacePeriod < nCurrentUnitTime - 1;
-			cReplacePeriod++
-		) {
-			// console.log(aTimeUnitSpending)
-			aMedianData.push(spendingOverTimeData.spendingOverTime[cReplacePeriod].total)
-			aSpendingProjection[cReplacePeriod].total =
-				spendingOverTimeData.spendingOverTime[cReplacePeriod].total
-		}
-		// override median data
-		oReturn['median_per_unit'] = nMedian(aMedianData) // current period
-		const aMaybeMode = anMode(aMedianData)
-		oReturn['mode_per_unit'] =
-			aMaybeMode && aMaybeMode.length > 0 ? aMaybeMode[0] : 0
+	oReturn['projected_spending_over_time'] = spendingProjectionData.projectedSpendingOverTime
+	oReturn['projection_for_scope'] = spendingProjectionData.projectionForScope
 
-		oReturn['projected_spending_over_time'] = aSpendingProjection
-	} else {
-		oReturn['projection_for_scope'] = null
-		oReturn['projected_spending_over_time'] = null
-	}
+	oReturn['median_per_unit'] = spendingProjectionData?.medianPerUnit ?? medianPerUnit
+	oReturn['mode_per_unit'] = spendingProjectionData?.modePerUnit ?? (aMaybeMode && aMaybeMode.length > 0 ? aMaybeMode[0] : 0)
+
 
 	return oReturn
 }
