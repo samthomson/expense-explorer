@@ -55,40 +55,37 @@ type ElasticExpense = {
 	}
 }
 
+export type CategorySpendingBreakdown = {
+	buckets: Array<{
+		key: string,
+		doc_count: number,
+		unit_total: {
+			value: number
+		}
+	}>
+}
+
+export type TimeSpendingBreakdown = {
+	buckets: Array<{
+		key_as_string: string,
+		key: number,
+		doc_count: number,
+		unit_total: {
+			value: number
+		}
+	}>
+}
+
 export type ElasticSummaryResponse = {
 	body: {
 		hits: {
 			hits: ElasticExpense[]
 		}
 		aggregations: {
-			category_spending_breakdown: {
-				buckets: Array<{
-					key: string,
-					doc_count: number,
-					unit_total: {
-						value: number
-					}
-				}>
-			},
-			subcategory_spending_breakdown: {
-				buckets: Array<{
-					key: string,
-					doc_count: number,
-					unit_total: {
-						value: number
-					}
-				}>
-			},
-			time_spending_breakdown: {
-				buckets: Array<{
-					key_as_string: string,
-					key: number,
-					doc_count: number,
-					unit_total: {
-						value: number
-					}
-				}>
-			}
+			category_spending_breakdown: CategorySpendingBreakdown,
+			subcategory_spending_breakdown: CategorySpendingBreakdown,
+			time_spending_breakdown: TimeSpendingBreakdown
 		}
 	}
 }
+export type Scope = 'month' | 'year'

@@ -1,4 +1,5 @@
 import * as SharedTypes from '@shared/declarations'
+import * as moment from 'moment'
 
 export type Expense = {
 	Category: string //'Food/Drink',
@@ -29,8 +30,28 @@ export type BuildElasticQueryInput = {
 	oFilter?: SharedTypes.Filter
 	sScope: string
 }
+
 export type ExpenseData = {
 	totalExpenditure: number
 	numberOfExpenses: number,
 	expenses: SharedTypes.Expense[],
+}
+
+export type SpendingOverTimeInput = {
+	sScope: SharedTypes.Scope
+	oQueriedDate: moment.Moment
+	spendingOverTimeBucket: SharedTypes.TimeSpendingBreakdown
+	totalExpenditure: number
+	nBudget?: number
+}
+
+export type TimeUnitSpending = {
+	date: string
+	expense_count: number
+	total: number
+}
+
+export type SpendingOverTimeData = {
+	spendingOverTime: TimeUnitSpending[]
+	prospectiveBudgetForForecast?: number
 }
