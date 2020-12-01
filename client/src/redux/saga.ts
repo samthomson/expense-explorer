@@ -33,7 +33,7 @@ function* getSummary() {
 			query: gql`
 				query GetSummary(
 					$date: String!
-					$scope: String!
+					$scope: ScopeEnum!
 					$budget: Int
 					$filter: Filter
 				) {
@@ -83,7 +83,7 @@ function* getSummary() {
 			`,
 			variables: {
 				date: moment.unix(date).format(),
-				scope,
+				scope: scope === 'month' ? 'MONTH' : 'YEAR',
 				budget,
 				filter,
 			},

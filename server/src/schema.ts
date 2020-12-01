@@ -8,6 +8,7 @@ import {
 	GraphQLInt,
 	GraphQLList,
 	GraphQLInputObjectType,
+	GraphQLEnumType,
 } from 'graphql'
 import * as moment from 'moment'
 import { IElasticExpenseDocument } from './declarations'
@@ -86,6 +87,18 @@ const SummaryType = new GraphQLObjectType({
 	}),
 })
 
+const ScopeEnumType = new GraphQLEnumType({
+	name: 'ScopeEnum',
+	values: {
+		MONTH: {
+			value: 'month',
+		},
+		YEAR: {
+			value: 'year',
+		},
+	},
+})
+
 const RootQuery = new GraphQLObjectType({
 	name: 'RootQueryType',
 	fields: () => ({
@@ -103,7 +116,7 @@ const RootQuery = new GraphQLObjectType({
 						'ISO date eg 2020-01-16',
 				},
 				budget: { type: GraphQLInt },
-				scope: { type: new GraphQLNonNull(GraphQLString) },
+				scope: { type: new GraphQLNonNull(ScopeEnumType) },
 				filter: {
 					type: FilterInputType,
 					description:
