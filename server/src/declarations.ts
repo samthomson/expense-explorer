@@ -1,3 +1,6 @@
+import * as SharedTypes from '@shared/declarations'
+import * as moment from 'moment'
+
 export type Expense = {
 	Category: string //'Food/Drink',
 	Date: string //'06/01/2018',
@@ -19,4 +22,56 @@ export interface ICSVExpenseRow extends Expense {
 	Payment: string // 'N/A',
 	Currency: string // 'DKK',
 	Note: string // 'GBP: 9,00 £\nExchange rate: 8.50545829\n',
+}
+
+export type BuildElasticQueryInput = {
+	sLowerDateRange: string
+	sUpperDateRange: string
+	oFilter?: SharedTypes.Filter
+	sScope: string
+}
+
+export type ExpenseData = {
+	totalExpenditure: number
+	numberOfExpenses: number,
+	expenses: SharedTypes.Expense[],
+}
+
+export type SpendingOverTimeInput = {
+	sScope: SharedTypes.Scope
+	oQueriedDate: moment.Moment
+	spendingOverTimeBucket: SharedTypes.TimeSpendingBreakdown
+	totalExpenditure: number
+	nBudget?: number
+}
+
+export type TimeUnitSpending = {
+	date: string
+	expense_count: number
+	total: number
+}
+
+export type SpendingOverTimeData = {
+	spendingOverTime: TimeUnitSpending[]
+	prospectiveBudgetForForecast?: number
+}
+
+export type SpendingProjection = {
+	total: number
+	date: string
+	expense_count: number
+}
+
+export type ProjectionData = {
+	projectionForScope?: number
+	projectedSpendingOverTime?: SpendingProjection[]
+	modePerUnit?: number
+	medianPerUnit?: number
+}
+
+export type ProjectionDataInput = {
+	sScope: SharedTypes.Scope
+	oQueriedDate: moment.Moment
+	fAverage: number
+	spendingOverTimeData: TimeUnitSpending[]
 }
