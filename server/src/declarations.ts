@@ -59,7 +59,7 @@ export type SpendingOverTimeData = {
 export type SpendingProjection = {
 	total: number
 	date: string
-	expense_count: number
+	expenseCount: number
 }
 
 export type ProjectionData = {

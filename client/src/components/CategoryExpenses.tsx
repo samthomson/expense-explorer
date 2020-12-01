@@ -71,7 +71,7 @@ export class CategoryExpenses extends React.Component<IProps, {}> {
 									{categories.map((oSingleCategory, i) => {
 										const {
 											category,
-											expense_count,
+											expenseCount,
 											percent,
 											total,
 										} = oSingleCategory
@@ -81,7 +81,7 @@ export class CategoryExpenses extends React.Component<IProps, {}> {
 										)
 										const sDisplayCategory: string =
 											asCategoryParts[
-												asCategoryParts.length - 1
+											asCategoryParts.length - 1
 											]
 
 										return (
@@ -102,7 +102,7 @@ export class CategoryExpenses extends React.Component<IProps, {}> {
 													</a>
 												</td>
 												<td>${total.toFixed(2)}</td>
-												<td>{expense_count}</td>
+												<td>{expenseCount}</td>
 												<td>
 													{percent > 1
 														? percent.toFixed(0)

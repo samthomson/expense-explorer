@@ -45,12 +45,12 @@ function* getSummary() {
 					) {
 						totalExpenditure
 						numberOfExpenses
-						average_per_unit
-						median_per_unit
-						mode_per_unit
-						projection_for_scope
-						prospective_budget_for_forecast
-						projected_spending_over_time {
+						averagePerUnit
+						medianPerUnit
+						modePerUnit
+						projectionForScope
+						prospectiveBudgetForForecast
+						projectedSpendingOverTime {
 							date
 							total
 						}
@@ -61,21 +61,21 @@ function* getSummary() {
 							subcategory
 							date
 						}
-						spending_by_category {
+						spendingByCategory {
 							category
-							expense_count
+							expenseCount
 							total
 							percent
 						}
-						spending_by_subcategory {
+						spendingBySubcategory {
 							category
-							expense_count
+							expenseCount
 							total
 							percent
 						}
-						spending_over_time {
+						spendingOverTime {
 							date
-							expense_count
+							expenseCount
 							total
 						}
 					}

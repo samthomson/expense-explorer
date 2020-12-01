@@ -301,7 +301,7 @@ const spendingProjection = ({ oQueriedDate, fAverage, sScope, spendingOverTimeDa
 		// projected 'scope expenditure'
 		const nNumberOfUnits: number =
 			sScope === 'year' ? 12 : oQueriedDate.daysInMonth()
-		// oReturn['projection_for_scope'] = fAverage * nNumberOfUnits
+		// oReturn['projectionForScope'] = fAverage * nNumberOfUnits
 
 		// projected dated spending
 		const aSpendingProjection = spendingOverTimeData.map(oP => {
