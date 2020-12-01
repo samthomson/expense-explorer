@@ -99,6 +99,25 @@ const ScopeEnumType = new GraphQLEnumType({
 	},
 })
 
+
+const ExpenseSummaryInputType = new GraphQLInputObjectType({
+	name: 'ExpenseSummaryInput',
+	fields: () => ({
+		date: {
+			type: new GraphQLNonNull(GraphQLString),
+			description:
+				'ISO date eg 2020-01-16',
+		},
+		budget: { type: GraphQLInt },
+		scope: { type: new GraphQLNonNull(ScopeEnumType) },
+		filter: {
+			type: FilterInputType,
+			description:
+				'an object containing term (column) and match (value) properties',
+		},
+	}),
+})
+
 const RootQuery = new GraphQLObjectType({
 	name: 'RootQueryType',
 	fields: () => ({
@@ -110,20 +129,9 @@ const RootQuery = new GraphQLObjectType({
 		summary: {
 			type: SummaryType,
 			args: {
-				date: {
-					type: new GraphQLNonNull(GraphQLString),
-					description:
-						'ISO date eg 2020-01-16',
-				},
-				budget: { type: GraphQLInt },
-				scope: { type: new GraphQLNonNull(ScopeEnumType) },
-				filter: {
-					type: FilterInputType,
-					description:
-						'an object containing term (column) and match (value) properties',
-				},
+				expenseSummaryInput: { type: GraphQLNonNull(ExpenseSummaryInputType) }
 			},
-			resolve: async (parentValue, { date, scope, filter, budget }) =>
+			resolve: async (parentValue, { expenseSummaryInput: { date, scope, filter, budget } }) =>
 				await getSummary(
 					date,
 					scope,

@@ -32,16 +32,10 @@ function* getSummary() {
 		const data = yield client.query({
 			query: gql`
 				query GetSummary(
-					$date: String!
-					$scope: ScopeEnum!
-					$budget: Int
-					$filter: Filter
+					$expenseSummaryInput: ExpenseSummaryInput!
 				) {
 					summary(
-						date: $date
-						scope: $scope
-						budget: $budget
-						filter: $filter
+						expenseSummaryInput: $expenseSummaryInput
 					) {
 						totalExpenditure
 						numberOfExpenses
@@ -82,10 +76,12 @@ function* getSummary() {
 				}
 			`,
 			variables: {
-				date: moment.unix(date).format(),
-				scope: scope === 'month' ? 'MONTH' : 'YEAR',
-				budget,
-				filter,
+				expenseSummaryInput: {
+					date: moment.unix(date).format(),
+					scope: scope === 'month' ? 'MONTH' : 'YEAR',
+					budget,
+					filter
+				}
 			},
 		})
 
