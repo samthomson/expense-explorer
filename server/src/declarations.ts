@@ -47,7 +47,7 @@ export type SpendingOverTimeInput = {
 
 export type TimeUnitSpending = {
 	date: string
-	expense_count: number
+	expenseCount: number
 	total: number
 }
 

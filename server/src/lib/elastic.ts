@@ -136,7 +136,7 @@ const categorySpending = (categoryAggregation: SharedTypes.CategorySpendingBreak
 		({ key, doc_count, unit_total }) => {
 			return {
 				category: key,
-				expense_count: doc_count,
+				expenseCount: doc_count,
 				total: unit_total.value,
 				percent:
 					(unit_total.value /
@@ -153,7 +153,7 @@ const categorySpending = (categoryAggregation: SharedTypes.CategorySpendingBreak
 		(oSubcategoryBucket) => {
 			return {
 				category: oSubcategoryBucket.key,
-				expense_count: oSubcategoryBucket.doc_count,
+				expenseCount: oSubcategoryBucket.doc_count,
 				total: oSubcategoryBucket.unit_total.value,
 				percent:
 					(oSubcategoryBucket.unit_total.value /
@@ -266,7 +266,7 @@ const spendingOverTime = ({ sScope, oQueriedDate, spendingOverTimeBucket, totalE
 
 			return {
 				date: sKey,
-				expense_count:
+				expenseCount:
 					aoMatchingTimePeriods.length > 0
 						? aoMatchingTimePeriods[0].doc_count
 						: 0,
@@ -283,7 +283,7 @@ const spendingOverTime = ({ sScope, oQueriedDate, spendingOverTimeBucket, totalE
 	spendingOverTimeBucket.buckets.map((oBucket) => {
 		return {
 			date: oBucket.key_as_string,
-			expense_count: oBucket.doc_count,
+			expenseCount: oBucket.doc_count,
 			total: oBucket.unit_total.value.toFixed(0),
 		}
 	})
@@ -399,20 +399,20 @@ export const getSummary = async (
 	const returnSummary: Summary = {
 		// historic data
 		expenses: expenseData.expenses,
-		spending_over_time: spendingOverTimeData.spendingOverTime,
-		spending_by_category: categorySpendingData.categorySpending,
-		spending_by_subcategory: categorySpendingData.subcategorySpending,
+		spendingOverTime: spendingOverTimeData.spendingOverTime,
+		spendingByCategory: categorySpendingData.categorySpending,
+		spendingBySubcategory: categorySpendingData.subcategorySpending,
 		// projected data
-		projected_spending_over_time: spendingProjectionData.projectedSpendingOverTime,
-		projection_for_scope: spendingProjectionData.projectionForScope,
+		projectedSpendingOverTime: spendingProjectionData.projectedSpendingOverTime,
+		projectionForScope: spendingProjectionData.projectionForScope,
 		// budget
-		prospective_budget_for_forecast: spendingOverTimeData.prospectiveBudgetForForecast,
+		prospectiveBudgetForForecast: spendingOverTimeData.prospectiveBudgetForForecast,
 		// stats
 		totalExpenditure,
 		numberOfExpenses: expenseData.numberOfExpenses,
-		average_per_unit: Number(fAverage.toFixed(2)),
-		median_per_unit: spendingProjectionData?.medianPerUnit ?? medianPerUnit,
-		mode_per_unit: spendingProjectionData?.modePerUnit ?? (aMaybeMode?.[0] ?? 0),
+		averagePerUnit: Number(fAverage.toFixed(2)),
+		medianPerUnit: spendingProjectionData?.medianPerUnit ?? medianPerUnit,
+		modePerUnit: spendingProjectionData?.modePerUnit ?? (aMaybeMode?.[0] ?? 0),
 	}
 
 	return returnSummary
