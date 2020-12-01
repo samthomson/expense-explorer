@@ -13,38 +13,38 @@ export enum ActionType {
 
 export type Action =
 	| {
-			type: ActionType.SET_DATE
-			nDate: number
-	  }
+		type: ActionType.SET_DATE
+		nDate: number
+	}
 	| {
-			type: ActionType.SET_BUDGET
-			nYearlyBudget: number
-	  }
+		type: ActionType.SET_BUDGET
+		nYearlyBudget: number
+	}
 	| {
-			type: ActionType.GET_SUMMARY
-			nDate: number
-	  }
+		type: ActionType.GET_SUMMARY
+		nDate: number
+	}
 	| {
-			type: ActionType.GET_SUMMARY_SUCCEEDED
-			oSummary: Summary
-	  }
+		type: ActionType.GET_SUMMARY_SUCCEEDED
+		oSummary: Summary
+	}
 	| {
-			type: ActionType.GET_SUMMARY_FAILED
-	  }
+		type: ActionType.GET_SUMMARY_FAILED
+	}
 	| {
-			type: ActionType.CHANGE_MONTH
-			bBackwards: boolean
-			oSummary: Summary | null
-	  }
+		type: ActionType.CHANGE_MONTH
+		bBackwards: boolean
+		oSummary: Summary | null
+	}
 	| {
-			type: ActionType.CHANGE_SCOPE
-			sScope: string
-			oSummary: Summary | null
-	  }
+		type: ActionType.CHANGE_SCOPE
+		sScope: string
+		oSummary: Summary | null
+	}
 	| {
-			type: ActionType.SET_FILTER
-			oFilter: Filter | null
-	  }
+		type: ActionType.SET_FILTER
+		filter: Filter | null
+	}
 
 export const setDate = (nDate: number): Action => {
 	return {
@@ -96,9 +96,9 @@ export const changeScope = (sScope: string): Action => {
 	}
 }
 
-export const setFilter = (oFilter: Filter | null): Action => {
+export const setFilter = (filter: Filter | null): Action => {
 	return {
 		type: ActionType.SET_FILTER,
-		oFilter,
+		filter,
 	}
 }

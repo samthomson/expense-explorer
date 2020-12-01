@@ -30,27 +30,27 @@ export const getDocument = async (
 	}
 }
 
-const buildElasticQuery = ({ sLowerDateRange, sUpperDateRange, oFilter, sScope }: ServerTypes.BuildElasticQueryInput) => {
+const buildElasticQuery = ({ lowerDateRange, upperDateRange, filter, scope }: ServerTypes.BuildElasticQueryInput) => {
 
 	const nSize = 10000
-	const sAggregationScopePeriod = sScope === 'month' ? 'day' : 'month'
+	const sAggregationScopePeriod = scope === 'month' ? 'day' : 'month'
 
 	const aMustQueries: unknown[] = []
 
 	aMustQueries.push({
 		range: {
 			Date: {
-				gte: sLowerDateRange,
-				lte: sUpperDateRange,
+				gte: lowerDateRange,
+				lte: upperDateRange,
 				format: 'dd/MM/yyyy',
 			},
 		},
 	})
 
 	// option free text matching
-	if (oFilter) {
+	if (filter) {
 		aMustQueries.push({
-			match: { [oFilter.term]: oFilter.match },
+			match: { [filter.term]: filter.match },
 		})
 	}
 
@@ -187,13 +187,13 @@ const numberOfUnits = (spendingOverTimeBucket: SharedTypes.TimeSpendingBreakdown
  * Take all expenses and group by date/month (if not done so already), then maybe derive stats per grouping.
  *
  */
-const spendingOverTime = ({ sScope, oQueriedDate, spendingOverTimeBucket, totalExpenditure, nBudget }: ServerTypes.SpendingOverTimeInput): ServerTypes.SpendingOverTimeData => {
+const spendingOverTime = ({ scope, queriedDate, spendingOverTimeBucket, totalExpenditure, budget }: ServerTypes.SpendingOverTimeInput): ServerTypes.SpendingOverTimeData => {
 	// build up empty state objects
 	const oPossibleTimeUnits: PossibleTimeUnits = {}
 	// dates of the month
-	if (sScope === 'month') {
+	if (scope === 'month') {
 		// get all dates for the month
-		const iNumberOfDays: number = oQueriedDate.daysInMonth() // get number of days in current month
+		const iNumberOfDays: number = queriedDate.daysInMonth() // get number of days in current month
 		for (
 			let cUnitCreate = 0;
 			cUnitCreate < iNumberOfDays;
@@ -203,7 +203,7 @@ const spendingOverTime = ({ sScope, oQueriedDate, spendingOverTimeBucket, totalE
 		}
 	}
 	// months of the year
-	if (sScope === 'year') {
+	if (scope === 'year') {
 		for (let cUnitCreate = 0; cUnitCreate < 12; cUnitCreate++) {
 			oPossibleTimeUnits[cUnitCreate + 1] = {}
 		}
@@ -214,23 +214,23 @@ const spendingOverTime = ({ sScope, oQueriedDate, spendingOverTimeBucket, totalE
 	// current year and year mode
 	let prospectiveBudgetForForecast = undefined
 	if (
-		sScope === 'year' &&
-		moment(oQueriedDate).isSame(new Date(), sScope)
+		scope === 'year' &&
+		moment(queriedDate).isSame(new Date(), scope)
 	) {
 		// get exact monthly average
 		const cDayNumberOfYear: number = moment().dayOfYear()
 		const fDecimalMonthsThroughYear: number =
 			(cDayNumberOfYear / 365) * 12
 
-		if (totalExpenditure && nBudget) {
+		if (totalExpenditure && budget) {
 			prospectiveBudgetForForecast =
-				(nBudget - totalExpenditure) /
+				(budget - totalExpenditure) /
 				(12 - fDecimalMonthsThroughYear)
 		}
 	}
 	if (
-		sScope === 'month' &&
-		moment(oQueriedDate).isSame(new Date(), sScope)
+		scope === 'month' &&
+		moment(queriedDate).isSame(new Date(), scope)
 	) {
 		// get exact monthly average
 		const nPresentDateOfCurrentMonth: number = moment().date()
@@ -239,8 +239,8 @@ const spendingOverTime = ({ sScope, oQueriedDate, spendingOverTimeBucket, totalE
 		const fDecimalDaysThroughMonth: number =
 			(nPresentDateOfCurrentMonth / nTotalDaysInCurrentMonth) * nTotalDaysInCurrentMonth
 
-		if (totalExpenditure && nBudget) {
-			const budgetRemaining = nBudget - totalExpenditure
+		if (totalExpenditure && budget) {
+			const budgetRemaining = budget - totalExpenditure
 			const daysRemaining = nTotalDaysInCurrentMonth - fDecimalDaysThroughMonth
 			prospectiveBudgetForForecast = budgetRemaining / daysRemaining
 		}
@@ -256,7 +256,7 @@ const spendingOverTime = ({ sScope, oQueriedDate, spendingOverTimeBucket, totalE
 						'MM/DD/Y',
 					)
 
-					if (sScope === 'month') {
+					if (scope === 'month') {
 						return oPeriodDate.date() === Number(sKey)
 					} else {
 						return oPeriodDate.month() + 1 === Number(sKey)
@@ -291,29 +291,29 @@ const spendingOverTime = ({ sScope, oQueriedDate, spendingOverTimeBucket, totalE
 	return { spendingOverTime: aTimeUnitSpending, prospectiveBudgetForForecast }
 }
 
-const spendingProjection = ({ oQueriedDate, fAverage, sScope, spendingOverTimeData }: ServerTypes.ProjectionDataInput) => {
+const spendingProjection = ({ queriedDate, average, scope, spendingOverTimeData }: ServerTypes.ProjectionDataInput) => {
 
 	const projectedSpendingOverTime = null
 	const projectionForScope = null
 
-	if (moment(oQueriedDate).isSame(new Date(), sScope)) {
+	if (moment(queriedDate).isSame(new Date(), scope)) {
 		// current scope
 		// projected 'scope expenditure'
 		const nNumberOfUnits: number =
-			sScope === 'year' ? 12 : oQueriedDate.daysInMonth()
-		// oReturn['projectionForScope'] = fAverage * nNumberOfUnits
+			scope === 'year' ? 12 : queriedDate.daysInMonth()
+		// oReturn['projectionForScope'] = average * nNumberOfUnits
 
 		// projected dated spending
 		const aSpendingProjection = spendingOverTimeData.map(oP => {
 			return {
 				...oP,
-				total: fAverage || 0,
+				total: average || 0,
 			}
 		})
 
 		// projection data is from now until end of period, until now should be real data
 		const nCurrentUnitTime =
-			sScope === 'year' ? moment().month() + 1 : moment().date()
+			scope === 'year' ? moment().month() + 1 : moment().date()
 		// year mode - before current month, so in april, take month jan feb mar
 		// april = 3, so we add one
 		// month mode - before current date, so on 4th, take 1st 2nd 3rd
@@ -334,7 +334,7 @@ const spendingProjection = ({ oQueriedDate, fAverage, sScope, spendingOverTimeDa
 		return {
 			medianPerUnit: HelperUtil.median(aMedianData),
 			modePerUnit: aMaybeMode?.[0] ?? 0,
-			projectionForScope: fAverage * nNumberOfUnits,
+			projectionForScope: average * nNumberOfUnits,
 			projectedSpendingOverTime: aSpendingProjection
 		}
 	}
@@ -347,19 +347,19 @@ const spendingProjection = ({ oQueriedDate, fAverage, sScope, spendingOverTimeDa
 
 export const getSummary = async (
 	nDate: string,
-	sScope: 'month' | 'year',
-	oFilter: Filter | undefined,
-	nBudget?: number,
+	scope: 'month' | 'year',
+	filter: Filter | undefined,
+	budget?: number,
 ): Promise<Summary> => {
 	// build date range query
-	const oQueriedDate = moment(nDate)
-	const sScopePeriod = sScope === 'month' ? 'month' : 'year'
+	const queriedDate = moment(nDate)
+	const scopePeriod = scope === 'month' ? 'month' : 'year'
 
-	const sLowerDateRange = oQueriedDate.startOf(sScopePeriod).format('DD/MM/Y')
-	const sUpperDateRange = oQueriedDate.endOf(sScopePeriod).format('DD/MM/Y')
+	const lowerDateRange = queriedDate.startOf(scopePeriod).format('DD/MM/Y')
+	const upperDateRange = queriedDate.endOf(scopePeriod).format('DD/MM/Y')
 
 
-	const oQuery = buildElasticQuery({ oFilter, sLowerDateRange, sUpperDateRange, sScope })
+	const oQuery = buildElasticQuery({ filter, lowerDateRange, upperDateRange, scope })
 
 	const result: ElasticSummaryResponse = await client.search(oQuery)
 		.catch((err: Error) => console.log(JSON.stringify(err, null, 4)))
@@ -384,16 +384,16 @@ export const getSummary = async (
 
 	const categorySpendingData = categorySpending(aggDump.category_spending_breakdown, aggDump.subcategory_spending_breakdown)
 
-	const spendingOverTimeData = spendingOverTime({ sScope, oQueriedDate, spendingOverTimeBucket: aggDump.time_spending_breakdown, totalExpenditure, nBudget })
-	const fNumberOfUnits = numberOfUnits(aggDump.time_spending_breakdown, sScope)
-	const fAverage = (totalExpenditure / fNumberOfUnits)
+	const spendingOverTimeData = spendingOverTime({ scope, queriedDate, spendingOverTimeBucket: aggDump.time_spending_breakdown, totalExpenditure, budget })
+	const fNumberOfUnits = numberOfUnits(aggDump.time_spending_breakdown, scope)
+	const average = (totalExpenditure / fNumberOfUnits)
 
 	const totalsPerPeriod = spendingOverTimeData.spendingOverTime.map(oItem => Number(oItem.total))
 
 	const medianPerUnit = HelperUtil.median(totalsPerPeriod)
 	const aMaybeMode = HelperUtil.mode(totalsPerPeriod)
 
-	const spendingProjectionData = spendingProjection({ spendingOverTimeData: spendingOverTimeData.spendingOverTime, sScope, oQueriedDate, fAverage })
+	const spendingProjectionData = spendingProjection({ spendingOverTimeData: spendingOverTimeData.spendingOverTime, scope, queriedDate, average })
 
 
 	const returnSummary: Summary = {
@@ -410,7 +410,7 @@ export const getSummary = async (
 		// stats
 		totalExpenditure,
 		numberOfExpenses: expenseData.numberOfExpenses,
-		averagePerUnit: Number(fAverage.toFixed(2)),
+		averagePerUnit: Number(average.toFixed(2)),
 		medianPerUnit: spendingProjectionData?.medianPerUnit ?? medianPerUnit,
 		modePerUnit: spendingProjectionData?.modePerUnit ?? (aMaybeMode?.[0] ?? 0),
 	}

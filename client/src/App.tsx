@@ -22,7 +22,7 @@ import './../node_modules/semantic-ui-css/semantic.min.css'
 interface IAppProps {
 	nYearlyBudget: number
 	nDate: number
-	oFilter: Filter
+	filter: Filter
 	oSummary: Summary
 	sScope: string
 	changeMonth: (bBackwards: boolean) => {}
@@ -84,7 +84,7 @@ class App extends React.Component<IAppProps, {}> {
 	}
 
 	public renderEverything() {
-		const { nDate, oFilter, oSummary, sScope } = this.props
+		const { nDate, filter, oSummary, sScope } = this.props
 		const {
 			spendingByCategory,
 			spendingBySubcategory,
@@ -105,10 +105,10 @@ class App extends React.Component<IAppProps, {}> {
 							{/* current period */}
 							<h2>
 								{this.renderScopeLabel(nDate, sScope)}
-								{oFilter && (
+								{filter && (
 									<span>
 										&nbsp;(&nbsp;
-										{oFilter.term}:{oFilter.match}
+										{filter.term}:{filter.match}
 										<a onClick={() => this.eRemoveFilter()}>
 											<i className="icon trash" />
 										</a>
@@ -421,10 +421,10 @@ class App extends React.Component<IAppProps, {}> {
 }
 
 const mapStateToProps = (state: Store.App) => {
-	const { nDate, oFilter, oSummary, sScope, nYearlyBudget } = state
+	const { nDate, filter, oSummary, sScope, nYearlyBudget } = state
 	return {
 		nDate,
-		oFilter,
+		filter,
 		oSummary,
 		sScope,
 		nYearlyBudget,
@@ -436,7 +436,7 @@ const mapDispatchToProps = (dispatch: React.Dispatch<Action>) => ({
 	changeScope: (sScope: string) => dispatch(changeScope(sScope)),
 	getSummary: (iDate: number) => dispatch(getSummary(iDate)),
 	setBudget: (fYearlyBudget: number) => dispatch(setBudget(fYearlyBudget)),
-	setFilter: (oFilter: Filter | null) => dispatch(setFilter(oFilter)),
+	setFilter: (filter: Filter | null) => dispatch(setFilter(filter)),
 })
 
 export default connect(

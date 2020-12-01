@@ -18,15 +18,15 @@ const client = new ApolloClient({
 
 export const getIDate = (state: Store.App) => state.nDate
 export const getScope = (state: Store.App) => state.sScope
-export const getFilter = (state: Store.App) => state.oFilter
+export const getFilter = (state: Store.App) => state.filter
 export const getBudget = (state: Store.App) => state.nYearlyBudget
 
 // worker Saga: will be fired on USER_FETCH_REQUESTED actions
 function* getSummary() {
-	const nDate = yield select(getIDate) // epoch seconds
-	const sScope = yield select(getScope) // month / year
-	const nBudget = yield select(getBudget)
-	const oFilter = yield select(getFilter)
+	const date = yield select(getIDate) // epoch seconds
+	const scope = yield select(getScope) // month / year
+	const budget = yield select(getBudget)
+	const filter = yield select(getFilter)
 
 	try {
 		const data = yield client.query({
@@ -82,22 +82,18 @@ function* getSummary() {
 				}
 			`,
 			variables: {
-				date: moment.unix(nDate).format(),
-				scope: sScope,
-				budget: nBudget,
-				filter: oFilter,
+				date: moment.unix(date).format(),
+				scope,
+				budget,
+				filter,
 			},
 		})
 
-		if (data && data.data && data.data.summary) {
-			const { summary } = data.data
+		yield put(getSummarySucceded(data.data.summary))
 
-			yield put(getSummarySucceded(summary))
-		} else {
-			put(getSummaryFailed())
-		}
 	} catch (e) {
 		console.log('error getting summary? ', e.message)
+		put(getSummaryFailed())
 		// yield put({type: "USER_FETCH_FAILED", message: e.message});
 	}
 }
