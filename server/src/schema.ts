@@ -8,6 +8,7 @@ import {
 	GraphQLInt,
 	GraphQLList,
 	GraphQLInputObjectType,
+	GraphQLEnumType,
 } from 'graphql'
 import * as moment from 'moment'
 import { IElasticExpenseDocument } from './declarations'
@@ -29,7 +30,7 @@ const CategorySpendType = new GraphQLObjectType({
 	name: 'CategorySpend',
 	fields: () => ({
 		category: { type: GraphQLString },
-		expense_count: { type: GraphQLInt },
+		expenseCount: { type: GraphQLInt },
 		total: { type: GraphQLFloat },
 		percent: { type: GraphQLFloat },
 	}),
@@ -39,7 +40,7 @@ const TimeSpendType = new GraphQLObjectType({
 	name: 'TimeSpend',
 	fields: () => ({
 		date: { type: GraphQLString },
-		expense_count: { type: GraphQLInt },
+		expenseCount: { type: GraphQLInt },
 		total: { type: GraphQLFloat },
 	}),
 })
@@ -66,23 +67,54 @@ const SummaryType = new GraphQLObjectType({
 		totalExpenditure: { type: GraphQLFloat },
 		numberOfExpenses: { type: GraphQLInt },
 		expenses: { type: GraphQLList(ExpenseType) },
-		spending_over_time: {
+		spendingOverTime: {
 			type: GraphQLList(TimeSpendType),
 		},
-		projected_spending_over_time: {
+		projectedSpendingOverTime: {
 			type: GraphQLList(ProjectedTimeSpendType),
 		},
-		spending_by_category: {
+		spendingByCategory: {
 			type: GraphQLList(CategorySpendType),
 		},
-		spending_by_subcategory: {
+		spendingBySubcategory: {
 			type: GraphQLList(CategorySpendType),
 		},
-		average_per_unit: { type: GraphQLFloat },
-		median_per_unit: { type: GraphQLFloat },
-		mode_per_unit: { type: GraphQLFloat },
-		projection_for_scope: { type: GraphQLFloat },
-		prospective_budget_for_forecast: { type: GraphQLFloat },
+		averagePerUnit: { type: GraphQLFloat },
+		medianPerUnit: { type: GraphQLFloat },
+		modePerUnit: { type: GraphQLFloat },
+		projectionForScope: { type: GraphQLFloat },
+		prospectiveBudgetForForecast: { type: GraphQLFloat },
+	}),
+})
+
+const ScopeEnumType = new GraphQLEnumType({
+	name: 'ScopeEnum',
+	values: {
+		MONTH: {
+			value: 'month',
+		},
+		YEAR: {
+			value: 'year',
+		},
+	},
+})
+
+
+const ExpenseSummaryInputType = new GraphQLInputObjectType({
+	name: 'ExpenseSummaryInput',
+	fields: () => ({
+		date: {
+			type: new GraphQLNonNull(GraphQLString),
+			description:
+				'ISO date eg 2020-01-16',
+		},
+		budget: { type: GraphQLInt },
+		scope: { type: new GraphQLNonNull(ScopeEnumType) },
+		filter: {
+			type: FilterInputType,
+			description:
+				'an object containing term (column) and match (value) properties',
+		},
 	}),
 })
 
@@ -97,20 +129,9 @@ const RootQuery = new GraphQLObjectType({
 		summary: {
 			type: SummaryType,
 			args: {
-				date: {
-					type: new GraphQLNonNull(GraphQLString),
-					description:
-						'ISO date eg 2020-01-16',
-				},
-				budget: { type: GraphQLInt },
-				scope: { type: new GraphQLNonNull(GraphQLString) },
-				filter: {
-					type: FilterInputType,
-					description:
-						'an object containing term (column) and match (value) properties',
-				},
+				expenseSummaryInput: { type: GraphQLNonNull(ExpenseSummaryInputType) }
 			},
-			resolve: async (parentValue, { date, scope, filter, budget }) =>
+			resolve: async (parentValue, { expenseSummaryInput: { date, scope, filter, budget } }) =>
 				await getSummary(
 					date,
 					scope,

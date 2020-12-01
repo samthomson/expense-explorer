@@ -1,16 +1,16 @@
 export type Summary = {
-	spending_by_category?: Category[]
-	spending_by_subcategory?: Category[]
-	spending_over_time?: TimeUnit[]
-	projected_spending_over_time?: TimeUnit[] | null
-	average_per_unit?: number
-	median_per_unit?: number
-	mode_per_unit?: number
-	projection_for_scope?: number | null
+	spendingByCategory?: Category[]
+	spendingBySubcategory?: Category[]
+	spendingOverTime?: TimeUnit[]
+	projectedSpendingOverTime?: TimeUnit[] | null
+	averagePerUnit?: number
+	medianPerUnit?: number
+	modePerUnit?: number
+	projectionForScope?: number | null
 	expenses?: Expense[]
 	totalExpenditure?: number
 	numberOfExpenses?: number
-	prospective_budget_for_forecast?: number
+	prospectiveBudgetForForecast?: number
 }
 
 export type Expense = {
@@ -23,7 +23,7 @@ export type Expense = {
 
 export type Category = {
 	category: string
-	expense_count: number
+	expenseCount: number
 	percent: number
 	total: number
 }
@@ -35,7 +35,7 @@ export type PossibleTimeUnits = {
 export type TimeUnit = {
 	date: string
 	total: number
-	expense_count: number
+	expenseCount: number
 }
 
 export type Filter = {

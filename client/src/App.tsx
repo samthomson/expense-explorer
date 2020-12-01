@@ -22,7 +22,7 @@ import './../node_modules/semantic-ui-css/semantic.min.css'
 interface IAppProps {
 	nYearlyBudget: number
 	nDate: number
-	oFilter: Filter
+	filter: Filter
 	oSummary: Summary
 	sScope: string
 	changeMonth: (bBackwards: boolean) => {}
@@ -84,11 +84,11 @@ class App extends React.Component<IAppProps, {}> {
 	}
 
 	public renderEverything() {
-		const { nDate, oFilter, oSummary, sScope } = this.props
+		const { nDate, filter, oSummary, sScope } = this.props
 		const {
-			spending_by_category,
-			spending_by_subcategory,
-			spending_over_time,
+			spendingByCategory,
+			spendingBySubcategory,
+			spendingOverTime,
 			expenses,
 			totalExpenditure,
 		}: Summary = oSummary
@@ -105,10 +105,10 @@ class App extends React.Component<IAppProps, {}> {
 							{/* current period */}
 							<h2>
 								{this.renderScopeLabel(nDate, sScope)}
-								{oFilter && (
+								{filter && (
 									<span>
 										&nbsp;(&nbsp;
-										{oFilter.term}:{oFilter.match}
+										{filter.term}:{filter.match}
 										<a onClick={() => this.eRemoveFilter()}>
 											<i className="icon trash" />
 										</a>
@@ -126,20 +126,20 @@ class App extends React.Component<IAppProps, {}> {
 
 				{/* render expenses for current date */}
 				{/* {totalExpenditure > 0 && ( */}
-				{!!totalExpenditure && totalExpenditure > 0 && spending_over_time && spending_by_category && spending_by_subcategory && expenses && oSummary.average_per_unit && (
+				{!!totalExpenditure && totalExpenditure > 0 && spendingOverTime && spendingByCategory && spendingBySubcategory && expenses && oSummary.averagePerUnit && (
 					<div>
 						<br />
 						{this.renderSummary()}
-						{this.renderSpendingOverTime(spending_over_time)}
+						{this.renderSpendingOverTime(spendingOverTime)}
 						<br />
 						<CategoryExpenses
-							categories={spending_by_category}
+							categories={spendingByCategory}
 							eSetFilter={this.eSetFilter}
 							sCategoryName={'Category'}
 						/>
 						<br />
 						<CategoryExpenses
-							categories={spending_by_subcategory}
+							categories={spendingBySubcategory}
 							eSetFilter={this.eSetFilter}
 							sCategoryName={'Subcategory'}
 						/>
@@ -184,12 +184,12 @@ class App extends React.Component<IAppProps, {}> {
 		const { nYearlyBudget, oSummary, sScope } = this.props
 		// todo: defaults of -1 to shut linter up, later types should be updated to be non nullable, that means changing API elastic.ts file
 		const {
-			average_per_unit = -1,
-			median_per_unit = -1,
-			mode_per_unit = -1,
+			averagePerUnit = -1,
+			medianPerUnit = -1,
+			modePerUnit = -1,
 			numberOfExpenses,
-			projection_for_scope,
-			prospective_budget_for_forecast,
+			projectionForScope,
+			prospectiveBudgetForForecast,
 			totalExpenditure = -1,
 		} = oSummary
 
@@ -217,41 +217,41 @@ class App extends React.Component<IAppProps, {}> {
 					<br />
 					mean average per {sDisplayPeriod}:$
 					<NumberDisplay
-						number={Number(average_per_unit.toFixed(2))}
+						number={Number(averagePerUnit.toFixed(2))}
 					/>
 				</div>
 				<div className="five wide column">
 					<span title="the most frequently appearing value">
 						mode
 					</span>{' '}
-					per {sDisplayPeriod}: ${mode_per_unit.toFixed(2)}
+					per {sDisplayPeriod}: ${modePerUnit.toFixed(2)}
 					<br />
 					<span title="cumulative total divided by number of items - the classic average">
 						mean
 					</span>{' '}
 					per {sDisplayPeriod}: $
 					<NumberDisplay
-						number={Number(average_per_unit.toFixed(2))}
+						number={Number(averagePerUnit.toFixed(2))}
 					/>
 					<br />
 					<span title="the middle value if all values are ordered">
 						median
 					</span>{' '}
-					per {sDisplayPeriod}: ${median_per_unit.toFixed(2)}
+					per {sDisplayPeriod}: ${medianPerUnit.toFixed(2)}
 				</div>
 				<div className="six wide column">
 					{bInCurrentPeriod && (
 						<div>
 							{/* only show projection data if the current period is incomplete */}
-							{projection_for_scope && (
+							{projectionForScope && (
 								<span>projection for {sScope}:&nbsp;</span>
 							)}
-							{projection_for_scope && (
+							{projectionForScope && (
 								<span>
 									$
 									<NumberDisplay
 										number={Number(
-											projection_for_scope.toFixed(2),
+											projectionForScope.toFixed(2),
 										)}
 									/>
 								</span>
@@ -270,12 +270,12 @@ class App extends React.Component<IAppProps, {}> {
 									}
 								/>
 							</div>
-							{nYearlyBudget && prospective_budget_for_forecast && (
+							{nYearlyBudget && prospectiveBudgetForForecast && (
 								<div>
 									spend up to $
 									<NumberDisplay
 										number={Number(
-											prospective_budget_for_forecast.toFixed(
+											prospectiveBudgetForForecast.toFixed(
 												2,
 											),
 										)}
@@ -334,9 +334,9 @@ class App extends React.Component<IAppProps, {}> {
 				},
 			]
 
-			if (this.props.oSummary.projected_spending_over_time) {
+			if (this.props.oSummary.projectedSpendingOverTime) {
 				// render projection data too
-				const afSpendingProjection = this.props.oSummary.projected_spending_over_time.map(
+				const afSpendingProjection = this.props.oSummary.projectedSpendingOverTime.map(
 					oItem => Number(oItem.total.toFixed(2)),
 				)
 
@@ -353,9 +353,9 @@ class App extends React.Component<IAppProps, {}> {
 
 				// console.log(afSpendingProjection)
 				// and if they have a target adjusted forecast
-				if (this.props.oSummary.prospective_budget_for_forecast) {
+				if (this.props.oSummary.prospectiveBudgetForForecast) {
 					// render projection data too
-					// const afAdjustedProjection = this.props.oSummary.projected_spending_over_time.map(oItem => this.props.oSummary.prospective_budget_for_forecast)
+					// const afAdjustedProjection = this.props.oSummary.projectedSpendingOverTime.map(oItem => this.props.oSummary.prospectiveBudgetForForecast)
 					// console.log(afAdjustedProjection)
 					// not working :(
 					// aDataSets.push(
@@ -421,10 +421,10 @@ class App extends React.Component<IAppProps, {}> {
 }
 
 const mapStateToProps = (state: Store.App) => {
-	const { nDate, oFilter, oSummary, sScope, nYearlyBudget } = state
+	const { nDate, filter, oSummary, sScope, nYearlyBudget } = state
 	return {
 		nDate,
-		oFilter,
+		filter,
 		oSummary,
 		sScope,
 		nYearlyBudget,
@@ -436,7 +436,7 @@ const mapDispatchToProps = (dispatch: React.Dispatch<Action>) => ({
 	changeScope: (sScope: string) => dispatch(changeScope(sScope)),
 	getSummary: (iDate: number) => dispatch(getSummary(iDate)),
 	setBudget: (fYearlyBudget: number) => dispatch(setBudget(fYearlyBudget)),
-	setFilter: (oFilter: Filter | null) => dispatch(setFilter(oFilter)),
+	setFilter: (filter: Filter | null) => dispatch(setFilter(filter)),
 })
 
 export default connect(

@@ -25,10 +25,10 @@ export interface ICSVExpenseRow extends Expense {
 }
 
 export type BuildElasticQueryInput = {
-	sLowerDateRange: string
-	sUpperDateRange: string
-	oFilter?: SharedTypes.Filter
-	sScope: string
+	lowerDateRange: string
+	upperDateRange: string
+	filter?: SharedTypes.Filter
+	scope: SharedTypes.Scope
 }
 
 export type ExpenseData = {
@@ -38,16 +38,16 @@ export type ExpenseData = {
 }
 
 export type SpendingOverTimeInput = {
-	sScope: SharedTypes.Scope
-	oQueriedDate: moment.Moment
+	scope: SharedTypes.Scope
+	queriedDate: moment.Moment
 	spendingOverTimeBucket: SharedTypes.TimeSpendingBreakdown
 	totalExpenditure: number
-	nBudget?: number
+	budget?: number
 }
 
 export type TimeUnitSpending = {
 	date: string
-	expense_count: number
+	expenseCount: number
 	total: number
 }
 
@@ -59,7 +59,7 @@ export type SpendingOverTimeData = {
 export type SpendingProjection = {
 	total: number
 	date: string
-	expense_count: number
+	expenseCount: number
 }
 
 export type ProjectionData = {
@@ -70,8 +70,8 @@ export type ProjectionData = {
 }
 
 export type ProjectionDataInput = {
-	sScope: SharedTypes.Scope
-	oQueriedDate: moment.Moment
-	fAverage: number
+	scope: SharedTypes.Scope
+	queriedDate: moment.Moment
+	average: number
 	spendingOverTimeData: TimeUnitSpending[]
 }

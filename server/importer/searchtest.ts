@@ -2,16 +2,16 @@
 import { Client as ElasticClient } from '@elastic/elasticsearch'
 import * as moment from 'moment'
 
-export const search  = async () => {
+export const search = async () => {
 
 	const client = new ElasticClient({ node: 'http://elasticsearch:9200' })
 	const sIndex: string = String(process.env.ELASTIC_INDEX)
 
 	const scope: string = 'month'
-	const oQueriedDate = moment()
+	const queriedDate = moment()
 	const sScopePeriod: any = (scope === 'month') ? 'month' : 'year'
-	const sLowerDateRange = oQueriedDate.startOf(sScopePeriod).format('DD/MM/Y')
-	const sUpperDateRange = oQueriedDate.endOf(sScopePeriod).format('DD/MM/Y')
+	const lowerDateRange = queriedDate.startOf(sScopePeriod).format('DD/MM/Y')
+	const upperDateRange = queriedDate.endOf(sScopePeriod).format('DD/MM/Y')
 
 	const oQuery = {
 		index: process.env.ELASTIC_INDEX,
@@ -19,8 +19,8 @@ export const search  = async () => {
 			query: {
 				range: {
 					Date: {
-						gte: sLowerDateRange,
-						lte: sUpperDateRange,
+						gte: lowerDateRange,
+						lte: upperDateRange,
 						format: "dd/MM/yyyy"
 					}
 				}
@@ -28,18 +28,18 @@ export const search  = async () => {
 			size: 10000,
 			aggs: {
 				time_spending_breakdown: {
-					date_histogram : {
+					date_histogram: {
 						field: "Date",
 						interval: "day"
 					},
 					aggs: {
-						unit_total: { "sum" : { "field" : "Amount" } }
+						unit_total: { "sum": { "field": "Amount" } }
 					}
 				},
 				category_spending_breakdown: {
-					terms : { "field" : "Category" },
+					terms: { "field": "Category" },
 					aggs: {
-						unit_total: { "sum" : { "field" : "Amount" } }
+						unit_total: { "sum": { "field": "Amount" } }
 					}
 				}
 			}
@@ -47,12 +47,12 @@ export const search  = async () => {
 	}
 
 	const util = require('util')
-	const result = await client.search(oQuery).catch((err: any) => console.log(util.inspect(err, {showHidden: false, depth: null})))
+	const result = await client.search(oQuery).catch((err: any) => console.log(util.inspect(err, { showHidden: false, depth: null })))
 
 
 
 
-	console.log(util.inspect(result, {showHidden: false, depth: null}))
+	console.log(util.inspect(result, { showHidden: false, depth: null }))
 
 	// console.log(result)
 	// if (result && result.body && result.body.hits && result.body.hits.hits) {
