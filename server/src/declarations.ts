@@ -40,6 +40,7 @@ export type ExpenseData = {
 export type SpendingOverTimeInput = {
 	scope: SharedTypes.Scope
 	queriedDate: moment.Moment
+	endDate?: moment.Moment
 	spendingOverTimeBucket: SharedTypes.TimeSpendingBreakdown
 	totalExpenditure: number
 	budget?: number

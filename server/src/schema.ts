@@ -96,6 +96,9 @@ const ScopeEnumType = new GraphQLEnumType({
 		YEAR: {
 			value: 'year',
 		},
+		CUSTOM: {
+			value: 'custom',
+		},
 	},
 })
 
@@ -107,6 +110,11 @@ const ExpenseSummaryInputType = new GraphQLInputObjectType({
 			type: new GraphQLNonNull(GraphQLString),
 			description:
 				'ISO date eg 2020-01-16',
+		},
+		endDate: {
+			type: GraphQLString,
+			description:
+				'optional, required if scope is \'custom\'',
 		},
 		budget: { type: GraphQLInt },
 		scope: { type: new GraphQLNonNull(ScopeEnumType) },
@@ -131,13 +139,14 @@ const RootQuery = new GraphQLObjectType({
 			args: {
 				expenseSummaryInput: { type: GraphQLNonNull(ExpenseSummaryInputType) }
 			},
-			resolve: async (parentValue, { expenseSummaryInput: { date, scope, filter, budget } }) =>
-				await getSummary(
+			resolve: async (parentValue, { expenseSummaryInput: { date, scope, filter, budget, endDate } }) =>
+				await getSummary({
 					date,
 					scope,
 					filter, //{ term: 'Category', match: 'utility' },
 					budget,
-				),
+					endDate
+				}),
 		},
 	}),
 })
