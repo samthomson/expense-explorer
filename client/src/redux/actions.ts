@@ -1,4 +1,5 @@
 import { Filter, Summary } from '@shared/declarations'
+import moment from 'moment'
 
 export enum ActionType {
 	CHANGE_MONTH = 'CHANGE_MONTH',
@@ -14,7 +15,7 @@ export enum ActionType {
 export type Action =
 	| {
 		type: ActionType.SET_DATE
-		nDate: number
+		nDate: moment.Moment
 	}
 	| {
 		type: ActionType.SET_BUDGET
@@ -22,7 +23,7 @@ export type Action =
 	}
 	| {
 		type: ActionType.GET_SUMMARY
-		nDate: number
+		nDate: moment.Moment
 	}
 	| {
 		type: ActionType.GET_SUMMARY_SUCCEEDED
@@ -46,7 +47,7 @@ export type Action =
 		filter: Filter | null
 	}
 
-export const setDate = (nDate: number): Action => {
+export const setDate = (nDate: moment.Moment): Action => {
 	return {
 		type: ActionType.SET_DATE,
 		nDate,
@@ -60,7 +61,7 @@ export const setBudget = (nYearlyBudget: number): Action => {
 	}
 }
 
-export const getSummary = (nDate: number): Action => {
+export const getSummary = (nDate: moment.Moment): Action => {
 	return {
 		nDate,
 		type: ActionType.GET_SUMMARY,

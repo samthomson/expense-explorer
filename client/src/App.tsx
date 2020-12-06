@@ -20,14 +20,14 @@ import { Store } from 'src/redux/store'
 import './../node_modules/semantic-ui-css/semantic.min.css'
 
 interface IAppProps {
-	nYearlyBudget: number
-	nDate: number
+	nYearlyBudget?: number
+	nDate: moment.Moment
 	filter: Filter
 	oSummary: Summary
 	sScope: string
 	changeMonth: (bBackwards: boolean) => {}
 	changeScope: (sScope: string) => {}
-	getSummary: (iDate: number) => {}
+	getSummary: (iDate: moment.Moment) => {}
 	setBudget: (fYearlyBudget: number) => {}
 	setFilter: (oSummary: Filter | null) => {}
 }
@@ -196,7 +196,7 @@ class App extends React.Component<IAppProps, {}> {
 		const sDisplayPeriod: string = sScope === 'year' ? 'month' : 'day'
 
 		// is the current date within the current month/year. e.g. if current date is may 12th, and it is may 19th. Then it is in the current period (both month and year scope)
-		const bInCurrentPeriod: boolean = moment.unix(this.props.nDate).isSame(
+		const bInCurrentPeriod: boolean = this.props.nDate.isSame(
 			new Date(),
 			// @ts-ignore
 			sScope,
@@ -405,9 +405,9 @@ class App extends React.Component<IAppProps, {}> {
 		)
 	}
 
-	private renderScopeLabel(iDate: number, sScope: string) {
+	private renderScopeLabel(date: moment.Moment, sScope: string) {
 		const sFormat: string = sScope === 'month' ? 'MMMM YYYY' : 'Y'
-		return moment.unix(iDate).format(sFormat)
+		return date.format(sFormat)
 	}
 
 	private eSetFilter = (term: string, match: string) => {
@@ -434,7 +434,7 @@ const mapStateToProps = (state: Store.App) => {
 const mapDispatchToProps = (dispatch: React.Dispatch<Action>) => ({
 	changeMonth: (bBackwards: boolean) => dispatch(changeMonth(bBackwards)),
 	changeScope: (sScope: string) => dispatch(changeScope(sScope)),
-	getSummary: (iDate: number) => dispatch(getSummary(iDate)),
+	getSummary: (iDate: moment.Moment) => dispatch(getSummary(iDate)),
 	setBudget: (fYearlyBudget: number) => dispatch(setBudget(fYearlyBudget)),
 	setFilter: (filter: Filter | null) => dispatch(setFilter(filter)),
 })

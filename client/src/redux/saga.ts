@@ -4,7 +4,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 import ApolloClient from 'apollo-client'
 import { createHttpLink } from 'apollo-link-http'
 import gql from 'graphql-tag'
-import * as moment from 'moment'
+// import * as moment from 'moment'
 import { ActionType, getSummaryFailed, getSummarySucceded } from './actions'
 import { Store } from './store'
 
@@ -77,7 +77,7 @@ function* getSummary() {
 			`,
 			variables: {
 				expenseSummaryInput: {
-					date: moment.unix(date).format(),
+					date: date.format(),
 					scope: scope === 'month' ? 'MONTH' : 'YEAR',
 					budget,
 					filter
