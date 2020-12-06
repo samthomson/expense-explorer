@@ -36,7 +36,7 @@ const main = async () => {
 
 	console.log(`${results.length} expenses read from csv`)
 
-	const client = new ElasticClient({ node: 'http://elasticsearch:9200' })
+	const client = new ElasticClient({ node: 'http://elasticsearch:9201' })
 	const indexName = String(process.env.ELASTIC_INDEX)
 	const elasticDocumentType = String(process.env.ELASTIC_TYPE)
 
