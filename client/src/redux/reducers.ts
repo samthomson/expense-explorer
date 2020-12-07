@@ -4,6 +4,7 @@ import { Store } from './store'
 
 const initialState: Store.App = {
 	initialDate: moment(),
+	endDate: moment().add(1, 'days'),
 	oSummary: null,
 	filter: null,
 	sScope: 'month',
@@ -19,6 +20,7 @@ export function appReducers(
 			return {
 				...state,
 				initialDate: action.initialDate,
+				endDate: action.endDate,
 			}
 		case ActionType.SET_BUDGET:
 			return {

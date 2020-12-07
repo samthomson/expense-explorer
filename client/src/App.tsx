@@ -6,8 +6,10 @@ import { Line as LineChart, Pie as PieChart } from 'react-chartjs'
 import { connect } from 'react-redux'
 import 'src/App.css'
 import CategoryExpenses from 'src/components/CategoryExpenses'
+import DateEntry from 'src/components/DateEntry'
 import ExpenseTable from 'src/components/ExpenseTable'
 import NumberDisplay from 'src/components/NumberDisplay'
+
 import {
 	Action,
 	changeMonth,
@@ -110,6 +112,7 @@ class App extends React.Component<IAppProps, {}> {
 						<div className="column">
 							{/* month / year changer */}
 							{this.renderScopeInputUI()}
+							{sScope === 'custom' && <DateEntry />}
 						</div>
 						<div className="column centered-text">
 							{/* current period */}

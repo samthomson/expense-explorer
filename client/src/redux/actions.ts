@@ -16,6 +16,7 @@ export type Action =
 	| {
 		type: ActionType.SET_DATE
 		initialDate: moment.Moment
+		endDate: moment.Moment
 	}
 	| {
 		type: ActionType.SET_BUDGET
@@ -47,10 +48,11 @@ export type Action =
 		filter: Filter | null
 	}
 
-export const setDate = (initialDate: moment.Moment): Action => {
+export const setDates = (initialDate: moment.Moment, endDate: moment.Moment): Action => {
 	return {
 		type: ActionType.SET_DATE,
 		initialDate,
+		endDate,
 	}
 }
 
