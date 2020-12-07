@@ -15,7 +15,7 @@ export enum ActionType {
 export type Action =
 	| {
 		type: ActionType.SET_DATE
-		nDate: moment.Moment
+		initialDate: moment.Moment
 	}
 	| {
 		type: ActionType.SET_BUDGET
@@ -23,7 +23,7 @@ export type Action =
 	}
 	| {
 		type: ActionType.GET_SUMMARY
-		nDate: moment.Moment
+		initialDate: moment.Moment
 	}
 	| {
 		type: ActionType.GET_SUMMARY_SUCCEEDED
@@ -47,10 +47,10 @@ export type Action =
 		filter: Filter | null
 	}
 
-export const setDate = (nDate: moment.Moment): Action => {
+export const setDate = (initialDate: moment.Moment): Action => {
 	return {
 		type: ActionType.SET_DATE,
-		nDate,
+		initialDate,
 	}
 }
 
@@ -61,9 +61,9 @@ export const setBudget = (nYearlyBudget: number): Action => {
 	}
 }
 
-export const getSummary = (nDate: moment.Moment): Action => {
+export const getSummary = (initialDate: moment.Moment): Action => {
 	return {
-		nDate,
+		initialDate,
 		type: ActionType.GET_SUMMARY,
 	}
 }

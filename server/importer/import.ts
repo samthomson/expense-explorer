@@ -75,7 +75,7 @@ const main = async () => {
 	// 	// @ts-ignore
 	// 	let expenseObjectMapping = oFetchedMapping.body['expense-explorer-index'].mappings
 	// 	// console.log(expenseObjectMapping)
-	// 	// console.log('\n\ndate: ', expenseObjectMapping.expense.properties.Date.type, '\n\n')
+	// 	// console.log('\n\initialDate: ', expenseObjectMapping.expense.properties.Date.type, '\n\n')
 	// } catch (err) {
 	// 	console.log('error getting mapping')
 	// }

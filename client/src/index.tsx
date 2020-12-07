@@ -21,7 +21,7 @@ const store: ReduxStore<Store.App> = createStore(
 
 sagaMiddleware.run(rootSaga)
 
-store.dispatch(getSummary(store.getState().nDate))
+store.dispatch(getSummary(store.getState().initialDate))
 
 ReactDOM.render(
 	<div>

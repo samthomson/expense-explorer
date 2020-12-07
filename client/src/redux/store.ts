@@ -3,8 +3,8 @@ import moment from 'moment'
 
 export namespace Store {
 	export type App = {
-		// nDate: number // unix epoch - milliseconds
-		nDate: moment.Moment
+		// initialDate: number // unix epoch - milliseconds
+		initialDate: moment.Moment
 		// endDate: moment.Moment
 		oSummary: Summary | null
 		filter: Filter | null

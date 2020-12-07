@@ -21,7 +21,7 @@ import './../node_modules/semantic-ui-css/semantic.min.css'
 
 interface IAppProps {
 	nYearlyBudget?: number
-	nDate: moment.Moment
+	initialDate: moment.Moment
 	filter: Filter
 	oSummary: Summary
 	sScope: string
@@ -94,7 +94,7 @@ class App extends React.Component<IAppProps, {}> {
 	}
 
 	public renderEverything() {
-		const { nDate, filter, oSummary, sScope } = this.props
+		const { initialDate, filter, oSummary, sScope } = this.props
 		const {
 			spendingByCategory,
 			spendingBySubcategory,
@@ -114,7 +114,7 @@ class App extends React.Component<IAppProps, {}> {
 						<div className="column centered-text">
 							{/* current period */}
 							<h2>
-								{this.renderScopeLabel(nDate, sScope)}
+								{this.renderScopeLabel(initialDate, sScope)}
 								{filter && (
 									<span>
 										&nbsp;(&nbsp;
@@ -177,17 +177,17 @@ class App extends React.Component<IAppProps, {}> {
 
 	private eChangeMonth(bBackwards: boolean) {
 		this.props.changeMonth(bBackwards)
-		this.props.getSummary(this.props.nDate)
+		this.props.getSummary(this.props.initialDate)
 	}
 
 	private eChangeScope(sScope: string) {
 		this.props.changeScope(sScope)
-		this.props.getSummary(this.props.nDate)
+		this.props.getSummary(this.props.initialDate)
 	}
 
 	private eChangeBudget(fBudget: number) {
 		this.props.setBudget(fBudget)
-		this.props.getSummary(this.props.nDate)
+		this.props.getSummary(this.props.initialDate)
 	}
 
 	private renderSummary() {
@@ -206,7 +206,7 @@ class App extends React.Component<IAppProps, {}> {
 		const sDisplayPeriod: string = sScope === 'year' ? 'month' : 'day'
 
 		// is the current date within the current month/year. e.g. if current date is may 12th, and it is may 19th. Then it is in the current period (both month and year scope)
-		const bInCurrentPeriod: boolean = this.props.nDate.isSame(
+		const bInCurrentPeriod: boolean = this.props.initialDate.isSame(
 			new Date(),
 			// @ts-ignore
 			sScope,
@@ -323,7 +323,7 @@ class App extends React.Component<IAppProps, {}> {
 			const dataLabels = timeunits.map(oP => {
 				// make nice date rendered label
 				return this.props.sScope === 'month'
-					? moment(this.props.nDate) // create from currently selected date so that we can correctly render the number of that months days on the x axis
+					? moment(this.props.initialDate) // create from currently selected date so that we can correctly render the number of that months days on the x axis
 						.date(Number(oP.date))
 						.format('Do')
 					: moment() // a year only ever has 12 months..
@@ -422,18 +422,18 @@ class App extends React.Component<IAppProps, {}> {
 
 	private eSetFilter = (term: string, match: string) => {
 		this.props.setFilter({ term, match })
-		this.props.getSummary(this.props.nDate)
+		this.props.getSummary(this.props.initialDate)
 	}
 	private eRemoveFilter = () => {
 		this.props.setFilter(null)
-		this.props.getSummary(this.props.nDate)
+		this.props.getSummary(this.props.initialDate)
 	}
 }
 
 const mapStateToProps = (state: Store.App) => {
-	const { nDate, filter, oSummary, sScope, nYearlyBudget } = state
+	const { initialDate, filter, oSummary, sScope, nYearlyBudget } = state
 	return {
-		nDate,
+		initialDate,
 		filter,
 		oSummary,
 		sScope,

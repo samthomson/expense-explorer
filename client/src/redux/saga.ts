@@ -16,7 +16,7 @@ const client = new ApolloClient({
 	cache: new InMemoryCache(),
 })
 
-export const getIDate = (state: Store.App) => state.nDate
+export const getIDate = (state: Store.App) => state.initialDate
 export const getScope = (state: Store.App) => state.sScope
 export const getFilter = (state: Store.App) => state.filter
 export const getBudget = (state: Store.App) => state.nYearlyBudget
