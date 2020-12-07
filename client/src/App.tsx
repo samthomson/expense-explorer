@@ -11,6 +11,7 @@ import DateEntry from 'src/components/DateEntry'
 import ExpenseTable from 'src/components/ExpenseTable'
 import ScopedTitle from 'src/components/ScopedTitle'
 import ScopeInput from 'src/components/ScopeInput'
+import ScopeNavigation from 'src/components/ScopeNavigation'
 import SpendingOverTime from 'src/components/SpendingOverTime'
 import SpendingSummary from 'src/components/SpendingSummary'
 
@@ -90,33 +91,15 @@ const App: React.StatelessComponent<IAppProps> = ({initialDate, endDate, filter,
 			<div className="ui grid">
 				<div className="three column row">
 					<div className="column">
-						{/* month / year changer */}
 						<ScopeInput scope={sScope} changeScope={(newScope: SharedTypes.Scope) => eChangeScope(newScope)} />
 						{sScope === 'custom' && <DateEntry />}
 					</div>
 					<div className="column centered-text">
-						{/* current period */}
 						<ScopedTitle initialDate={initialDate} endDate={endDate} sScope={sScope} filter={filter} removeFilter={() => eRemoveFilter()} />
 						
 					</div>
 					<div className="column">
-						{/* date navigation */}
-						<div className="ui small buttons right floated">
-							<button
-								className="ui labeled icon button"
-								onClick={() => eChangeMonth(true)}
-							>
-								<i className="left chevron icon" />
-								Back
-							</button>
-							<button
-								className="ui right labeled icon button"
-								onClick={() => eChangeMonth(false)}
-							>
-								Forward
-								<i className="right chevron icon" />
-							</button>
-						</div>
+						<ScopeNavigation navigate={eChangeMonth}  />						
 					</div>
 				</div>
 			</div>
