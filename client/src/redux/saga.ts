@@ -81,7 +81,7 @@ function* getSummary() {
 			variables: {
 				expenseSummaryInput: {
 					date: date.format(),
-					endDate,
+					endDate: endDate.format(),
 					scope: scope.toUpperCase(),
 					budget,
 					filter

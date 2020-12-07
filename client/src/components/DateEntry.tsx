@@ -18,12 +18,14 @@ const DateEntry: React.StatelessComponent<IProps> = ({
 	setDates
 }) => {
 
-	const [firstDate, setFirstDate] = React.useState(initialDate.format('DD/MM/Y'))
-	const [secondDate, setSecondDate] = React.useState(endDate.format('DD/MM/Y'))
+	const CLIENT_DATE_FORMAT = 'DD/MM/Y'
+
+	const [firstDate, setFirstDate] = React.useState(initialDate.format(CLIENT_DATE_FORMAT))
+	const [secondDate, setSecondDate] = React.useState(endDate.format(CLIENT_DATE_FORMAT))
 
 	const updateDates = () => {
 		// todo: validate dates?
-		setDates(moment(firstDate), moment(secondDate))
+		setDates(moment(firstDate, CLIENT_DATE_FORMAT), moment(secondDate, CLIENT_DATE_FORMAT))
 		getSummary()
 	}
 
