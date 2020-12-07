@@ -1,4 +1,4 @@
-import { Expense, Filter, Summary } from '@shared/declarations'
+import { Filter, Summary } from '@shared/declarations'
 import * as SharedTypes from '@shared/declarations'
 import * as moment from 'moment'
 import * as React from 'react'
@@ -9,9 +9,9 @@ import 'src/App.css'
 import CategoryExpenses from 'src/components/CategoryExpenses'
 import DateEntry from 'src/components/DateEntry'
 import ExpenseTable from 'src/components/ExpenseTable'
-import NumberDisplay from 'src/components/NumberDisplay'
-import ScopeSelect from 'src/components/ScopeSelect'
+import ScopeInput from 'src/components/ScopeInput'
 import SpendingOverTime from 'src/components/SpendingOverTime'
+import SpendingSummary from 'src/components/SpendingSummary'
 
 import {
 	Action,
@@ -79,7 +79,7 @@ class App extends React.Component<IAppProps, {}> {
 					<div className="three column row">
 						<div className="column">
 							{/* month / year changer */}
-							<ScopeSelect scope={sScope} changeScope={newScope => this.eChangeScope(newScope)} />
+							<ScopeInput scope={sScope} changeScope={(newScope: SharedTypes.Scope) => this.eChangeScope(newScope)} />
 							{sScope === 'custom' && <DateEntry />}
 						</div>
 						<div className="column centered-text">
@@ -106,11 +106,10 @@ class App extends React.Component<IAppProps, {}> {
 				</div>
 
 				{/* render expenses for current date */}
-				{/* {totalExpenditure > 0 && ( */}
 				{!!totalExpenditure && totalExpenditure > 0 && spendingOverTime && spendingByCategory && spendingBySubcategory && expenses && oSummary.averagePerUnit && (
 					<div>
 						<br />
-						{this.renderSummary()}
+						<SpendingSummary oSummary={this.props.oSummary} nYearlyBudget={this.props.nYearlyBudget} scope={this.props.sScope} initialDate={this.props.initialDate} setBudget={this.eChangeBudget} />
 						<SpendingOverTime initialDate={initialDate} scope={sScope} summary={oSummary} timeunits={spendingOverTime} />
 						<br />
 						<CategoryExpenses
@@ -125,7 +124,13 @@ class App extends React.Component<IAppProps, {}> {
 							sCategoryName={'Subcategory'}
 						/>
 						<br />
-						{this.renderExpenses(expenses)}
+						<div>
+							<h3>Expenses</h3>
+							<ExpenseTable
+								eSetFilter={this.eSetFilter}
+								expenses={expenses}
+							/>
+						</div>
 					</div>
 				)}
 				{totalExpenditure === 0 && (
@@ -159,130 +164,6 @@ class App extends React.Component<IAppProps, {}> {
 	private eChangeBudget(fBudget: number) {
 		this.props.setBudget(fBudget)
 		this.props.getSummary()
-	}
-
-	private renderSummary() {
-		const { nYearlyBudget, oSummary, sScope } = this.props
-		// todo: defaults of -1 to shut linter up, later types should be updated to be non nullable, that means changing API elastic.ts file
-		const {
-			averagePerUnit = -1,
-			medianPerUnit = -1,
-			modePerUnit = -1,
-			numberOfExpenses,
-			projectionForScope,
-			prospectiveBudgetForForecast,
-			totalExpenditure = -1,
-		} = oSummary
-
-		const sDisplayPeriod: string = sScope === 'year' ? 'month' : 'day'
-
-		// is the current date within the current month/year. e.g. if current date is may 12th, and it is may 19th. Then it is in the current period (both month and year scope)
-		const bInCurrentPeriod: boolean = this.props.initialDate.isSame(
-			new Date(),
-			// @ts-ignore
-			sScope,
-		)
-
-		return (
-			<div className="ui grid" >
-				<div className="five wide column">
-					total expenditure:{' '}
-					<strong>
-						$
-						<NumberDisplay
-							number={Number(totalExpenditure.toFixed(2))}
-						/>
-					</strong>
-					<br />
-					expenses: {numberOfExpenses}
-					<br />
-					mean average per {sDisplayPeriod}:$
-					<NumberDisplay
-						number={Number(averagePerUnit.toFixed(2))}
-					/>
-				</div>
-				<div className="five wide column">
-					<span title="the most frequently appearing value">
-						mode
-					</span>{' '}
-					per {sDisplayPeriod}: ${modePerUnit.toFixed(2)}
-					<br />
-					<span title="cumulative total divided by number of items - the classic average">
-						mean
-					</span>{' '}
-					per {sDisplayPeriod}: $
-					<NumberDisplay
-						number={Number(averagePerUnit.toFixed(2))}
-					/>
-					<br />
-					<span title="the middle value if all values are ordered">
-						median
-					</span>{' '}
-					per {sDisplayPeriod}: ${medianPerUnit.toFixed(2)}
-				</div>
-				<div className="six wide column">
-					{bInCurrentPeriod && (
-						<div>
-							{/* only show projection data if the current period is incomplete */}
-							{projectionForScope && (
-								<span>projection for {sScope}:&nbsp;</span>
-							)}
-							{projectionForScope && (
-								<span>
-									$
-									<NumberDisplay
-										number={Number(
-											projectionForScope.toFixed(2),
-										)}
-									/>
-								</span>
-							)}
-							<br />
-							{/* only show projection data if the current period is incomplete */}
-							<div className="ui input">
-								target budget for {sScope}:&nbsp;
-								<input
-									type="text"
-									value={nYearlyBudget || ''}
-									onChange={e =>
-										this.eChangeBudget(
-											Number(e.currentTarget.value),
-										)
-									}
-								/>
-							</div>
-							{nYearlyBudget && prospectiveBudgetForForecast && (
-								<div>
-									spend up to $
-									<NumberDisplay
-										number={Number(
-											prospectiveBudgetForForecast.toFixed(
-												2,
-											),
-										)}
-									/>
-									&nbsp; per {sDisplayPeriod} to come in at $
-									{nYearlyBudget} for the {sScope}.
-								</div>
-							)}
-						</div>
-					)}
-				</div>
-			</div>
-		)
-	}
-
-
-	private renderExpenses(expenses: Expense[]) {
-		return (
-			<div>
-				<h3>Expenses</h3>
-				<ExpenseTable
-					eSetFilter={this.eSetFilter}
-					expenses={expenses}
-				/>
-			</div>
-		)
 	}
 
 	private renderScopeLabel(date: moment.Moment, sScope: string) {

@@ -7,7 +7,7 @@ interface IProps {
 	changeScope: (scope: SharedTypes.Scope) => void
 }
 
-const ScopeSelect: React.StatelessComponent<IProps> = ({scope, changeScope}) => {
+const ScopeInput: React.StatelessComponent<IProps> = ({scope, changeScope}) => {
 
 	return (
 		<div className="ui small buttons">
@@ -42,4 +42,4 @@ const ScopeSelect: React.StatelessComponent<IProps> = ({scope, changeScope}) => 
 	)
 }
 
-export default ScopeSelect
+export default ScopeInput
