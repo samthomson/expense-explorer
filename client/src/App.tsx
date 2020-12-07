@@ -10,6 +10,7 @@ import CategoryExpenses from 'src/components/CategoryExpenses'
 import DateEntry from 'src/components/DateEntry'
 import ExpenseTable from 'src/components/ExpenseTable'
 import NumberDisplay from 'src/components/NumberDisplay'
+import ScopeSelect from 'src/components/ScopeSelect'
 import SpendingOverTime from 'src/components/SpendingOverTime'
 
 import {
@@ -39,41 +40,6 @@ interface IAppProps {
 class App extends React.Component<IAppProps, {}> {
 	public renderError() {
 		return '...no data.. (loading?)'
-	}
-
-	public renderScopeInputUI() {
-		const { sScope } = this.props
-		return (
-			<div className="ui small buttons">
-				<button
-					onClick={() => this.eChangeScope('month')}
-					className={
-						'ui button' + (sScope === 'month' ? ' active' : '')
-					}
-				>
-					month
-				</button>
-				<div className="or" />
-				<button
-					onClick={() => this.eChangeScope('year')}
-					className={
-						'ui button' + (sScope === 'year' ? ' active' : '')
-					}
-				>
-					year
-				</button>
-
-				<div className="or" />
-				<button
-					onClick={() => this.eChangeScope('custom')}
-					className={
-						'ui button' + (sScope === 'custom' ? ' active' : '')
-					}
-				>
-					custom
-				</button>
-			</div>
-		)
 	}
 
 	public renderDateInputUI() {
@@ -113,7 +79,7 @@ class App extends React.Component<IAppProps, {}> {
 					<div className="three column row">
 						<div className="column">
 							{/* month / year changer */}
-							{this.renderScopeInputUI()}
+							<ScopeSelect scope={sScope} changeScope={newScope => this.eChangeScope(newScope)} />
 							{sScope === 'custom' && <DateEntry />}
 						</div>
 						<div className="column centered-text">
