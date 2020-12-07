@@ -1,21 +1,16 @@
 import * as React from 'react'
 
 interface IProps {
-	number: number
+	value: number
 }
 
-export class NumberDisplay extends React.Component<IProps, {}> {
-	constructor(props: IProps) {
-		super(props)
+const NumberDisplay: React.StatelessComponent<IProps> = ({value}) => {
+
+	const numberWithCommas = (x: number) => {
+		return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 	}
 
-	public render() {
-		return <span>{numberWithCommas(this.props.number)}</span>
-	}
-}
-
-const numberWithCommas = (x: number) => {
-	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+	return (<span>{numberWithCommas(value)}</span>)
 }
 
 export default NumberDisplay
