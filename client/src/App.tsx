@@ -1,4 +1,5 @@
-import { Expense, Filter, Summary, TimeUnit } from '@shared/declarations'
+import { Expense, Filter, Summary } from '@shared/declarations'
+import * as SharedTypes from '@shared/declarations'
 import * as moment from 'moment'
 import * as React from 'react'
 // @ts-ignore
@@ -6,8 +7,11 @@ import { Line as LineChart, Pie as PieChart } from 'react-chartjs'
 import { connect } from 'react-redux'
 import 'src/App.css'
 import CategoryExpenses from 'src/components/CategoryExpenses'
+import DateEntry from 'src/components/DateEntry'
 import ExpenseTable from 'src/components/ExpenseTable'
 import NumberDisplay from 'src/components/NumberDisplay'
+import SpendingOverTime from 'src/components/SpendingOverTime'
+
 import {
 	Action,
 	changeMonth,
@@ -20,14 +24,14 @@ import { Store } from 'src/redux/store'
 import './../node_modules/semantic-ui-css/semantic.min.css'
 
 interface IAppProps {
-	nYearlyBudget: number
-	nDate: number
+	nYearlyBudget?: number
+	initialDate: moment.Moment
 	filter: Filter
 	oSummary: Summary
-	sScope: string
+	sScope: SharedTypes.Scope
 	changeMonth: (bBackwards: boolean) => {}
 	changeScope: (sScope: string) => {}
-	getSummary: (iDate: number) => {}
+	getSummary: () => {}
 	setBudget: (fYearlyBudget: number) => {}
 	setFilter: (oSummary: Filter | null) => {}
 }
@@ -58,6 +62,16 @@ class App extends React.Component<IAppProps, {}> {
 				>
 					year
 				</button>
+
+				<div className="or" />
+				<button
+					onClick={() => this.eChangeScope('custom')}
+					className={
+						'ui button' + (sScope === 'custom' ? ' active' : '')
+					}
+				>
+					custom
+				</button>
 			</div>
 		)
 	}
@@ -84,7 +98,7 @@ class App extends React.Component<IAppProps, {}> {
 	}
 
 	public renderEverything() {
-		const { nDate, filter, oSummary, sScope } = this.props
+		const { initialDate, filter, oSummary, sScope } = this.props
 		const {
 			spendingByCategory,
 			spendingBySubcategory,
@@ -100,11 +114,12 @@ class App extends React.Component<IAppProps, {}> {
 						<div className="column">
 							{/* month / year changer */}
 							{this.renderScopeInputUI()}
+							{sScope === 'custom' && <DateEntry />}
 						</div>
 						<div className="column centered-text">
 							{/* current period */}
 							<h2>
-								{this.renderScopeLabel(nDate, sScope)}
+								{this.renderScopeLabel(initialDate, sScope)}
 								{filter && (
 									<span>
 										&nbsp;(&nbsp;
@@ -130,7 +145,7 @@ class App extends React.Component<IAppProps, {}> {
 					<div>
 						<br />
 						{this.renderSummary()}
-						{this.renderSpendingOverTime(spendingOverTime)}
+						<SpendingOverTime initialDate={initialDate} scope={sScope} summary={oSummary} timeunits={spendingOverTime} />
 						<br />
 						<CategoryExpenses
 							categories={spendingByCategory}
@@ -167,17 +182,17 @@ class App extends React.Component<IAppProps, {}> {
 
 	private eChangeMonth(bBackwards: boolean) {
 		this.props.changeMonth(bBackwards)
-		this.props.getSummary(this.props.nDate)
+		this.props.getSummary()
 	}
 
 	private eChangeScope(sScope: string) {
 		this.props.changeScope(sScope)
-		this.props.getSummary(this.props.nDate)
+		this.props.getSummary()
 	}
 
 	private eChangeBudget(fBudget: number) {
 		this.props.setBudget(fBudget)
-		this.props.getSummary(this.props.nDate)
+		this.props.getSummary()
 	}
 
 	private renderSummary() {
@@ -196,7 +211,7 @@ class App extends React.Component<IAppProps, {}> {
 		const sDisplayPeriod: string = sScope === 'year' ? 'month' : 'day'
 
 		// is the current date within the current month/year. e.g. if current date is may 12th, and it is may 19th. Then it is in the current period (both month and year scope)
-		const bInCurrentPeriod: boolean = moment.unix(this.props.nDate).isSame(
+		const bInCurrentPeriod: boolean = this.props.initialDate.isSame(
 			new Date(),
 			// @ts-ignore
 			sScope,
@@ -291,107 +306,6 @@ class App extends React.Component<IAppProps, {}> {
 		)
 	}
 
-	private renderSpendingOverTime(timeunits: TimeUnit[]) {
-		if (timeunits.length > 0) {
-			const chartOptions = {
-				responsive: true,
-				maintainAspectRatio: false,
-				scales: {
-					yAxes: [
-						{
-							ticks: {
-								beginAtZero: true,
-							},
-						},
-					],
-				},
-			}
-
-			const afSpendingOverTime: number[] = timeunits.map(oP =>
-				Number(oP.total),
-			)
-			const dataLabels = timeunits.map(oP => {
-				// make nice date rendered label
-				return this.props.sScope === 'month'
-					? moment(this.props.nDate) // create from currently selected date so that we can correctly render the number of that months days on the x axis
-						.date(Number(oP.date))
-						.format('Do')
-					: moment() // a year only ever has 12 months..
-						.month(Number(oP.date) - 1)
-						.format('MMM')
-			})
-
-			const aDataSets = [
-				{
-					label: 'Spending over time',
-					fillColor: 'rgba(151,187,205,0.2)',
-					strokeColor: 'rgba(151,187,205,1)',
-					pointColor: 'rgba(151,187,205,1)',
-					pointStrokeColor: '#fff',
-					pointHighlightFill: '#fff',
-					pointHighlightStroke: 'rgba(151,187,205,1)',
-					data: afSpendingOverTime,
-				},
-			]
-
-			if (this.props.oSummary.projectedSpendingOverTime) {
-				// render projection data too
-				const afSpendingProjection = this.props.oSummary.projectedSpendingOverTime.map(
-					oItem => Number(oItem.total.toFixed(2)),
-				)
-
-				aDataSets.push({
-					label: 'Projected Spending',
-					fillColor: 'rgba(220,220,220,0.2)',
-					strokeColor: 'rgba(220,220,220,1)',
-					pointColor: 'rgba(220,220,220,1)',
-					pointStrokeColor: '#fff',
-					pointHighlightFill: '#fff',
-					pointHighlightStroke: 'rgba(220,220,220,1)',
-					data: afSpendingProjection,
-				})
-
-				// console.log(afSpendingProjection)
-				// and if they have a target adjusted forecast
-				if (this.props.oSummary.prospectiveBudgetForForecast) {
-					// render projection data too
-					// const afAdjustedProjection = this.props.oSummary.projectedSpendingOverTime.map(oItem => this.props.oSummary.prospectiveBudgetForForecast)
-					// console.log(afAdjustedProjection)
-					// not working :(
-					// aDataSets.push(
-					// 	{
-					// 		label: "Adjusted budget",
-					// 		fillColor: "rgba(50,50,50,0.2)",
-					// 		strokeColor: "rgba(50,50,50,1)",
-					// 		pointColor: "rgba(50,50,50,1)",
-					// 		pointStrokeColor: "#fff",
-					// 		pointHighlightFill: "#fff",
-					// 		pointHighlightStroke: "rgba(50,50,50,1)",
-					// 		data: afAdjustedProjection,
-					// 	}
-					// )
-				}
-			}
-
-			const chartData = {
-				labels: dataLabels,
-				datasets: aDataSets,
-			}
-
-			return (
-				<div>
-					<LineChart
-						data={chartData}
-						options={chartOptions}
-						width="100%"
-						height="300"
-					/>
-				</div>
-			)
-		} else {
-			return 'awaiting data'
-		}
-	}
 
 	private renderExpenses(expenses: Expense[]) {
 		return (
@@ -405,25 +319,25 @@ class App extends React.Component<IAppProps, {}> {
 		)
 	}
 
-	private renderScopeLabel(iDate: number, sScope: string) {
+	private renderScopeLabel(date: moment.Moment, sScope: string) {
 		const sFormat: string = sScope === 'month' ? 'MMMM YYYY' : 'Y'
-		return moment.unix(iDate).format(sFormat)
+		return date.format(sFormat)
 	}
 
 	private eSetFilter = (term: string, match: string) => {
 		this.props.setFilter({ term, match })
-		this.props.getSummary(this.props.nDate)
+		this.props.getSummary()
 	}
 	private eRemoveFilter = () => {
 		this.props.setFilter(null)
-		this.props.getSummary(this.props.nDate)
+		this.props.getSummary()
 	}
 }
 
 const mapStateToProps = (state: Store.App) => {
-	const { nDate, filter, oSummary, sScope, nYearlyBudget } = state
+	const { initialDate, filter, oSummary, sScope, nYearlyBudget } = state
 	return {
-		nDate,
+		initialDate,
 		filter,
 		oSummary,
 		sScope,
@@ -434,7 +348,7 @@ const mapStateToProps = (state: Store.App) => {
 const mapDispatchToProps = (dispatch: React.Dispatch<Action>) => ({
 	changeMonth: (bBackwards: boolean) => dispatch(changeMonth(bBackwards)),
 	changeScope: (sScope: string) => dispatch(changeScope(sScope)),
-	getSummary: (iDate: number) => dispatch(getSummary(iDate)),
+	getSummary: () => dispatch(getSummary()),
 	setBudget: (fYearlyBudget: number) => dispatch(setBudget(fYearlyBudget)),
 	setFilter: (filter: Filter | null) => dispatch(setFilter(filter)),
 })

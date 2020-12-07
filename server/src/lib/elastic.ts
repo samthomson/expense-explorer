@@ -33,7 +33,8 @@ export const getDocument = async (
 const buildElasticQuery = ({ lowerDateRange, upperDateRange, filter, scope }: ServerTypes.BuildElasticQueryInput) => {
 
 	const nSize = 10000
-	const sAggregationScopePeriod = scope === 'month' ? 'day' : 'month'
+	// year gets month aggs, month/custom gets days
+	const sAggregationScopePeriod = scope === 'year' ? 'month' : 'day'
 
 	const aMustQueries: unknown[] = []
 
@@ -187,7 +188,7 @@ const numberOfUnits = (spendingOverTimeBucket: SharedTypes.TimeSpendingBreakdown
  * Take all expenses and group by date/month (if not done so already), then maybe derive stats per grouping.
  *
  */
-const spendingOverTime = ({ scope, queriedDate, spendingOverTimeBucket, totalExpenditure, budget }: ServerTypes.SpendingOverTimeInput): ServerTypes.SpendingOverTimeData => {
+const spendingOverTime = ({ scope, queriedDate, endDate, spendingOverTimeBucket, totalExpenditure, budget }: ServerTypes.SpendingOverTimeInput): ServerTypes.SpendingOverTimeData => {
 	// build up empty state objects
 	const oPossibleTimeUnits: PossibleTimeUnits = {}
 	// dates of the month
@@ -206,6 +207,20 @@ const spendingOverTime = ({ scope, queriedDate, spendingOverTimeBucket, totalExp
 	if (scope === 'year') {
 		for (let cUnitCreate = 0; cUnitCreate < 12; cUnitCreate++) {
 			oPossibleTimeUnits[cUnitCreate + 1] = {}
+		}
+	}
+	// custom
+	if (scope === 'custom' && endDate) {
+		// get all dates for the period
+		const iNumberOfDays: number = endDate.diff(queriedDate, 'days') + 1
+		for (
+			let cUnitCreate = 0;
+			cUnitCreate < iNumberOfDays;
+			cUnitCreate++
+		) {
+			const indexDate = queriedDate.clone().add(cUnitCreate, 'days')
+			// create key matching date format in elastic docs
+			oPossibleTimeUnits[indexDate.format('MM/DD/Y')] = {}
 		}
 	}
 
@@ -245,10 +260,13 @@ const spendingOverTime = ({ scope, queriedDate, spendingOverTimeBucket, totalExp
 			prospectiveBudgetForForecast = budgetRemaining / daysRemaining
 		}
 	}
+	// todo: what about custom?
 
 	// for each possible time unit, see if we have matching data - or return zeros (missing dates)
+	// go through each possible date we could have data for
 	const aTimeUnitSpending = Object.keys(oPossibleTimeUnits).map(
 		(sKey: string) => {
+			// find matching data stores for that date
 			const aoMatchingTimePeriods = spendingOverTimeBucket.buckets.filter(
 				(oSpendingSummary) => {
 					const oPeriodDate = moment(
@@ -258,18 +276,20 @@ const spendingOverTime = ({ scope, queriedDate, spendingOverTimeBucket, totalExp
 
 					if (scope === 'month') {
 						return oPeriodDate.date() === Number(sKey)
-					} else {
+					} 
+					if (scope === 'year') {
 						return oPeriodDate.month() + 1 === Number(sKey)
+					}
+					if (scope === 'custom') {
+						// same as month?
+						return oSpendingSummary.key_as_string === sKey
 					}
 				},
 			)
 
 			return {
 				date: sKey,
-				expenseCount:
-					aoMatchingTimePeriods.length > 0
-						? aoMatchingTimePeriods[0].doc_count
-						: 0,
+				expenseCount: aoMatchingTimePeriods?.[0]?.doc_count ?? 0,
 				total:
 					aoMatchingTimePeriods.length > 0
 						? Number(aoMatchingTimePeriods[0].unit_total.value.toFixed(
@@ -296,7 +316,13 @@ const spendingProjection = ({ queriedDate, average, scope, spendingOverTimeData 
 	const projectedSpendingOverTime = null
 	const projectionForScope = null
 
-	if (moment(queriedDate).isSame(new Date(), scope)) {
+	// if month/ye ar mode, check if current date is in the same period 
+
+	// otherwise check it is within the two dates. or don't have this feature for custom?
+	const isSamePeriod = scope !== 'custom' && moment(queriedDate).isSame(new Date(), scope)
+
+	// todo: what about custom?
+	if (isSamePeriod) {
 		// current scope
 		// projected 'scope expenditure'
 		const nNumberOfUnits: number =
@@ -345,19 +371,26 @@ const spendingProjection = ({ queriedDate, average, scope, spendingOverTimeData 
 	}
 }
 
-export const getSummary = async (
-	nDate: string,
-	scope: 'month' | 'year',
-	filter: Filter | undefined,
-	budget?: number,
-): Promise<Summary> => {
+export const getSummary = async ({
+	date,
+	scope,
+	filter,
+	budget,
+	endDate
+}: SharedTypes.GetSummaryInput): Promise<Summary> => {
 	// build date range query
-	const queriedDate = moment(nDate)
-	const scopePeriod = scope === 'month' ? 'month' : 'year'
+	const queriedDate = moment(date)
+	const queriedEndDate = moment(endDate)
+	// year mode gets year scope, month/custom get month (date) scope
+	const scopePeriod = scope !== 'month' ? 'year' : 'month'
 
-	const lowerDateRange = queriedDate.startOf(scopePeriod).format('DD/MM/Y')
-	const upperDateRange = queriedDate.endOf(scopePeriod).format('DD/MM/Y')
+	let lowerDateRange = queriedDate.clone().startOf(scopePeriod).format('DD/MM/Y')
+	let upperDateRange = queriedDate.clone().endOf(scopePeriod).format('DD/MM/Y')
 
+	if (scope === 'custom') {
+		lowerDateRange = moment(date).format('DD/MM/Y')
+		upperDateRange = queriedEndDate.format('DD/MM/Y')
+	}
 
 	const oQuery = buildElasticQuery({ filter, lowerDateRange, upperDateRange, scope })
 
@@ -384,7 +417,7 @@ export const getSummary = async (
 
 	const categorySpendingData = categorySpending(aggDump.category_spending_breakdown, aggDump.subcategory_spending_breakdown)
 
-	const spendingOverTimeData = spendingOverTime({ scope, queriedDate, spendingOverTimeBucket: aggDump.time_spending_breakdown, totalExpenditure, budget })
+	const spendingOverTimeData = spendingOverTime({ scope, queriedDate, endDate: queriedEndDate, spendingOverTimeBucket: aggDump.time_spending_breakdown, totalExpenditure, budget })
 	const fNumberOfUnits = numberOfUnits(aggDump.time_spending_breakdown, scope)
 	const average = (totalExpenditure / fNumberOfUnits)
 

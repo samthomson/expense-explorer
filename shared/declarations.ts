@@ -88,4 +88,14 @@ export type ElasticSummaryResponse = {
 		}
 	}
 }
-export type Scope = 'month' | 'year'
+
+export type Scope = 'month' | 'year' | 'custom'
+export type AggregationScope = 'month' | 'year'
+
+export type GetSummaryInput = {
+	date: string,
+	scope: Scope,
+	filter: Filter | undefined,
+	budget?: number,
+	endDate?: string
+}

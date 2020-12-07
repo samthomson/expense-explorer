@@ -36,7 +36,7 @@ const main = async () => {
 
 	console.log(`${results.length} expenses read from csv`)
 
-	const client = new ElasticClient({ node: 'http://elasticsearch:9200' })
+	const client = new ElasticClient({ node: 'http://elasticsearch:9201' })
 	const indexName = String(process.env.ELASTIC_INDEX)
 	const elasticDocumentType = String(process.env.ELASTIC_TYPE)
 
@@ -75,7 +75,7 @@ const main = async () => {
 	// 	// @ts-ignore
 	// 	let expenseObjectMapping = oFetchedMapping.body['expense-explorer-index'].mappings
 	// 	// console.log(expenseObjectMapping)
-	// 	// console.log('\n\ndate: ', expenseObjectMapping.expense.properties.Date.type, '\n\n')
+	// 	// console.log('\n\initialDate: ', expenseObjectMapping.expense.properties.Date.type, '\n\n')
 	// } catch (err) {
 	// 	console.log('error getting mapping')
 	// }

@@ -44,12 +44,12 @@ services:
         hard: -1
     mem_limit: 1024m
     ports:
-      - "9200:9200"
-      - "9300:9300"
+      - "9201:9200"
+      - "9301:9300"
   dejavu:
     image: appbaseio/dejavu:3.0.0-alpha
     ports:
-      - 1358:1358
+      - 1359:1358
     depends_on:
       - elasticsearch
 

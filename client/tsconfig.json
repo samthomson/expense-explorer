@@ -20,7 +20,8 @@
 		"noUnusedParameters": true,
 		"paths": {
 			"@shared/*": ["../shared/*"]
-		}
+		},
+		"allowSyntheticDefaultImports": true,
 	},
 	"exclude": [
 		"node_modules",

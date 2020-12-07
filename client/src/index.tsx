@@ -2,6 +2,7 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { applyMiddleware, createStore, Store as ReduxStore } from 'redux'
+import { composeWithDevTools } from 'redux-devtools-extension'
 import createSagaMiddleware from 'redux-saga'
 import { getSummary } from './redux/actions'
 
@@ -12,14 +13,15 @@ import { Store } from './redux/store'
 
 const sagaMiddleware = createSagaMiddleware()
 
+
 const store: ReduxStore<Store.App> = createStore(
 	appReducers,
-	applyMiddleware(sagaMiddleware),
+	composeWithDevTools(applyMiddleware(sagaMiddleware)),
 )
 
 sagaMiddleware.run(rootSaga)
 
-store.dispatch(getSummary(store.getState().nDate))
+store.dispatch(getSummary())
 
 ReactDOM.render(
 	<div>
