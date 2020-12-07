@@ -9,6 +9,7 @@ import 'src/App.css'
 import CategoryExpenses from 'src/components/CategoryExpenses'
 import DateEntry from 'src/components/DateEntry'
 import ExpenseTable from 'src/components/ExpenseTable'
+import ScopedTitle from 'src/components/ScopedTitle'
 import ScopeInput from 'src/components/ScopeInput'
 import SpendingOverTime from 'src/components/SpendingOverTime'
 import SpendingSummary from 'src/components/SpendingSummary'
@@ -27,6 +28,7 @@ import './../node_modules/semantic-ui-css/semantic.min.css'
 interface IAppProps {
 	nYearlyBudget?: number
 	initialDate: moment.Moment
+	endDate: moment.Moment
 	filter: Filter
 	oSummary: Summary
 	sScope: SharedTypes.Scope
@@ -37,13 +39,10 @@ interface IAppProps {
 	setFilter: (oSummary: Filter | null) => {}
 }
 
-const App: React.StatelessComponent<IAppProps> = ({initialDate, filter, oSummary, sScope, nYearlyBudget, changeMonth, changeScope, getSummary, setBudget, setFilter}) => {
+const App: React.StatelessComponent<IAppProps> = ({initialDate, endDate, filter, oSummary, sScope, nYearlyBudget, changeMonth, changeScope, getSummary, setBudget, setFilter}) => {
 	
 	
-	const scopeLabel = (date: moment.Moment, currentScope: string) => {
-		const sFormat = currentScope === 'month' ? 'MMMM YYYY' : 'Y'
-		return date.format(sFormat)
-	}
+	
 
 
 	const eChangeMonth = (bBackwards: boolean) => {
@@ -65,7 +64,7 @@ const App: React.StatelessComponent<IAppProps> = ({initialDate, filter, oSummary
 		setFilter({ term, match })
 		getSummary()
 	}
-	
+
 	const eRemoveFilter = () => {
 		setFilter(null)
 		getSummary()
@@ -97,19 +96,8 @@ const App: React.StatelessComponent<IAppProps> = ({initialDate, filter, oSummary
 					</div>
 					<div className="column centered-text">
 						{/* current period */}
-						<h2>
-							{scopeLabel(initialDate, sScope)}
-							{filter && (
-								<span>
-									&nbsp;(&nbsp;
-									{filter.term}:{filter.match}
-									<a onClick={() => eRemoveFilter()}>
-										<i className="icon trash" />
-									</a>
-									&nbsp;)
-								</span>
-							)}
-						</h2>
+						<ScopedTitle initialDate={initialDate} endDate={endDate} sScope={sScope} filter={filter} removeFilter={() => eRemoveFilter()} />
+						
 					</div>
 					<div className="column">
 						{/* date navigation */}
@@ -175,13 +163,14 @@ const App: React.StatelessComponent<IAppProps> = ({initialDate, filter, oSummary
 }
 
 const mapStateToProps = (state: Store.App) => {
-	const { initialDate, filter, oSummary, sScope, nYearlyBudget } = state
+	const { initialDate, endDate, filter, oSummary, sScope, nYearlyBudget } = state
 	return {
 		initialDate,
 		filter,
 		oSummary,
 		sScope,
 		nYearlyBudget,
+		endDate
 	}
 }
 
