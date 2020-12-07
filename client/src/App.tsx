@@ -1,4 +1,5 @@
-import { Expense, Filter, Summary, TimeUnit } from '@shared/declarations'
+import { Expense, Filter, Summary } from '@shared/declarations'
+import * as SharedTypes from '@shared/declarations'
 import * as moment from 'moment'
 import * as React from 'react'
 // @ts-ignore
@@ -9,6 +10,7 @@ import CategoryExpenses from 'src/components/CategoryExpenses'
 import DateEntry from 'src/components/DateEntry'
 import ExpenseTable from 'src/components/ExpenseTable'
 import NumberDisplay from 'src/components/NumberDisplay'
+import SpendingOverTime from 'src/components/SpendingOverTime'
 
 import {
 	Action,
@@ -26,7 +28,7 @@ interface IAppProps {
 	initialDate: moment.Moment
 	filter: Filter
 	oSummary: Summary
-	sScope: string
+	sScope: SharedTypes.Scope
 	changeMonth: (bBackwards: boolean) => {}
 	changeScope: (sScope: string) => {}
 	getSummary: () => {}
@@ -143,7 +145,7 @@ class App extends React.Component<IAppProps, {}> {
 					<div>
 						<br />
 						{this.renderSummary()}
-						{this.renderSpendingOverTime(spendingOverTime)}
+						<SpendingOverTime initialDate={initialDate} scope={sScope} summary={oSummary} timeunits={spendingOverTime} />
 						<br />
 						<CategoryExpenses
 							categories={spendingByCategory}
@@ -304,107 +306,6 @@ class App extends React.Component<IAppProps, {}> {
 		)
 	}
 
-	private renderSpendingOverTime(timeunits: TimeUnit[]) {
-		if (timeunits.length > 0) {
-			const chartOptions = {
-				responsive: true,
-				maintainAspectRatio: false,
-				scales: {
-					yAxes: [
-						{
-							ticks: {
-								beginAtZero: true,
-							},
-						},
-					],
-				},
-			}
-
-			const afSpendingOverTime: number[] = timeunits.map(oP =>
-				Number(oP.total),
-			)
-			const dataLabels = timeunits.map(oP => {
-				// make nice date rendered label
-				return this.props.sScope === 'month'
-					? moment(this.props.initialDate) // create from currently selected date so that we can correctly render the number of that months days on the x axis
-						.date(Number(oP.date))
-						.format('Do')
-					: moment() // a year only ever has 12 months..
-						.month(Number(oP.date) - 1)
-						.format('MMM')
-			})
-
-			const aDataSets = [
-				{
-					label: 'Spending over time',
-					fillColor: 'rgba(151,187,205,0.2)',
-					strokeColor: 'rgba(151,187,205,1)',
-					pointColor: 'rgba(151,187,205,1)',
-					pointStrokeColor: '#fff',
-					pointHighlightFill: '#fff',
-					pointHighlightStroke: 'rgba(151,187,205,1)',
-					data: afSpendingOverTime,
-				},
-			]
-
-			if (this.props.oSummary.projectedSpendingOverTime) {
-				// render projection data too
-				const afSpendingProjection = this.props.oSummary.projectedSpendingOverTime.map(
-					oItem => Number(oItem.total.toFixed(2)),
-				)
-
-				aDataSets.push({
-					label: 'Projected Spending',
-					fillColor: 'rgba(220,220,220,0.2)',
-					strokeColor: 'rgba(220,220,220,1)',
-					pointColor: 'rgba(220,220,220,1)',
-					pointStrokeColor: '#fff',
-					pointHighlightFill: '#fff',
-					pointHighlightStroke: 'rgba(220,220,220,1)',
-					data: afSpendingProjection,
-				})
-
-				// console.log(afSpendingProjection)
-				// and if they have a target adjusted forecast
-				if (this.props.oSummary.prospectiveBudgetForForecast) {
-					// render projection data too
-					// const afAdjustedProjection = this.props.oSummary.projectedSpendingOverTime.map(oItem => this.props.oSummary.prospectiveBudgetForForecast)
-					// console.log(afAdjustedProjection)
-					// not working :(
-					// aDataSets.push(
-					// 	{
-					// 		label: "Adjusted budget",
-					// 		fillColor: "rgba(50,50,50,0.2)",
-					// 		strokeColor: "rgba(50,50,50,1)",
-					// 		pointColor: "rgba(50,50,50,1)",
-					// 		pointStrokeColor: "#fff",
-					// 		pointHighlightFill: "#fff",
-					// 		pointHighlightStroke: "rgba(50,50,50,1)",
-					// 		data: afAdjustedProjection,
-					// 	}
-					// )
-				}
-			}
-
-			const chartData = {
-				labels: dataLabels,
-				datasets: aDataSets,
-			}
-
-			return (
-				<div>
-					<LineChart
-						data={chartData}
-						options={chartOptions}
-						width="100%"
-						height="300"
-					/>
-				</div>
-			)
-		} else {
-			return 'awaiting data'
-		}
-	}
 
 	private renderExpenses(expenses: Expense[]) {
 		return (
