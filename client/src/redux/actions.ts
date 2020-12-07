@@ -24,7 +24,7 @@ export type Action =
 	}
 	| {
 		type: ActionType.GET_SUMMARY
-		initialDate: moment.Moment
+		// initialDate: moment.Moment
 	}
 	| {
 		type: ActionType.GET_SUMMARY_SUCCEEDED
@@ -63,9 +63,9 @@ export const setBudget = (nYearlyBudget: number): Action => {
 	}
 }
 
-export const getSummary = (initialDate: moment.Moment): Action => {
+export const getSummary = (): Action => {
 	return {
-		initialDate,
+		// initialDate,
 		type: ActionType.GET_SUMMARY,
 	}
 }

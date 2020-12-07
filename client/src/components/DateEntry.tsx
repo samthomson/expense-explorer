@@ -1,18 +1,20 @@
 import moment from 'moment'
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { Action, setDates as setDatesAction } from 'src/redux/actions'
+import { Action, getSummary as getSummaryAction, setDates as setDatesAction } from 'src/redux/actions'
 import { Store } from 'src/redux/store'
 
 interface IProps {
 	initialDate: moment.Moment
 	endDate: moment.Moment
+	getSummary: () => {}
 	setDates: (initialDate: moment.Moment, endDate: moment.Moment) => {}
 }
 
 const DateEntry: React.StatelessComponent<IProps> = ({
 	initialDate,
 	endDate,
+	getSummary,
 	setDates
 }) => {
 
@@ -22,6 +24,7 @@ const DateEntry: React.StatelessComponent<IProps> = ({
 	const updateDates = () => {
 		// todo: validate dates?
 		setDates(moment(firstDate), moment(secondDate))
+		getSummary()
 	}
 
 	return (
@@ -41,6 +44,7 @@ const mapStateToProps = (state: Store.App) => {
 }
 
 const mapDispatchToProps = (dispatch: React.Dispatch<Action>) => ({
+	getSummary: () => dispatch(getSummaryAction()),
 	setDates: (initialDate: moment.Moment, endDate: moment.Moment) =>
 		dispatch(setDatesAction(initialDate, endDate)),
 })

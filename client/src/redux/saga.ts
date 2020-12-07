@@ -17,13 +17,16 @@ const client = new ApolloClient({
 })
 
 export const getIDate = (state: Store.App) => state.initialDate
+const getEndDate = (state: Store.App) => state.endDate
 export const getScope = (state: Store.App) => state.sScope
 export const getFilter = (state: Store.App) => state.filter
 export const getBudget = (state: Store.App) => state.nYearlyBudget
 
+
 // worker Saga: will be fired on USER_FETCH_REQUESTED actions
 function* getSummary() {
-	const date = yield select(getIDate) // epoch seconds
+	const date = yield select(getIDate) 
+	const endDate = yield select(getEndDate) 
 	const scope = yield select(getScope) // month / year
 	const budget = yield select(getBudget)
 	const filter = yield select(getFilter)
@@ -78,7 +81,8 @@ function* getSummary() {
 			variables: {
 				expenseSummaryInput: {
 					date: date.format(),
-					scope: scope === 'month' ? 'MONTH' : 'YEAR',
+					endDate,
+					scope: scope.toUpperCase(),
 					budget,
 					filter
 				}

@@ -29,7 +29,7 @@ interface IAppProps {
 	sScope: string
 	changeMonth: (bBackwards: boolean) => {}
 	changeScope: (sScope: string) => {}
-	getSummary: (iDate: moment.Moment) => {}
+	getSummary: () => {}
 	setBudget: (fYearlyBudget: number) => {}
 	setFilter: (oSummary: Filter | null) => {}
 }
@@ -180,17 +180,17 @@ class App extends React.Component<IAppProps, {}> {
 
 	private eChangeMonth(bBackwards: boolean) {
 		this.props.changeMonth(bBackwards)
-		this.props.getSummary(this.props.initialDate)
+		this.props.getSummary()
 	}
 
 	private eChangeScope(sScope: string) {
 		this.props.changeScope(sScope)
-		this.props.getSummary(this.props.initialDate)
+		this.props.getSummary()
 	}
 
 	private eChangeBudget(fBudget: number) {
 		this.props.setBudget(fBudget)
-		this.props.getSummary(this.props.initialDate)
+		this.props.getSummary()
 	}
 
 	private renderSummary() {
@@ -425,11 +425,11 @@ class App extends React.Component<IAppProps, {}> {
 
 	private eSetFilter = (term: string, match: string) => {
 		this.props.setFilter({ term, match })
-		this.props.getSummary(this.props.initialDate)
+		this.props.getSummary()
 	}
 	private eRemoveFilter = () => {
 		this.props.setFilter(null)
-		this.props.getSummary(this.props.initialDate)
+		this.props.getSummary()
 	}
 }
 
@@ -447,7 +447,7 @@ const mapStateToProps = (state: Store.App) => {
 const mapDispatchToProps = (dispatch: React.Dispatch<Action>) => ({
 	changeMonth: (bBackwards: boolean) => dispatch(changeMonth(bBackwards)),
 	changeScope: (sScope: string) => dispatch(changeScope(sScope)),
-	getSummary: (iDate: moment.Moment) => dispatch(getSummary(iDate)),
+	getSummary: () => dispatch(getSummary()),
 	setBudget: (fYearlyBudget: number) => dispatch(setBudget(fYearlyBudget)),
 	setFilter: (filter: Filter | null) => dispatch(setFilter(filter)),
 })
