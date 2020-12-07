@@ -58,6 +58,16 @@ class App extends React.Component<IAppProps, {}> {
 				>
 					year
 				</button>
+
+				<div className="or" />
+				<button
+					onClick={() => this.eChangeScope('custom')}
+					className={
+						'ui button' + (sScope === 'custom' ? ' active' : '')
+					}
+				>
+					custom
+				</button>
 			</div>
 		)
 	}

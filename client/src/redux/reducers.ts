@@ -47,14 +47,9 @@ export function appReducers(
 				oSummary: null,
 			}
 		case ActionType.CHANGE_SCOPE:
-			let sScopeFromAction = action.sScope
-
-			sScopeFromAction =
-				sScopeFromAction === 'month' ? sScopeFromAction : 'year'
-
 			return {
 				...state,
-				sScope: sScopeFromAction,
+				sScope: action.sScope
 			}
 		case ActionType.GET_SUMMARY_SUCCEEDED:
 			return {
