@@ -24,6 +24,7 @@ Stack:
 2. browse to
   - `http://localhost:3400` for the client
   - `http://localhost:3300/graphql` to explore the API
+  - `http://127.0.0.1:1359` for dejavu (enter `http://127.0.0.1:9201` for host, and `expense-explorer-index` for index.)
 
 ## data import
 
