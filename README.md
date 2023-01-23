@@ -14,7 +14,8 @@ Stack:
 
 ### pre-run setup
 
-1. [clone repo & cd in]
+0. [clone repo & cd in]
+1. Make a copy of the environmental variables required by running `cp .env.sample .env` and then fill them all in.
 2. build containers: `docker-compose build`
 3. let each container install its js dependencies: `docker-compose run client yarn && docker-compose run server yarn`
 
@@ -24,11 +25,11 @@ Stack:
 2. browse to
   - `http://localhost:3400` for the client
   - `http://localhost:3300/graphql` to explore the API
-  - `http://127.0.0.1:1359` for dejavu (enter `http://127.0.0.1:9201` for host, and `expense-explorer-index` for index.)
+  - `http://localhost:1359` for dejavu (enter `http://localhost:9201` for host, and `expense-explorer-index` for index.)
 
 ## data import
 
-- update left hand side of data volume import (`/home/sam/Dropbox/Apps/Iexpense lite:/server/importer/data`)` to contain your own export folder
+- update the env var `DROPBOX_DIR` to contain your own export folder
 	- import script assumes all CSVs in that folder are named like `ix_20190417.csv`
 - after starting the project (`docker-compose up -d`)
 	- or in dev: `docker-compose up -d elasticsearch dejavu && docker-compose up client server`

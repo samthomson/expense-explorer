@@ -17,7 +17,7 @@ app.use(allowCrossDomain)
 
 // enable cors
 const corsOptions = {
-	origin: 'http://127.0.0.1:3400',
+	origin: 'http://localhost:3400',
 	credentials: true, // <-- REQUIRED backend setting
 }
 app.use(cors(corsOptions))

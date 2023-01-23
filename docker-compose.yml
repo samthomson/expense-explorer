@@ -24,7 +24,7 @@ services:
     volumes:
       - ./server:/server
       - ./shared:/shared
-      - /home/sam/Dropbox/Apps/Iexpense lite:/server/importer/data
+      - ${DROPBOX_DIR}:/server/importer/data
     depends_on:
       - elasticsearch
   elasticsearch:
