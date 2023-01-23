@@ -115,7 +115,7 @@ async function readInFile(importFilePath: string) {
 				if (expenseDate.isBefore(moment())) {
 					// convert danish numbers to english numbers
 					let amount = parseFloat(data.Amount.replace('.', '').replace(',', '.'))
-					amount *= Number(process.env.DKK_TO_USD) // convert to dollars
+					amount *= process.env?.EUR_TO_USD ? Number(process.env.EUR_TO_USD) : 1 // convert to dollars or keep as is (euros?)
 					amount *= -1 // make positive
 					// remove certain properties
 					delete data.Payment
