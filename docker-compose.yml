@@ -19,7 +19,7 @@ services:
       - PORT=3100
       - ELASTIC_INDEX=expense-explorer-index
       - ELASTIC_TYPE=expense
-      - EUR_TO_USD=0.92
+      - EUR_TO_USD=1.09
     ports:
       - "3300:3100"
       - "9222:9222"
