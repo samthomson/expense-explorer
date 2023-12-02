@@ -38,7 +38,7 @@ Stack:
 
 
 
-Run `./sai.sh` to start the containers *and* run the importer.
+Run `bash ./sai.sh` to start the containers *and* run the importer.
 
 ## todo
 
