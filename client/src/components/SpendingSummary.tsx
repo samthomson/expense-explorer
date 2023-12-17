@@ -11,8 +11,13 @@ interface IProps {
 	setBudget: (newBudget: number) => void
 }
 
-const SpendingSummary: React.StatelessComponent<IProps> = ({oSummary, scope: sScope, nYearlyBudget, initialDate, setBudget}) => {
-
+const SpendingSummary: React.StatelessComponent<IProps> = ({
+	oSummary,
+	scope: sScope,
+	nYearlyBudget,
+	initialDate,
+	setBudget,
+}) => {
 	// todo: defaults of -1 to shut linter up, later types should be updated to be non nullable, that means changing API elastic.ts file
 	const {
 		averagePerUnit = -1,
@@ -34,7 +39,7 @@ const SpendingSummary: React.StatelessComponent<IProps> = ({oSummary, scope: sSc
 	)
 
 	return (
-		<div className="ui grid" >
+		<div className="ui grid">
 			<div className="five wide column">
 				total expenditure:{' '}
 				<strong>
@@ -47,28 +52,24 @@ const SpendingSummary: React.StatelessComponent<IProps> = ({oSummary, scope: sSc
 				expenses: {numberOfExpenses}
 				<br />
 				mean average per {sDisplayPeriod}:$
-				<NumberDisplay
-					value={Number(averagePerUnit.toFixed(2))}
-				/>
+				<NumberDisplay value={Number(averagePerUnit.toFixed(2))} />
 			</div>
 			<div className="five wide column">
-				<span title="the most frequently appearing value">
-					mode
-				</span>{' '}
-				per {sDisplayPeriod}: ${modePerUnit.toFixed(2)}
+				<span title="the most frequently appearing value">mode</span>{' '}
+				per {sDisplayPeriod}: $
+				<NumberDisplay value={Number(modePerUnit.toFixed(2))} />
 				<br />
 				<span title="cumulative total divided by number of items - the classic average">
 					mean
 				</span>{' '}
 				per {sDisplayPeriod}: $
-				<NumberDisplay
-					value={Number(averagePerUnit.toFixed(2))}
-				/>
+				<NumberDisplay value={Number(averagePerUnit.toFixed(2))} />
 				<br />
 				<span title="the middle value if all values are ordered">
 					median
 				</span>{' '}
-				per {sDisplayPeriod}: ${medianPerUnit.toFixed(2)}
+				per {sDisplayPeriod}: $
+				<NumberDisplay value={Number(medianPerUnit.toFixed(2))} />
 			</div>
 			<div className="six wide column">
 				{bInCurrentPeriod && (
@@ -95,9 +96,7 @@ const SpendingSummary: React.StatelessComponent<IProps> = ({oSummary, scope: sSc
 								type="text"
 								value={nYearlyBudget || ''}
 								onChange={e =>
-									setBudget(
-										Number(e.currentTarget.value),
-									)
+									setBudget(Number(e.currentTarget.value))
 								}
 							/>
 						</div>
@@ -106,9 +105,7 @@ const SpendingSummary: React.StatelessComponent<IProps> = ({oSummary, scope: sSc
 								spend up to $
 								<NumberDisplay
 									value={Number(
-										prospectiveBudgetForForecast.toFixed(
-											2,
-										),
+										prospectiveBudgetForForecast.toFixed(2),
 									)}
 								/>
 								&nbsp; per {sDisplayPeriod} to come in at $

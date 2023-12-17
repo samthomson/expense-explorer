@@ -1,6 +1,7 @@
 import { Expense } from '@shared/declarations'
 import * as moment from 'moment'
 import * as React from 'react'
+import NumberDisplay from '../components/NumberDisplay'
 
 interface IProps {
 	eSetFilter: (term: string, match: string) => void
@@ -40,7 +41,14 @@ export class ExpenseTable extends React.Component<IProps, {}> {
 									<tr key={i}>
 										<td>{i + 1}</td>
 										<td>
-											${oSingleExpense.amount.toFixed(2)}
+											$
+											<NumberDisplay
+												value={Number(
+													oSingleExpense.amount.toFixed(
+														2,
+													),
+												)}
+											/>{' '}
 										</td>
 										<td>
 											<a
