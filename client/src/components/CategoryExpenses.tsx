@@ -1,6 +1,6 @@
 import { Category } from '@shared/declarations'
 import * as React from 'react'
-import NumberDisplay from '../components/NumberDisplay'
+import NumberDisplay from 'src/components/NumberDisplay'
 
 // @ts-ignore
 import { Pie as PieChart } from 'react-chartjs'
@@ -82,7 +82,7 @@ export class CategoryExpenses extends React.Component<IProps, {}> {
 										)
 										const sDisplayCategory: string =
 											asCategoryParts[
-												asCategoryParts.length - 1
+											asCategoryParts.length - 1
 											]
 
 										return (
@@ -105,7 +105,7 @@ export class CategoryExpenses extends React.Component<IProps, {}> {
 												$
 												<NumberDisplay
 													value={Number(
-														total.toFixed(2),
+													total.toFixed(2),
 													)}
 												/>
 												<td>{expenseCount}</td>

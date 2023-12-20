@@ -11,13 +11,7 @@ interface IProps {
 	setBudget: (newBudget: number) => void
 }
 
-const SpendingSummary: React.StatelessComponent<IProps> = ({
-	oSummary,
-	scope: sScope,
-	nYearlyBudget,
-	initialDate,
-	setBudget,
-}) => {
+const SpendingSummary: React.StatelessComponent<IProps> = ({oSummary, scope: sScope, nYearlyBudget, initialDate, setBudget}) => {
 	// todo: defaults of -1 to shut linter up, later types should be updated to be non nullable, that means changing API elastic.ts file
 	const {
 		averagePerUnit = -1,
@@ -96,7 +90,9 @@ const SpendingSummary: React.StatelessComponent<IProps> = ({
 								type="text"
 								value={nYearlyBudget || ''}
 								onChange={e =>
-									setBudget(Number(e.currentTarget.value))
+									setBudget(
+										Number(e.currentTarget.value),
+									)
 								}
 							/>
 						</div>
@@ -105,7 +101,9 @@ const SpendingSummary: React.StatelessComponent<IProps> = ({
 								spend up to $
 								<NumberDisplay
 									value={Number(
-										prospectiveBudgetForForecast.toFixed(2),
+										prospectiveBudgetForForecast.toFixed(
+											2,
+										),
 									)}
 								/>
 								&nbsp; per {sDisplayPeriod} to come in at $

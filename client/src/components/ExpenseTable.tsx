@@ -1,7 +1,7 @@
 import { Expense } from '@shared/declarations'
 import * as moment from 'moment'
 import * as React from 'react'
-import NumberDisplay from '../components/NumberDisplay'
+import NumberDisplay from 'src/components/NumberDisplay'
 
 interface IProps {
 	eSetFilter: (term: string, match: string) => void
