@@ -12,7 +12,6 @@ interface IProps {
 	eSetFilter: (term: string, match: string) => void
 }
 
-// @ts-ignore
 const CategoryExpenses: React.FC<IProps> = ({
 	categories,
 	sCategoryName,
@@ -180,24 +179,26 @@ const CategoryExpenses: React.FC<IProps> = ({
 	const data = useMemo(() => categories, [categories])
 
 	return (
-		categories.length > 0 && (
-			<div>
-				<h3>Spending by {sCategoryName}</h3>
-				<div className="ui grid">
-					<div className="eight wide column">
-						<Table columns={columns} data={data} />
-					</div>
-					<div className="eight wide column">
-						<PieChart
-							data={chartData}
-							options={chartOptions}
-							width="100%"
-							height="250"
-						/>
+		<div>
+			{categories.length > 0 && (
+				<div>
+					<h3>Spending by {sCategoryName}</h3>
+					<div className="ui grid">
+						<div className="eight wide column">
+							<Table columns={columns} data={data} />
+						</div>
+						<div className="eight wide column">
+							<PieChart
+								data={chartData}
+								options={chartOptions}
+								width="100%"
+								height="250"
+							/>
+						</div>
 					</div>
 				</div>
-			</div>
-		)
+			)}
+		</div>
 	)
 }
 
