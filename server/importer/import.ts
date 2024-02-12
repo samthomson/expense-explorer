@@ -113,8 +113,9 @@ async function readInFile(importFilePath: string) {
 				// only store past expenses
 				const expenseDate: moment.Moment = moment(data.Date, 'MM/DD/Y')
 				if (expenseDate.isBefore(moment())) {
-					// convert danish numbers to english numbers
-					let amount = parseFloat(data.Amount.replace('.', '').replace(',', '.'))
+					// // convert danish numbers to english numbers
+					// let amount = parseFloat(data.Amount.replace('.', '').replace(',', '.'))
+					let amount = parseFloat(data.Amount.replace(/,/g, ''))
 					amount *= process.env?.EUR_TO_USD ? Number(process.env.EUR_TO_USD) : 1 // convert to dollars or keep as is (euros?)
 					amount *= -1 // make positive
 					// remove certain properties
