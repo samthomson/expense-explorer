@@ -102,12 +102,13 @@ export class CategoryExpenses extends React.Component<IProps, {}> {
 														)}
 													</a>
 												</td>
+												<td>
 												$
 												<NumberDisplay
 													value={Number(
 													total.toFixed(2),
 													)}
-												/>
+												/></td>
 												<td>{expenseCount}</td>
 												<td>
 													{percent > 1
