@@ -7,8 +7,8 @@ import { Store } from 'src/redux/store'
 interface IProps {
 	initialDate: moment.Moment
 	endDate: moment.Moment
-	getSummary: () => {}
-	setDates: (initialDate: moment.Moment, endDate: moment.Moment) => {}
+	getSummary: () => void
+	setDates: (initialDate: moment.Moment, endDate: moment.Moment) => void
 }
 
 const DateEntry: React.StatelessComponent<IProps> = ({

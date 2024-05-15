@@ -1,4 +1,4 @@
-import { Filter, Summary } from '@shared/declarations'
+import * as SharedTypes from '@shared/declarations'
 import moment from 'moment'
 
 export namespace Store {
@@ -6,9 +6,9 @@ export namespace Store {
 		// initialDate: number // unix epoch - milliseconds
 		initialDate: moment.Moment
 		endDate: moment.Moment
-		oSummary: Summary | null
-		filter: Filter | null
-		sScope: string // month / year / custom
+		oSummary: SharedTypes.Summary | null
+		filter: SharedTypes.Filter | null
+		sScope: SharedTypes.Scope // month / year / custom
 		nYearlyBudget?: number
 	}
 }

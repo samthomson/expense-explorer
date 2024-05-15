@@ -29,15 +29,15 @@ import './../node_modules/semantic-ui-css/semantic.min.css'
 interface IAppProps {
 	nYearlyBudget?: number
 	initialDate: moment.Moment
-	endDate: moment.Moment
-	filter: Filter
-	oSummary: Summary
+	endDate: moment.Moment 
+	filter: Filter | null
+	oSummary: Summary | null
 	sScope: SharedTypes.Scope
-	changeMonth: (bBackwards: boolean) => {}
-	changeScope: (sScope: string) => {}
-	getSummary: () => {}
-	setBudget: (fYearlyBudget: number) => {}
-	setFilter: (oSummary: Filter | null) => {}
+	changeMonth: (bBackwards: boolean) => void
+	changeScope: (sScope: string) => void
+	getSummary: () => void
+	setBudget: (fYearlyBudget: number) => void
+	setFilter: (oSummary: Filter | null) => void
 }
 
 const App: React.StatelessComponent<IAppProps> = ({initialDate, endDate, filter, oSummary, sScope, nYearlyBudget, changeMonth, changeScope, getSummary, setBudget, setFilter}) => {
@@ -159,10 +159,10 @@ const mapStateToProps = (state: Store.App) => {
 
 const mapDispatchToProps = (dispatch: React.Dispatch<Action>) => ({
 	changeMonth: (bBackwards: boolean) => dispatch(changeMonthAction(bBackwards)),
-	changeScope: (sScope: string) => dispatch(changeScopeAction(sScope)),
+	changeScope: (sScope: SharedTypes.Scope) => dispatch(changeScopeAction(sScope)),
 	getSummary: () => dispatch(getSummaryAction()),
 	setBudget: (fYearlyBudget: number) => dispatch(setBudgetAction(fYearlyBudget)),
-	setFilter: (filter: Filter | null) => dispatch(setFilterAction(filter)),
+	setFilter: (filter: Filter) => dispatch(setFilterAction(filter)),
 })
 
 export default connect(

@@ -1,4 +1,4 @@
-import { Filter, Summary } from '@shared/declarations'
+import * as SharedTypes from '@shared/declarations'
 import moment from 'moment'
 
 export enum ActionType {
@@ -28,7 +28,7 @@ export type Action =
 	}
 	| {
 		type: ActionType.GET_SUMMARY_SUCCEEDED
-		oSummary: Summary
+		oSummary: SharedTypes.Summary
 	}
 	| {
 		type: ActionType.GET_SUMMARY_FAILED
@@ -36,16 +36,16 @@ export type Action =
 	| {
 		type: ActionType.CHANGE_MONTH
 		bBackwards: boolean
-		oSummary: Summary | null
+		oSummary: SharedTypes.Summary | null
 	}
 	| {
 		type: ActionType.CHANGE_SCOPE
-		sScope: string
-		oSummary: Summary | null
+		sScope: SharedTypes.Scope
+		oSummary: SharedTypes.Summary | null
 	}
 	| {
 		type: ActionType.SET_FILTER
-		filter: Filter | null
+		filter: SharedTypes.Filter | null
 	}
 
 export const setDates = (initialDate: moment.Moment, endDate: moment.Moment): Action => {
@@ -70,7 +70,7 @@ export const getSummary = (): Action => {
 	}
 }
 
-export const getSummarySucceded = (oSummary: Summary): Action => {
+export const getSummarySucceded = (oSummary: SharedTypes.Summary): Action => {
 	return {
 		type: ActionType.GET_SUMMARY_SUCCEEDED,
 		oSummary,
@@ -91,7 +91,7 @@ export const changeMonth = (bBackwards: boolean): Action => {
 	}
 }
 
-export const changeScope = (sScope: string): Action => {
+export const changeScope = (sScope: SharedTypes.Scope): Action => {
 	return {
 		type: ActionType.CHANGE_SCOPE,
 		sScope,
@@ -99,7 +99,7 @@ export const changeScope = (sScope: string): Action => {
 	}
 }
 
-export const setFilter = (filter: Filter | null): Action => {
+export const setFilter = (filter: SharedTypes.Filter | null): Action => {
 	return {
 		type: ActionType.SET_FILTER,
 		filter,

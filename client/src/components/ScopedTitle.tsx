@@ -6,7 +6,7 @@ import * as React from 'react'
 interface IProps {
 	initialDate: moment.Moment
 	endDate: moment.Moment
-	filter: SharedTypes.Filter
+	filter: SharedTypes.Filter | null
 	sScope: SharedTypes.Scope
 	removeFilter: () => void
 }
