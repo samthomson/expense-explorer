@@ -394,8 +394,33 @@ export const getSummary = async ({
 
 	const oQuery = buildElasticQuery({ filter, lowerDateRange, upperDateRange, scope })
 
-	const result: ElasticSummaryResponse = await client.search(oQuery)
-		.catch((err: Error) => console.log(JSON.stringify(err, null, 4)))
+	let result: ElasticSummaryResponse | null = null
+	
+	try {
+		result = await client.search(oQuery)
+	} catch (err: any) {
+		// If index doesn't exist yet, return empty data instead of throwing
+		if (err?.meta?.body?.error?.type === 'index_not_found_exception') {
+			console.log('Index not found yet, returning empty data')
+			return {
+				expenses: [],
+				spendingOverTime: [],
+				spendingByCategory: [],
+				spendingBySubcategory: [],
+				projectedSpendingOverTime: null,
+				projectionForScope: null,
+				prospectiveBudgetForForecast: 0,
+				totalExpenditure: 0,
+				numberOfExpenses: 0,
+				averagePerUnit: 0,
+				medianPerUnit: 0,
+				modePerUnit: 0,
+			}
+		}
+		// For other errors, log and re-throw
+		console.log(JSON.stringify(err, null, 4))
+		throw err
+	}
 
 	if (
 		!(
