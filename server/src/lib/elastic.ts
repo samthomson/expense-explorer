@@ -398,7 +398,7 @@ export const getSummary = async ({
 	
 	try {
 		result = await client.search(oQuery)
-	} catch (err: any) {
+	} catch (err) {
 		// If index doesn't exist yet, return empty data instead of throwing
 		if (err?.meta?.body?.error?.type === 'index_not_found_exception') {
 			console.log('Index not found yet, returning empty data')

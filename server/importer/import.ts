@@ -25,14 +25,30 @@ const main = async () => {
 				.replace('ix_', '')
 		)
 	)
-	const latestDate = Math.max(...filePathDatesAsNumbers)
-	const importFileName = `ix_${latestDate}.csv`
-	console.log('determined the latest is: ', importFileName)
-
-	const importFilePath = path.resolve(importDir, importFileName)
-	console.log(`importing from ${importFilePath}`)
-
-	const results: IElasticExpenseDocument[] = await readInFile(importFilePath)
+	const sortedDates = filePathDatesAsNumbers.sort((a, b) => b - a) // Sort descending
+	
+	let results: IElasticExpenseDocument[] = []
+	let importFilePath: string | null = null
+	
+	// Try files from newest to oldest until one works
+	for (const date of sortedDates) {
+		const importFileName = `ix_${date}.csv`
+		importFilePath = path.resolve(importDir, importFileName)
+		console.log(`trying to import from ${importFileName}`)
+		
+		try {
+			results = await readInFile(importFilePath)
+			console.log(`successfully imported from ${importFileName}`)
+			break
+		} catch (err) {
+			console.log(`failed to read ${importFileName}, trying next file...`)
+			if (date === sortedDates[sortedDates.length - 1]) {
+				// Last file failed, exit with error
+				console.error('All files failed to read:', err)
+				process.exit(1)
+			}
+		}
+	}
 
 	console.log(`${results.length} expenses read from csv`)
 
@@ -45,13 +61,11 @@ const main = async () => {
 	//
 	const elasticIndexMapping = {
 		mappings: {
-			expense: {
-				properties: {
-					Category: { "type": "keyword" },
-					Date: { "type": "date", "format": "MM/dd/yyyy" },
-					Fullcategory: { "type": "keyword" },
-					Subcategory: { "type": "keyword" }
-				}
+			properties: {
+				Category: { "type": "keyword" },
+				Date: { "type": "date", "format": "MM/dd/yyyy" },
+				Fullcategory: { "type": "keyword" },
+				Subcategory: { "type": "keyword" }
 			}
 		}
 	}
@@ -95,7 +109,6 @@ const main = async () => {
 
 	const { body: bulkResponse } = await client.bulk({
 		index: indexName,
-		type: elasticDocumentType,
 		body: elasticBulkInsertDocumentBody
 	})
 }
@@ -103,11 +116,15 @@ const main = async () => {
 main()
 
 async function readInFile(importFilePath: string) {
-	return new Promise<IElasticExpenseDocument[]>(resolve => {
+	return new Promise<IElasticExpenseDocument[]>((resolve, reject) => {
 
 		const results: IElasticExpenseDocument[] = []
 
-		fs.createReadStream(importFilePath)
+		const stream = fs.createReadStream(importFilePath)
+			.on('error', (err) => {
+				console.error('Error reading file:', err)
+				reject(err)
+			})
 			.pipe(csv())
 			.on('data', (data: ICSVExpenseRow) => {
 				// only store past expenses
@@ -118,6 +135,8 @@ async function readInFile(importFilePath: string) {
 					let amount = parseFloat(data.Amount.replace(/,/g, ''))
 					amount *= process.env?.EUR_TO_USD ? Number(process.env.EUR_TO_USD) : 1 // convert to dollars or keep as is (euros?)
 					amount *= -1 // make positive
+					// save ID before deleting
+					const expenseId = data.ID
 					// remove certain properties
 					delete data.Payment
 					delete data.Currency
@@ -126,6 +145,7 @@ async function readInFile(importFilePath: string) {
 
 					return results.push({
 						...data,
+						ID: expenseId,
 						Amount: amount,
 						Fullcategory: data.Category + '_' + data.Subcategory
 					})
@@ -133,6 +153,10 @@ async function readInFile(importFilePath: string) {
 			})
 			.on('end', () => {
 				resolve(results)
+			})
+			.on('error', (err) => {
+				console.error('Error parsing CSV:', err)
+				reject(err)
 			})
 	})
 }
