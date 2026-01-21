@@ -1,4 +1,3 @@
-version: "2"
 services:
   client:
     command: yarn run start
